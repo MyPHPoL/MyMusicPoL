@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// idk czy tego potrzebujemy, ale to jest z tutoriala (okok?)
 namespace mymusicpol.ViewModels
 {
 	internal class SonglistViewModel : ViewModelBase

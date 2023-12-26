@@ -45,25 +45,25 @@ namespace mymusicpol.ViewModels
 			}
 		}
 
-		private int time_elapsed; // current song time elapsed
-		public int Time_Elapsed
+		private string timeElapsed; // current song time elapsed
+		public string TimeElapsed
 		{
-			get { return time_elapsed; }
+			get { return timeElapsed; }
 			set
 			{
-				time_elapsed = value;
-				OnPropertyChanged(nameof(Time_Elapsed));
+				timeElapsed = value;
+				OnPropertyChanged(nameof(TimeElapsed));
 			}
 		}
 
-		private int time_remaining; // current song time remaining
-		public int Time_Remaining
+		private string timeRemaining; // current song time remaining
+		public string TimeRemaining
 		{
-			get { return time_remaining; }
+			get { return timeRemaining; }
 			set
 			{
-				time_remaining = value;
-				OnPropertyChanged(nameof(Time_Remaining));
+				timeRemaining = value;
+				OnPropertyChanged(nameof(TimeRemaining));
 			}
 		}
 
@@ -77,26 +77,40 @@ namespace mymusicpol.ViewModels
 				OnPropertyChanged(nameof(Volume));
 			}
 		}
-		private int progress_value; // current song progress value (slider bar)
-		public int Progress_Value
+
+		private int progressValue; // current song progress value (slider bar)
+		public int ProgressValue
 		{
-			get { return progress_value; }
+			get { return progressValue; }
 			set
 			{
-				progress_value = value;
-				OnPropertyChanged(nameof(Progress_Value));
+				progressValue = value;
+				OnPropertyChanged(nameof(ProgressValue));
 			}
 		}
-		private int progress_maximum; // current song progress maximum (slider bar)
-		public int Progress_Maximum
+
+		private int progressMaximum; // current song progress maximum (slider bar)
+		public int ProgressMaximum
 		{
-			get { return progress_maximum; }
+			get { return progressMaximum; }
 			set
 			{
-				progress_maximum = value;
-				OnPropertyChanged(nameof(Progress_Maximum));
+				progressMaximum = value;
+				OnPropertyChanged(nameof(ProgressMaximum));
 			}
 		}
+
+		private string selectedListName; // current selected playlist name
+		public string SelectedListName
+		{
+			get { return selectedListName; }
+			set
+			{
+				selectedListName = value;
+				OnPropertyChanged(nameof(SelectedListName));
+			}
+		}
+    
 		private readonly ObservableCollection<SonglistViewModel> playlists; // all playlists
 		public IEnumerable<SonglistViewModel> Playlists => playlists;
 		public ICommand Show_Library { get; }
@@ -111,23 +125,24 @@ namespace mymusicpol.ViewModels
 			playlists =
 			[
 				new SonglistViewModel(new Songlist("Playlist 1", new List<Song>())),
-				new SonglistViewModel(new Songlist("Playlist 2", new List<Song>())),
-				new SonglistViewModel(new Songlist("Playlist 3", new List<Song>())),
-				new SonglistViewModel(new Songlist("Playlist 4", new List<Song>())),
-				new SonglistViewModel(new Songlist("Playlist 5", new List<Song>())),
-				new SonglistViewModel(new Songlist("Playlist 6", new List<Song>())),
-				new SonglistViewModel(new Songlist("Playlist 7", new List<Song>())),
+				new SonglistViewModel(new Songlist("Playlist 2 Different Name", new List<Song>())),
+				new SonglistViewModel(new Songlist("Playlist 3 LOLOLO", new List<Song>())),
+				new SonglistViewModel(new Songlist("Playlist 4 xdd", new List<Song>())),
+				new SonglistViewModel(new Songlist("Playlist 5 test", new List<Song>())),
+				new SonglistViewModel(new Songlist("Playlist 6 oho", new List<Song>())),
+				new SonglistViewModel(new Songlist("Playlist 7 haahahahahah", new List<Song>())),
 			];
 
 			volume = 50;
-			progress_maximum = 100;
-			progress_value = 50;
-			time_elapsed = 50;
-			time_remaining = 50;
-			// fix this cover path
-			cover = "..\\..\\assets\\TEST-BOX-100px-100px.png";
+			progressMaximum = 100;
+			progressValue = 50;
+			timeElapsed = "0:00:00";
+			timeRemaining = "-0:00:00";
+			// IDK HOW TO SHOW THIS DAMN COVER
+			cover = "..\\source\\repos\\mymusicpol\\assets\\TEST-BOX-100px-100px.png";
 			title = "Test Title";
 			artist = "Test Artist";
+			selectedListName = "Test Playlist Name";
 		}
 
 	}
