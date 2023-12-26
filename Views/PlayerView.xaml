@@ -6,7 +6,6 @@
              Height="720" Width="1270"
         mc:Ignorable="d"
         Background="#202124">
-
     <UserControl.Resources>
         <!-- All media control buttons should have unified style (round border + segoe font) -->
         <!-- Its not super important, but for the cleanless of the code should be done somewhere near future (probably never) -->
@@ -124,7 +123,6 @@
                             </Style>
                         </Button.Resources>
                     </Button>
-
                     <Button Command="{Binding PlayPauseButton}" x:Name="play_pause" Click="play_pause_Click" Height="45" Width="45" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" Content="" FontSize="37" FontFamily="{StaticResource Segoe}" Background="#ecf0f1">
                         <Button.Resources>
                             <Style TargetType="Border">
@@ -140,7 +138,6 @@
                             </Style>
                         </Button.Resources>
                     </Button>
-
                     <Button Command="{Binding RepeatButton}" x:Name="repeat" Click="repeat_Click" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="&#xE8EE;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                         <Button.Resources>
                             <Style TargetType="Border">
@@ -175,7 +172,6 @@
                         </Style>
                     </Button.Resources>
                 </Button>
-
                 <Label x:Name="volIcon" Content="" FontFamily="{StaticResource Segoe}" Foreground="#cacfd2" FontSize="20" VerticalAlignment="Center" Margin="30 0 0 0"/>
                 <Slider x:Name="volume" Style="{StaticResource Horizontal_Slider}" Width="100" Height="10" Margin="10 10" Value="{Binding Volume}" Maximum="100" Minimum="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight" ValueChanged="volume_ValueChanged" />
             </StackPanel>
@@ -251,7 +247,7 @@
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Width="Auto" Height="Auto"/>
 
             <StackPanel Grid.Row="0">
-
+              
                 <!-- undo and redo buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 20 0 0">
                     <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">

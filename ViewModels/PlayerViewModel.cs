@@ -110,7 +110,7 @@ namespace mymusicpol.ViewModels
 				OnPropertyChanged(nameof(SelectedListName));
 			}
 		}
-
+    
 		private readonly ObservableCollection<SonglistViewModel> playlists; // all playlists
 		public IEnumerable<SonglistViewModel> Playlists => playlists;
 		public ICommand Show_Library { get; }
