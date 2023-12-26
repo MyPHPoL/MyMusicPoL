@@ -307,6 +307,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <!-- mby later add row number on the left -->
+                                <Image Source="{Binding cover}" Height="30" Width="30"/>
                                 <Label Content="{Binding name}" Foreground="#ecf0f1" FontSize="19"/>
                                 <Label Content="{Binding artist}" Foreground="#af7ac5" FontSize="19"/>
                                 <Label Content="{Binding album}" Foreground="#ecf0f1" FontSize="19"/>
