@@ -1,0 +1,326 @@
+﻿<UserControl x:Class="mymusicpol.Views.PlayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             Height="720" Width="1270"
+        mc:Ignorable="d"
+        Background="#202124">
+
+    <UserControl.Resources>
+        <!-- All media control buttons should have unified style (round border + segoe font) -->
+        <!-- Its not super important, but for the cleanless of the code should be done somewhere near future (probably never) -->
+
+        <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="IsTabStop" Value="false" />
+            <Setter Property="Focusable" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border  BorderThickness="1" BorderBrush="Black" Background="Black" Height="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border SnapsToDevicePixels="True" Background="#af7ac5"  BorderThickness="1" BorderBrush="#af7ac5" Height="3"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderThumb" TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Ellipse Height="10" Width="10" Fill="#7d3c98"></Ellipse>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="Slider"  TargetType="Slider">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Track Grid.Row="1" x:Name="PART_Track"   >
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource SliderThumb}"  />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="Horizontal_Slider" TargetType="Slider">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="SnapsToDevicePixels" Value="true" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="MinHeight" Value="21" />
+                    <Setter Property="MinWidth" Value="104" />
+                    <Setter Property="Template" Value="{StaticResource Slider}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid x:Name="controller" Margin="0,580,0,0" Background="#121212">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- currently played song title, artist and cover -->
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                <Image Source="{Binding Cover}" Height="60" Width="60" Margin="20 20" HorizontalAlignment="Left"/>
+                <StackPanel Orientation="Vertical" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <Label Content="{Binding Title}" Foreground="#ecf0f1" FontSize="15"/>
+                    <Label Content="{Binding Artist}" Foreground="#cacfd2" FontSize="15"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- media control buttons (for all segoe fonts refer to this site: http://modernicons.io/segoe-mdl2/cheatsheet/) -->
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <StackPanel Orientation="Horizontal" Height="60" VerticalAlignment="Center" HorizontalAlignment="Center" Width="390" Margin="0 5 0 0">
+                    <Button Command="{Binding ShuffleButton}" x:Name="shuffle" Click="shuffle_Click" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" Content="&#xE8B1;" FontSize="19" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Command="{Binding PreviousButton}" x:Name="previous" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Command="{Binding PlayPauseButton}" x:Name="play_pause" Click="play_pause_Click" Height="45" Width="45" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" Content="" FontSize="37" FontFamily="{StaticResource Segoe}" Background="#ecf0f1">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Command="{Binding NextButton}" x:Name="next" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Command="{Binding RepeatButton}" x:Name="repeat" Click="repeat_Click" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="&#xE8EE;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
+
+                <!-- progress bar -->
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{Binding TimeElapsed}" Foreground="White" FontSize="13" VerticalAlignment="Center" Margin="20 0"/>
+                    <Slider x:Name="slider" Style="{StaticResource Horizontal_Slider}" Width="390" Height="10" Margin="0 10" Value="{Binding ProgressValue}" Maximum="{Binding ProgressMaximum}" Minimum="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight" />
+                    <Label x:Name="time_remaining" Content="{Binding TimeRemaining}" Foreground="White" FontSize="13" VerticalAlignment="Center" Margin="20 0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- visualizer, queue and volume slider -->
+            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+                <Button Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="100"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="100"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Label x:Name="volIcon" Content="" FontFamily="{StaticResource Segoe}" Foreground="#cacfd2" FontSize="20" VerticalAlignment="Center" Margin="30 0 0 0"/>
+                <Slider x:Name="volume" Style="{StaticResource Horizontal_Slider}" Width="100" Height="10" Margin="10 10" Value="{Binding Volume}" Maximum="100" Minimum="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight" ValueChanged="volume_ValueChanged" />
+            </StackPanel>
+        </Grid>
+
+        <!-- left side grid -->
+        <Grid Margin="5,5,800,147" Background="Transparent">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="105"/>
+                <RowDefinition Height="75" />
+                <RowDefinition Height="75" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- program name -->
+            <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+                <Label Content="Welcome to" Foreground="#ecf0f1" FontSize="38" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="38" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+            </StackPanel>
+
+            <!-- all music -->
+            <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
+                <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Button Command="{Binding ShowLibrary}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
+            </StackPanel>
+
+            <!-- play from web -->
+            <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="2" Grid.Column="0" Margin="0 5 0 0"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
+                <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                <Label Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145"/>
+                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+            </StackPanel>
+
+            <!-- playlists -->
+            <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="3" Grid.Column="0" Margin="0,5,0,0" VerticalAlignment="Top" Height="308"/>
+            <StackPanel Grid.Row="3" Grid.Column="0" Margin="10 10 0 0" VerticalAlignment="Top">
+
+                <!-- create new playlist-->
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                    <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                    <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                </StackPanel>
+
+                <!-- playlist list (select, edit name, delete)-->
+                <ListBox ItemsSource="{Binding Playlists}" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=5}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding name}" Foreground="#ecf0f1" FontSize="23"/>
+                                <!-- idk how to move these buttons on the right side -->
+                                <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                                <Button Content="&#xE70F;" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                                <Button Content="&#xE74D;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Grid>
+
+        <!-- selected playlist (can be also all music, queue, selected album or artist -->
+        <Grid  Margin="475,5,5,147">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Width="Auto" Height="Auto"/>
+
+            <StackPanel Grid.Row="0">
+
+                <!-- undo and redo buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 20 0 0">
+                    <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
+
+                <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
+                <Label Content="{Binding SelectedListName}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
+                <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
+
+                    <!-- you can't put 2 fonts inside the same button (or maybe you can idk) so 2 buttons with the same icon but 1 exports as JSON and the other as XML (to be changed later) -->
+                    <Button Command="{Binding ExportJSONButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                    <Button Command="{Binding ExportXMLButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="100"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <!-- filter textbox (mby ill add placeholder text later) -->
+                    <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+
+                    <!-- sort checkbox -->
+                    <Label Content="Sort by: " VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19"/>
+                    <RadioButton GroupName="sort" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
+                    <RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
+                    <RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
+                    <RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>
+                </StackPanel>
+
+                <!-- song list (the same problem as with the playlist list: idk how to set float right on those buttons) -->
+                <ListBox ItemsSource="{Binding SelectedList}" Background="Transparent" Height="403" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <!-- mby later add row number on the left -->
+                                <Label Content="{Binding name}" Foreground="#ecf0f1" FontSize="19"/>
+                                <Label Content="{Binding artist}" Foreground="#af7ac5" FontSize="19"/>
+                                <Label Content="{Binding album}" Foreground="#ecf0f1" FontSize="19"/>
+                                <Label Content="{Binding length}" Foreground="#af7ac5" FontSize="19"/>
+                                <!-- idk how to move these buttons on the right side -->
+                                <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+</UserControl>
