@@ -6,10 +6,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <Configurations>Debug;Release;DebugNoHwAccel</Configurations>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugNoHwAccel|AnyCPU'">
+    <DefineConstants>$(DefineConstants);DEBUGNOHWACCEL</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="assets\TEST-BOX-100px-100px.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
   </ItemGroup>
 
   <ItemGroup>

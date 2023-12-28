@@ -5,7 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              Height="720" Width="1270"
         mc:Ignorable="d"
-        Background="#202124">
+        Background="#202124"
+        xmlns:viewmodel="clr-namespace:mymusicpol.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodel:PlayerViewModel}">
     <UserControl.Resources>
         <!-- All media control buttons should have unified style (round border + segoe font) -->
         <!-- Its not super important, but for the cleanless of the code should be done somewhere near future (probably never) -->
@@ -150,14 +152,25 @@
                 <!-- progress bar -->
                 <StackPanel Orientation="Horizontal">
                     <Label Content="{Binding TimeElapsed}" Foreground="White" FontSize="13" VerticalAlignment="Center" Margin="20 0"/>
-                    <Slider x:Name="slider" Style="{StaticResource Horizontal_Slider}" Width="390" Height="10" Margin="0 10" Value="{Binding ProgressValue}" Maximum="{Binding ProgressMaximum}" Minimum="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight" />
-                    <Label x:Name="time_remaining" Content="{Binding TimeRemaining}" Foreground="White" FontSize="13" VerticalAlignment="Center" Margin="20 0"/>
+                    <Slider 
+                        x:Name="slider"
+                        Style="{StaticResource Horizontal_Slider}"
+                        Width="390"
+                        Height="10"
+                        Margin="0 10"
+                        Value="{Binding ProgressValue.Value}"
+                        Maximum="1"
+                        Minimum="0"
+                        IsMoveToPointEnabled="True"
+                        TickFrequency="1"
+                        TickPlacement="None" />
+                    <Label x:Name="time_remaining" Content="{Binding TotalTime.Value}" Foreground="White" FontSize="13" VerticalAlignment="Center" Margin="20 0"/>
                 </StackPanel>
             </StackPanel>
 
             <!-- visualizer, queue and volume slider -->
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                <Button Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="100"/>
@@ -173,7 +186,20 @@
                     </Button.Resources>
                 </Button>
                 <Label x:Name="volIcon" Content="" FontFamily="{StaticResource Segoe}" Foreground="#cacfd2" FontSize="20" VerticalAlignment="Center" Margin="30 0 0 0"/>
-                <Slider x:Name="volume" Style="{StaticResource Horizontal_Slider}" Width="100" Height="10" Margin="10 10" Value="{Binding Volume}" Maximum="100" Minimum="0" IsMoveToPointEnabled="True" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="BottomRight" ValueChanged="volume_ValueChanged" />
+                <Slider 
+                    x:Name="volume"
+                    Style="{StaticResource Horizontal_Slider}"
+                    Width="100"
+                    Height="10"
+                    Margin="10 10"
+                    Value="{Binding Volume.Value}"
+                    Maximum="100"
+                    Minimum="0"
+                    IsMoveToPointEnabled="True"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="1"
+                    TickPlacement="BottomRight"
+                    ValueChanged="volume_ValueChanged" />
             </StackPanel>
         </Grid>
 
@@ -304,10 +330,11 @@
                             <StackPanel Orientation="Horizontal">
                                 <!-- mby later add row number on the left -->
                                 <Image Source="{Binding cover}" Height="30" Width="30"/>
-                                <Label Content="{Binding name}" Foreground="#ecf0f1" FontSize="19"/>
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="100">
+                                    <AccessText Text="{Binding title}" TextTrimming="CharacterEllipsis" />
+                                </Label>
                                 <Label Content="{Binding artist}" Foreground="#af7ac5" FontSize="19"/>
                                 <Label Content="{Binding album}" Foreground="#ecf0f1" FontSize="19"/>
-                                <Label Content="{Binding length}" Foreground="#af7ac5" FontSize="19"/>
                                 <!-- idk how to move these buttons on the right side -->
                                 <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
                                 <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>

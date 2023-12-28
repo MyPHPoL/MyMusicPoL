@@ -7,6 +7,8 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace mymusicpol;
 internal class AppState
@@ -52,10 +54,10 @@ internal class AppState
         QueueModel queueModel,
         PlayerModel playerModel )
     {
-            pms = playerModel.DumpState();
-            qms = queueModel.DumpState();
-            var str = JsonSerializer.Serialize(this,jsonOptions);
-            File.WriteAllText(configPath,str);
+		pms = playerModel.DumpState();
+		qms = queueModel.DumpState();
+		var str = JsonSerializer.Serialize(this,jsonOptions);
+		File.WriteAllText(configPath,str);
     }
 }
 /// <summary>
@@ -78,6 +80,9 @@ public partial class App : Application
     }
 	protected override void OnStartup(StartupEventArgs e)
 	{
+#if DEBUGNOHWACCEL
+        RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+#endif
 		MainWindow = new MainWindow()
 		{
 			DataContext = new MainViewModel()

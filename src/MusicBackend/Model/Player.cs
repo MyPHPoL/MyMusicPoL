@@ -115,8 +115,9 @@ public class PlayerModel
 	{
 		if (audioFileReader is null || waveOut.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
 		{
-			audioFileReader = new(name);
-			waveOut.Init(audioFileReader);
+			var fileReader = new AudioFileReader(name);
+			waveOut.Init(fileReader);
+			audioFileReader = fileReader;
 			play();
 		}
 		else

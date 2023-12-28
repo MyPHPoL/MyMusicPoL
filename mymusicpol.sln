@@ -12,15 +12,20 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		DebugNoHwAccel|Any CPU = DebugNoHwAccel|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2ADC30D6-66F1-4CF6-A983-B08E1C2F5075}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2ADC30D6-66F1-4CF6-A983-B08E1C2F5075}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADC30D6-66F1-4CF6-A983-B08E1C2F5075}.DebugNoHwAccel|Any CPU.ActiveCfg = DebugNoHwAccel|Any CPU
+		{2ADC30D6-66F1-4CF6-A983-B08E1C2F5075}.DebugNoHwAccel|Any CPU.Build.0 = DebugNoHwAccel|Any CPU
 		{2ADC30D6-66F1-4CF6-A983-B08E1C2F5075}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ADC30D6-66F1-4CF6-A983-B08E1C2F5075}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54D1FA98-E972-4CA4-A957-25CF2EBFA1E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54D1FA98-E972-4CA4-A957-25CF2EBFA1E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D1FA98-E972-4CA4-A957-25CF2EBFA1E3}.DebugNoHwAccel|Any CPU.ActiveCfg = DebugNoHwAccel|Any CPU
+		{54D1FA98-E972-4CA4-A957-25CF2EBFA1E3}.DebugNoHwAccel|Any CPU.Build.0 = DebugNoHwAccel|Any CPU
 		{54D1FA98-E972-4CA4-A957-25CF2EBFA1E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54D1FA98-E972-4CA4-A957-25CF2EBFA1E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
