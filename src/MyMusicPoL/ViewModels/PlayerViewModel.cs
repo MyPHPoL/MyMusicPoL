@@ -139,7 +139,7 @@ namespace mymusicpol.ViewModels
 			timeElapsed = "0:00:00";
 			timeRemaining = "-0:00:00";
 			// IDK HOW TO SHOW THIS DAMN COVER
-			cover = "..\\source\\repos\\mymusicpol\\assets\\TEST-BOX-100px-100px.png";
+			cover = "assets\\TEST-BOX-100px-100px.png";
 			title = "Test Title";
 			artist = "Test Artist";
 			selectedListName = "Test Playlist Name";
