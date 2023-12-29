@@ -170,7 +170,7 @@
 
             <!-- visualizer, queue and volume slider -->
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                <Button Click="VisualizerClick" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="100"/>

@@ -25,6 +25,22 @@ namespace mymusicpol.Views
 			InitializeComponent();
 		}
 
+		private VisualizerView? visualizerWindow;
+
+		private void VisualizerClick(object snder, RoutedEventArgs e)
+		{
+			if (visualizerWindow is null)
+			{
+				visualizerWindow = new();
+				visualizerWindow.Closed += (a, b) => visualizerWindow = null;
+                visualizerWindow.Show();
+			}
+			else
+			{
+				visualizerWindow.Focus();
+			}
+		}
+
 		//only for test purposes
 		private void shuffle_Click(object sender, RoutedEventArgs e)
 		{
