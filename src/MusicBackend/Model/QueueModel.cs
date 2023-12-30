@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mp.Model;
+namespace MusicBackend.Model;
 
 public class QueueModelState
 {

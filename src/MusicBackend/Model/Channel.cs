@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerApi.Model;
+namespace MusicBackend.Model;
 
 public struct Channel
 {

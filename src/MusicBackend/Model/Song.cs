@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Mp.Model;
+namespace MusicBackend.Model;
 
 public class Song
 {

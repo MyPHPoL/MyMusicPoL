@@ -1,4 +1,4 @@
-﻿using Mp.Model;
+﻿using MusicBackend.Model;
 using mymusicpol.ViewModels;
 using System.Configuration;
 using System.Data;

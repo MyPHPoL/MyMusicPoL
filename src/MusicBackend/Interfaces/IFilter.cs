@@ -1,11 +1,11 @@
-﻿using PlayerApi.Model;
+﻿using MusicBackend.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerApi.Interfaces;
+namespace MusicBackend.Interfaces;
 
 public interface IFilter
 {

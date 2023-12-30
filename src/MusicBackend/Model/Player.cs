@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Timers;
+using MusicBackend.Utils;
+using NAudio.Extras;
 using NAudio.Wave;
 
-namespace Mp.Model;
+namespace MusicBackend.Model;
 
 public class PlayerModelState
 {
@@ -21,13 +24,21 @@ public static class PlaybackStateExtensions
 		return ps == PlaybackState.Playing;
 	}
 }
+
+public interface SampleObserver
+{
+	public void SamplesNotify(float[] samples);
+}
+
 public class PlayerModel
 {
 	public event Action<PlaybackState> OnPlaybackChange = delegate { };
 	public event Action<float> OnVolumeChange = delegate { };
 	public event Action<TimeSpan> OnTimeChange = delegate { };
+	private List<SampleObserver> sampleObservers = new();
 	AudioFileReader? audioFileReader;
 	WaveOutEvent waveOut;
+	SampleAccumulator? sampleAccumulator;
 	// workaround for weird design of stop events
 	private string? fileNameToSet = null;
 
@@ -54,14 +65,56 @@ public class PlayerModel
 		{
 			if (!string.IsNullOrEmpty(a.currentSong))
 			{
-				audioFileReader = new (a.currentSong);
-				waveOut.Init(audioFileReader);
+				waveInit(a.currentSong);
 			}
 			audioFileReader.CurrentTime = a.currentTime;
 		}
 		catch { }
 	}
 
+	public void Subscribe(SampleObserver observer)
+	{
+		{ sampleObservers.Add(observer); }
+	}
+	public void Unsubscribe(SampleObserver observer)
+	{
+			sampleObservers.Remove(observer);
+	}
+	private void NotifySamples(float[] samples)
+	{
+			foreach (var observer in sampleObservers)
+			{
+				observer.SamplesNotify(samples);
+			}
+	}
+
+	/**
+	 * @brief For the currently playing song returns:
+	 * - sample rate
+	 * - bits per sample
+	 * - number of channels
+	 * all zero if no song is selected
+	 */
+	public (int,int,int) WaveFormat()
+	{
+		if (sampleAccumulator is null)
+		{
+			return (0, 0, 0);
+		}
+		var wf = sampleAccumulator.WaveFormat;
+		return (wf.SampleRate, wf.BitsPerSample, wf.Channels);
+	}
+
+/*	public bool TryReadSamples(ref byte[] samples)
+	{
+		if (is null)
+		{
+			return false;
+		}
+		bufferedWaveProvider.Read(samples, 0, samples.Length);
+		return true;
+	}
+*/
 	public PlayerModelState DumpState()
 	{
 		var ct = audioFileReader?.CurrentTime ?? TimeSpan.Zero;
@@ -81,9 +134,8 @@ public class PlayerModel
 		{
 			if (fileNameToSet is not null)
 			{
-				audioFileReader = new(fileNameToSet);
-				waveOut.Init(audioFileReader);
 				fileNameToSet = null;
+				waveInit(fileNameToSet);
 				play();
 			}
 			else
@@ -92,6 +144,15 @@ public class PlayerModel
 			}
 		};
 	}
+	private void waveInit(string filename)
+	{
+		audioFileReader = new(filename);
+		sampleAccumulator = new(audioFileReader, 2048);
+		sampleAccumulator.SamplesAggregated += 
+			(s,e) => NotifySamples(e);
+		waveOut.Init(sampleAccumulator);
+	}
+
 	public void UpdateTime()
 	{
 		if (audioFileReader is not null)
@@ -115,9 +176,10 @@ public class PlayerModel
 	{
 		if (audioFileReader is null || waveOut.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
 		{
-			var fileReader = new AudioFileReader(name);
-			waveOut.Init(fileReader);
-			audioFileReader = fileReader;
+			waveInit(name);
+			//var fileReader = new AudioFileReader(name);
+			//waveOut.Init(fileReader);
+			//audioFileReader = fileReader;
 			play();
 		}
 		else

@@ -1,5 +1,5 @@
-﻿using PlayerApi.Interfaces;
-using PlayerApi.Model;
+﻿using MusicBackend.Interfaces;
+using MusicBackend.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
