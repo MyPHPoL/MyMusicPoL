@@ -213,7 +213,7 @@ internal class PlayerViewModel : ViewModelBase
 		selectedListName = "Test Playlist Name";
 		QueueModel.Instance.OnSongChange += (song) =>
 		{
-			title = song.name;
+			Title = song.name;
 			TotalTime.Value = formatTime(song.length);
 			timeElapsed = formatTime(TimeSpan.Zero);
 			

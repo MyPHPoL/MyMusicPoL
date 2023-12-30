@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 namespace MusicBackend.Utils;
 internal class SampleAccumulator : ISampleProvider
 {
-	public event EventHandler<float[]> SamplesAggregated;
+	public event EventHandler<float[]> SamplesAccumulated;
 	private readonly ISampleProvider Source;
 	private readonly float[] Buffer;
 	int readCursor;
+	int channels;
 	public WaveFormat WaveFormat => Source.WaveFormat;
 
 	public SampleAccumulator(ISampleProvider source, int bufferLength)
@@ -19,22 +20,28 @@ internal class SampleAccumulator : ISampleProvider
 		Source = source;
 		Buffer = new float[bufferLength];
 		readCursor = 0;
+		channels = source.WaveFormat.Channels;
 	}
 
 	public int Read(float[] buffer, int offset, int count)
 	{
 		var readCount = Source.Read(buffer, offset, count);
-		for (int i = 0; i != readCount; ++i)
+		if (channels == 1)
 		{
-			Append(buffer[i+offset]);
+			for (int i = 0; i != readCount; ++i)
+			{
+				Append(buffer[i+offset]);
+			}
+		}
+		else if (channels == 2)
+		{
+			for (int i = 0; i != readCount; i += 2)
+			{
+				Append((buffer[i + offset] + buffer[i + offset + 1]) / 2);
+			}
 		}
 
 		return readCount;
-	}
-
-	public void Reset()
-	{
-
 	}
 
 	private void Append(float v)
@@ -43,7 +50,7 @@ internal class SampleAccumulator : ISampleProvider
 		readCursor++;
 		if (readCursor == Buffer.Length)
 		{
-			SamplesAggregated?.Invoke(this, Buffer);
+			SamplesAccumulated?.Invoke(this, Buffer);
 			readCursor = 0;
 		}
 	}

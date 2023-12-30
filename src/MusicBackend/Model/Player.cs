@@ -35,7 +35,8 @@ public class PlayerModel
 	public event Action<PlaybackState> OnPlaybackChange = delegate { };
 	public event Action<float> OnVolumeChange = delegate { };
 	public event Action<TimeSpan> OnTimeChange = delegate { };
-	private List<SampleObserver> sampleObservers = new();
+	//private List<SampleObserver> sampleObservers = new();
+	public event Action<float[]>? SamplesAccumulated;
 	AudioFileReader? audioFileReader;
 	WaveOutEvent waveOut;
 	SampleAccumulator? sampleAccumulator;
@@ -72,21 +73,21 @@ public class PlayerModel
 		catch { }
 	}
 
-	public void Subscribe(SampleObserver observer)
-	{
-		{ sampleObservers.Add(observer); }
-	}
-	public void Unsubscribe(SampleObserver observer)
-	{
-			sampleObservers.Remove(observer);
-	}
-	private void NotifySamples(float[] samples)
-	{
-			foreach (var observer in sampleObservers)
-			{
-				observer.SamplesNotify(samples);
-			}
-	}
+	//public void Subscribe(SampleObserver observer)
+	//{
+	//	{ sampleObservers.Add(observer); }
+	//}
+	//public void Unsubscribe(SampleObserver observer)
+	//{
+	//		sampleObservers.Remove(observer);
+	//}
+	//private void NotifySamples(float[] samples)
+	//{
+	//		foreach (var observer in sampleObservers)
+	//		{
+	//			observer.SamplesNotify(samples);
+	//		}
+	//}
 
 	/**
 	 * @brief For the currently playing song returns:
@@ -134,8 +135,8 @@ public class PlayerModel
 		{
 			if (fileNameToSet is not null)
 			{
-				fileNameToSet = null;
 				waveInit(fileNameToSet);
+				fileNameToSet = null;
 				play();
 			}
 			else
@@ -148,8 +149,11 @@ public class PlayerModel
 	{
 		audioFileReader = new(filename);
 		sampleAccumulator = new(audioFileReader, 2048);
-		sampleAccumulator.SamplesAggregated += 
-			(s,e) => NotifySamples(e);
+		sampleAccumulator.SamplesAccumulated +=
+			(s, e) =>
+			{
+				SamplesAccumulated?.Invoke(e);
+			};
 		waveOut.Init(sampleAccumulator);
 	}
 

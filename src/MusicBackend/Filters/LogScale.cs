@@ -7,35 +7,36 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MusicBackend.Filters;
-public class LogScale : IFilter
+public sealed class LogScale : IFilter
 {
 	private int[] logIndices;
-	private Channel[] buffer;
+	private double[] buffer;
 	/**
 	 * @brief Logarithmic scale filter
 	 * @param factor Factor used to calculate how far to jump from one index to the next eg. 1.02 works good
 	 * @param sampleRateFactor Sample rate used to calculate current fftBin to end iterating
 	 */
-	public LogScale(float factor, float sampleRateFactor, int bufferLen)
+	public LogScale(double factor, int bufferLen)
 	{
 		List<int> logIndices = new ();
-		for (float i = 3; ; i*=factor)
+		int prev = 0;
+		for (double i = 3; i < bufferLen; i*=factor)
 		{
-			if (i > sampleRateFactor)
+			if (prev != (int)i)
 			{
-				break;
+				logIndices.Add((int)i);
 			}
-			logIndices.Add((int)i);
+			prev = (int)i;
 		}
 
 		this.logIndices = logIndices.ToArray();
-		buffer = new Channel[logIndices.Count];
+		buffer = new double[logIndices.Count];
 	}
 
 	/**
 	 * Might throw when buffer doesnt hold enough samples to index them on log scale
 	 */
-	public Channel[] process(Channel[] buffer)
+	public double[] process(double[] buffer)
 	{
 		for (int i = 0; i != logIndices.Length; ++i)
 		{

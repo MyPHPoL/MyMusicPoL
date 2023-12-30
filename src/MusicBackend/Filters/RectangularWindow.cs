@@ -10,14 +10,14 @@ namespace MusicBackend.Filters;
 
 public sealed class RectangularWindow : IWindowFunction
 {
-    private Channel[] _window;
-    public Channel[] Window { get => _window; }
+    private double[] _window;
+    public double[] Window { get => _window; }
     public RectangularWindow(int length)
     {
-        _window = new Channel[length];
+        _window = new double[length];
         for(int i = 0; i != length; ++i)
         {
-            _window[i] = new() { left = 1, right = 1 };
+            _window[i] = 1;
         }
     }
 }

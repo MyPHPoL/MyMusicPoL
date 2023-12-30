@@ -1,16 +1,18 @@
 ﻿using MusicBackend.Interfaces;
 using MusicBackend.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicBackend.Filters;
-public class FftFilter : IFilter
+public sealed class FftFilter : IFilter
 {
-	public Channel[] process(Channel[] buffer)
+	FftSharp.Window? Window;
+	public double[] process(double[] buffer)
 	{
-		throw new NotImplementedException();
+		if (Window is null)
+		{
+			Window = new FftSharp.Windows.Hanning();
+		}
+		Window.ApplyInPlace(buffer);
+		var fftArray = FftSharp.FFT.Forward(buffer);
+		return FftSharp.FFT.Magnitude(fftArray,true);
 	}
 }

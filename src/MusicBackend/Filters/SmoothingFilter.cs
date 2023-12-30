@@ -10,18 +10,13 @@ namespace MusicBackend.Filters;
 
 public sealed class SmoothingFilter : RecursiveFilter
 {
-    private float dampingFactor;
-    public SmoothingFilter(float dampingFactor) { this.dampingFactor = dampingFactor; }
-    public override Channel processChannels(Channel channels, int index)
+    private double dampingFactor;
+    public SmoothingFilter(double dampingFactor) { this.dampingFactor = dampingFactor; }
+    public override double processBin(double channels, int index)
     {
         var prevChannel = previousBuffer[index];
-        channels.left -= prevChannel.left;
-        channels.right -= prevChannel.right;
-        previousBuffer[index] = new()
-        {
-            left = prevChannel.left * dampingFactor,
-            right = prevChannel.right * dampingFactor
-        };
+        channels -= prevChannel;
+        previousBuffer[index] = prevChannel * dampingFactor;
         return channels;
     }
 

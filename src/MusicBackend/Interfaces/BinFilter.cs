@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MusicBackend.Interfaces;
 public class BinFilter : IFilter
 {
-	public Channel[] process(Channel[] buffer)
+	public double[] process(double[] buffer)
 	{
 		for (int i = 0; i != buffer.Length; ++i)
 		{
@@ -19,7 +19,7 @@ public class BinFilter : IFilter
 		return buffer;
 	}
 
-	virtual public Channel processBin(Channel bin)
+	virtual public double processBin(double bin)
 	{
 		return bin;
 	}
