@@ -1,4 +1,4 @@
-﻿using Mp.Model;
+﻿using MusicBackend.Model;
 using mymusicpol.ViewModels;
 using System.Configuration;
 using System.Data;
@@ -29,6 +29,7 @@ internal class AppState
         var jsonOptions = new JsonSerializerOptions()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            AllowTrailingCommas = true,
             WriteIndented = true
         };
         AppState appState;

@@ -1,11 +1,11 @@
-﻿using PlayerApi.Model;
+﻿using MusicBackend.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerApi.Interfaces;
+namespace MusicBackend.Interfaces;
 
 public interface IFilter
 {
@@ -13,10 +13,10 @@ public interface IFilter
      * Process the buffer that is about to be displayed 
      * returns new buffer, can be same as parameter
      */
-    Channel[] process(Channel[] buffer);
+    double[] process(double[] buffer);
 
     /**
      * Called when new buffer from sound device is obtained
      */
-    void refresh(Channel[] newBuffer) {}
+    void refresh(double[] newBuffer) {}
 }

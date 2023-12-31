@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MusicBackend.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
@@ -11,19 +12,17 @@ namespace mymusicpol.Models
 	// for now, this is just a placeholder class
 	internal class Song
 	{
-		public string title { get; set; } = "Unknown Title";
-		public string artist { get; set; } = "Unknown Artist";
-		public string album { get; set; } = "Unknown Album";
-		public string path { get; set; }
-		public string? cover { get; set; }
+		public string title { get; set; }
+		public string artist { get; set; }
+		public SongAlbum album { get; set; }
 
-		public Song(string title, string artist, string album, string path, string cover)
+
+
+		public Song(MusicBackend.Model.Song song)
 		{
-			this.title = title;
-			this.artist = artist;
-			this.album = album;
-			this.path = path;
-			this.cover = cover;
+			this.title = song.name;
+			this.artist = song.artist;
+			this.album = song.Album;
 		}
 
 	}

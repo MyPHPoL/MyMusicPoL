@@ -3,9 +3,11 @@ using mymusicpol.Utils;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Mp.Model;
+using MusicBackend.Model;
 using System.Windows.Threading;
 using System.ComponentModel;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace mymusicpol.ViewModels;
 
@@ -23,11 +25,53 @@ public struct TimeControl
 
 internal class SongViewModel : INotifyPropertyChanged
 {
-	private string _title { get; set; } = "Unknown Title";
-	private string _artist { get; set; } = "Unknown Artist";
-	private string _album { get; set; } = "Unknown Album";
-	private string _path { get; set; }
-	private string? _cover { get; set; }
+	private string _title { get; set; }
+	private string _artist { get; set; }
+	private string _album { get; set; } 
+	private BitmapSource _cover { get; set; }
+
+	public SongViewModel(MusicBackend.Model.Song? song)
+	{
+		SetSong(song);
+	}
+
+	public void SetSong(MusicBackend.Model.Song? song)
+	{
+		if (song is not null)
+		{
+			this.title = song.name;
+			this.artist = song.artist;
+			this.album = song.Album.Name;
+		}
+		else
+		{
+			this.title = "No song selected";
+			this.artist = "";
+			this.album = "";
+		}
+		var cover = song?.Album.Cover;
+		var image = new BitmapImage();
+		if (cover is not null)
+		{
+			using var ms = new System.IO.MemoryStream(cover);
+			ms.Position = 0;
+			image.BeginInit();
+			image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+			image.CacheOption = BitmapCacheOption.OnLoad;
+			image.UriSource = null;
+			image.StreamSource = ms;
+			image.EndInit();
+		}
+		else
+		{
+			image.BeginInit();
+			image.UriSource = new Uri("pack://application:,,,/assets/TEST-BOX-100px-100px.png");
+			image.EndInit();
+		}
+
+		image.Freeze();
+		this.cover = image;
+	}
 
 	public string title
 	{
@@ -56,16 +100,7 @@ internal class SongViewModel : INotifyPropertyChanged
 			OnPropertyChanged(nameof(album));
 		}
 	}
-	public string path
-	{
-		get => _path;
-		set
-		{
-			_path = value;
-			OnPropertyChanged(nameof(path));
-		}
-	}
-	public string? cover
+	public BitmapSource cover
 	{
 		get => _cover;
 		set
@@ -87,38 +122,8 @@ internal class SongViewModel : INotifyPropertyChanged
 //this is a test (i copied youtube tutorial video like a monkey)
 internal class PlayerViewModel : ViewModelBase
 {
-	private string cover; // current song cover
-	public string Cover
-	{
-		get { return cover; }
-		set
-		{
-			cover = value;
-			OnPropertyChanged(nameof(Cover));
-		}
-	}
-
-	private string title; // current song title
-	public string Title
-	{
-		get { return title; }
-		set
-		{
-			title = value;
-			OnPropertyChanged(nameof(Title));
-		}
-	}
-
-	private string artist; // current song artist
-	public string Artist
-	{
-		get { return artist; }
-		set
-		{
-			artist = value;
-			OnPropertyChanged(nameof(Artist));
-		}
-	}
+	// current song model
+	public SongViewModel CurrentSong { get; set; }
 
 	private string timeElapsed; // current song time elapsed
 	public string TimeElapsed
@@ -132,7 +137,6 @@ internal class PlayerViewModel : ViewModelBase
 	}
 
 	public Notify<string> TotalTime { get; set; }
-	public Notify<double> Volume { get; set; } // current volume
 
 	public Notify<double> ProgressValue { get; set; } // current song progress
 
@@ -150,7 +154,7 @@ internal class PlayerViewModel : ViewModelBase
 	private DispatcherTimer timer; 
 	// hack to avoid infinite recursion
 	public bool isChangingSlider = false;
-    
+	
 	private readonly ObservableCollection<SonglistViewModel> playlists; // all playlists
 	public ObservableCollection<SongViewModel> SelectedList { get; set; } = new();
 	public IEnumerable<SonglistViewModel> Playlists => playlists;
@@ -160,6 +164,22 @@ internal class PlayerViewModel : ViewModelBase
 	public ICommand PlayPauseButton { get; }
 	public ICommand PreviousButton { get; }
 	public ICommand NextButton { get; }
+	public Notify<string> PlayPauseLabel { get; set; } = new()
+	{
+		Value = ""
+	};
+	public ButtonNotify RepeatLabel	{ get; set; } = new()
+	{
+		Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush,
+		Content = ""
+	};
+	public ButtonNotify ShuffleLabel { get; set; } = new()
+	{
+		Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush,
+		Content = "\uE8B1"
+	};
+	public Notify<double> Volume { get; set; } = new(); // current volume
+	public Notify<string> VolumeIcon { get; set; } = new(); // volume icon
 
 	public PlayerViewModel()
 	{
@@ -174,15 +194,7 @@ internal class PlayerViewModel : ViewModelBase
 			new SonglistViewModel(new Songlist("Playlist 7 haahahahahah", new())),
 		];
 
-		foreach(var song in QueueModel.Instance.songs)
-		{
-			SelectedList.Add(new()
-			{
-				cover = null,
-				path = song.path,
-				title = song.name
-			});
-		}
+		FillSelectedList();
 
 		// fill commands
 		PreviousButton = new RelayCommand(PreviousSongCallback);
@@ -193,10 +205,9 @@ internal class PlayerViewModel : ViewModelBase
 
 		//setup data bindings
 		setupTimer();
-		Volume = new()
-		{
-			Value = (int)(PlayerModel.Instance.currentVolume()*100)
-		};
+		UpdateVolumeIcon(PlayerModel.Instance.currentVolume());
+
+		Volume.Value = PlayerModel.Instance.currentVolume() * 100;
 		ProgressValue = new()
 		{
 			Value = PlayerModel.Instance.currentTime().TotalSeconds / PlayerModel.Instance.songLength().TotalSeconds
@@ -206,36 +217,51 @@ internal class PlayerViewModel : ViewModelBase
 			Value = formatTime(PlayerModel.Instance.songLength())
 		};
 		timeElapsed = formatTime(PlayerModel.Instance.currentTime());
-		// IDK HOW TO SHOW THIS DAMN COVER
-		cover = "assets\\TEST-BOX-100px-100px.png";
-		title = QueueModel.Instance.currentSong()?.name ?? "No song selected";
-		artist = "Test Artist";
+		var curSong = QueueModel.Instance.currentSong();
+		CurrentSong = new (curSong);
 		selectedListName = "Test Playlist Name";
 		QueueModel.Instance.OnSongChange += (song) =>
 		{
-			title = song.name;
+			CurrentSong.SetSong(song);
 			TotalTime.Value = formatTime(song.length);
 			timeElapsed = formatTime(TimeSpan.Zero);
-			
+
 			startTimer();
 			PlayerModel.Instance.selectSong(song.path);
 		};
-		//PlayerModel.Instance.OnVolumeChange += (vol) =>
-		//{
-		//	Volume.Value = vol*100;
-		//};
+		PlayerModel.Instance.OnVolumeChange += (vol) =>
+		{
+			UpdateVolumeIcon(vol);
+		};
+		PlayerModel.Instance.OnPlaybackChange += (state) =>
+		{
+			if (state.isPlaying())
+			{
+				PlayPauseLabel.Value = "";
+			}
+			else
+			{
+				PlayPauseLabel.Value = "";
+			}
+		};
 
 		QueueModel.Instance.OnQueueModified += () =>
 		{
 			SelectedList.Clear();
-			foreach (var song in QueueModel.Instance.songs)
+			FillSelectedList();
+		};
+
+		QueueModel.Instance.OnRepeatChange += (repeat) =>
+		{
+			if (repeat)
 			{
-				SelectedList.Add(new SongViewModel()
-				{
-					title = song.name,
-					path = song.path,
-					cover = null
-				});
+				RepeatLabel.Content = "\uE8EE";
+				RepeatLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
+			}
+			else
+			{
+				RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+				RepeatLabel.Content = "\uE8ED";
 			}
 		};
 
@@ -249,10 +275,10 @@ internal class PlayerViewModel : ViewModelBase
 		{
 			QueueModel.Instance.nextSong();
 		});
-		Volume.PropertyChanged += (sender, e) =>
+		VolumeIcon.PropertyChanged += (sender, e) =>
 		{
-			PlayerModel.Instance.setVolume((float)Volume.Value/100);
-		}; 
+			PlayerModel.Instance.setVolume((float)Volume.Value / 100);
+		};
 		ProgressValue.PropertyChanged += (sender, e) =>
 		{
 			// avoid infinite recursion
@@ -265,6 +291,27 @@ internal class PlayerViewModel : ViewModelBase
 		};
 
 	}
+
+	private void UpdateVolumeIcon(float value)
+	{
+		if (value == 0)
+		{
+			VolumeIcon.Value = "";
+		}
+		else
+		{
+			VolumeIcon.Value = "";
+		}
+	}
+
+	private void FillSelectedList()
+	{
+		foreach (var song in QueueModel.Instance.songs)
+		{
+			SelectedList.Add(new(song));
+		}
+	}
+
 	public void OnSliderValueChanged(double value)
 	{
 		var playerModel = PlayerModel.Instance;
@@ -346,11 +393,6 @@ internal class PlayerViewModel : ViewModelBase
 	private void ShuffleSongCallback()
 	{
 		QueueModel.Instance.shuffleQueue();
-		//SongList.Clear();
-		//var songList = QueueModel.Instance.songs;
-		//foreach (var song in songList)
-		//{
-		//	SongList.Add(new SongEntry() { Name = song.name });
-		//}
+
 	}
 }

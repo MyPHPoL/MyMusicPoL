@@ -1,15 +1,15 @@
-﻿using PlayerApi.Model;
+﻿using MusicBackend.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerApi.Interfaces;
+namespace MusicBackend.Interfaces;
 
 public interface IWindowFunction
 {
-    public Channel[] Window { get; }
+    public double[] Window { get; }
 }
 public class WindowFunction : IFilter
 {
@@ -18,14 +18,13 @@ public class WindowFunction : IFilter
     {
         this.windowFunction = windowFunction;
     }
-    public Channel[] process(Channel[] buffer)
+    public double[] process(double[] buffer)
     {
         var window = windowFunction.Window;
         int minLength = Math.Min(window.Length, buffer.Length);
         for (int i = 0; i != minLength; ++i)
         {
-            buffer[i].left *= window[i].left;
-            buffer[i].right *= window[i].right;
+            buffer[i] *= window[i];
         }
         return buffer;
     }

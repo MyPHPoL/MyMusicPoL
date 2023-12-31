@@ -1,25 +1,24 @@
-﻿using PlayerApi.Interfaces;
-using PlayerApi.Model;
+﻿using MusicBackend.Interfaces;
+using MusicBackend.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlayerApi.Filters
+namespace MusicBackend.Filters;
+
+public sealed class HammingWindow : IWindowFunction
 {
-    public sealed class HammingWindow : IWindowFunction
+    private double[] _window;
+    public double[] Window { get => _window; }
+    public HammingWindow(int length)
     {
-        private Channel[] _window;
-        public Channel[] Window { get => _window; }
-        public HammingWindow(int length)
+        _window = new double[length];
+        for(int i = 0; i != length; ++i)
         {
-            _window = new Channel[length];
-            for(int i = 0; i != length; ++i)
-            {
-                float val = 0.53836f - 0.46164f * (float)Math.Cos(Math.PI * 2 * i / length);
-                _window[i] = new() { left = val, right = val };
-            }
+            double val = 0.53836f - 0.46164f * Math.Cos(Math.PI * 2 * i / length);
+            _window[i] = val;
         }
     }
 }

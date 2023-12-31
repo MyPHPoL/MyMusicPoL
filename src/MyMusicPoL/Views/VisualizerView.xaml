@@ -3,20 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
         xmlns:local="clr-namespace:mymusicpol.Views"
         mc:Ignorable="d"
-        Title="VisualizerView" Height="450" Width="800">
+        Background="#202124"
+        Title="VisualizerView" Height="450" Width="800"
+        Closing="Window_Closing">
     <Grid>
-        <Ellipse 
-            Width="100"
-            Height="100"
-            Stroke="Black"
-            StrokeThickness="4"
-            Fill="Aqua"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-            
-        </Ellipse>
-
+        <skia:SKElement
+            x:Name="Canvas"
+            PaintSurface="canvas_PaintSurface" />
     </Grid>
 </Window>

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
-namespace Mp.Model;
+namespace MusicBackend.Model;
 
+[DataContract]
 public class QueueModelState
 {
 	public List<Song> songs { get; set; } = new();

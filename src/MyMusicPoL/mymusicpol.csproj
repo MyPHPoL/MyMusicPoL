@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.6" />
   </ItemGroup>
 
   <ItemGroup>
