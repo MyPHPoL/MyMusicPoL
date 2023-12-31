@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace mymusicpol.Utils;
-public class ButtonNotify
+public class ButtonNotify : INotifyPropertyChanged
 {
 	private string _content;
-	private string _background;
+	private Brush _background;
 
 	public string Content
 	{
@@ -21,7 +22,7 @@ public class ButtonNotify
 		}
 	}
 
-	public string Background
+	public Brush Background
 	{
 		get => _background;
 		set

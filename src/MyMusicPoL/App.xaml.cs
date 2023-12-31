@@ -29,6 +29,7 @@ internal class AppState
         var jsonOptions = new JsonSerializerOptions()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            AllowTrailingCommas = true,
             WriteIndented = true
         };
         AppState appState;

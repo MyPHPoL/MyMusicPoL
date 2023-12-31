@@ -41,58 +41,61 @@ namespace mymusicpol.Views
 			}
 		}
 
-		//only for test purposes
-		private void shuffle_Click(object sender, RoutedEventArgs e)
-		{
-			if (shuffle.Background.ToString() == "#FFCACFD2")
-			{
-				shuffle.Background = (Brush)(new BrushConverter().ConvertFrom("#d2b4de"));
-			}
-			else if (shuffle.Background.ToString() == "#FFD2B4DE")
-			{
-				shuffle.Background = shuffle.Background = (Brush)(new BrushConverter().ConvertFrom("#cacfd2"));
-			}
-		}
+		////only for test purposes
+		//private void shuffle_Click(object sender, RoutedEventArgs e)
+		//{
+		//	if (shuffle.Background.ToString() == "#FFCACFD2")
+		//	{
+		//		shuffle.Background = (Brush)(new BrushConverter().ConvertFrom("#d2b4de"));
+		//	}
+		//	else if (shuffle.Background.ToString() == "#FFD2B4DE")
+		//	{
+		//		shuffle.Background = (Brush)(new BrushConverter().ConvertFrom("#cacfd2"));
+		//	}
+		//}
 
-		private void repeat_Click(object sender, RoutedEventArgs e)
-		{
-			if (repeat.Background.ToString() == "#FFCACFD2" && repeat.Content.ToString() == "")
-			{
-				repeat.Background = (Brush)(new BrushConverter().ConvertFrom("#d2b4de"));
-			}
-			else if (repeat.Background.ToString() == "#FFD2B4DE" && repeat.Content.ToString() == "")
-			{
-				repeat.Content = "";
-			}
-			else if (repeat.Background.ToString() == "#FFD2B4DE" && repeat.Content.ToString() == "")
-			{
-				repeat.Content = "";
-				repeat.Background = (Brush)(new BrushConverter().ConvertFrom("#cacfd2"));
-			}
-		}
+		//private void repeat_Click(object sender, RoutedEventArgs e)
+		//{
+		//	// if repeat is disabled
+		//	if (repeat.Background.ToString() == "#FFCACFD2" && repeat.Content.ToString() == "")
+		//	{
+		//		repeat.Background = (Brush)(new BrushConverter().ConvertFrom("#d2b4de"));
+		//	}
+		//	// if repeat is enabled
+		//	else if (repeat.Background.ToString() == "#FFD2B4DE" && repeat.Content.ToString() == "")
+		//	{
+		//		repeat.Content = "";
+		//	}
+		//	// if repeat is loop song
+		//	else if (repeat.Background.ToString() == "#FFD2B4DE" && repeat.Content.ToString() == "")
+		//	{
+		//		repeat.Content = "";
+		//		repeat.Background = (Brush)(new BrushConverter().ConvertFrom("#cacfd2"));
+		//	}
+		//}
 
-		private void play_pause_Click(object sender, RoutedEventArgs e)
-		{
-			if (play_pause.Content.ToString() == "")
-			{
-				play_pause.Content = "";
-			}
-			else if (play_pause.Content.ToString() == "")
-			{
-				play_pause.Content = "";
-			}
-		}
+		//private void play_pause_Click(object sender, RoutedEventArgs e)
+		//{
+		//	if (play_pause.Content.ToString() == "")
+		//	{
+		//		play_pause.Content = "";
+		//	}
+		//	else if (play_pause.Content.ToString() == "")
+		//	{
+		//		play_pause.Content = "";
+		//	}
+		//}
 
-		private void volume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			if (volume.Value == 0)
-			{
-				volIcon.Content = "";
-			}
-			else
-			{
-				volIcon.Content = "";
-			}
-		}
+		//private void volume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		//{
+		//	if (volume.Value == 0)
+		//	{
+		//		volIcon.Content = "";
+		//	}
+		//	else
+		//	{
+		//		volIcon.Content = "";
+		//	}
+		//}
 	}
 }

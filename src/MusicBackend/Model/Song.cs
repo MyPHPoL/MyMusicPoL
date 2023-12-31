@@ -1,15 +1,21 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
 
 public class Song
 {
-	public string name { get; set; }
 	public string path { get; set; }
-	[IgnoreDataMember]
+	[JsonIgnore]
+	public string name { get; set; }
+	[JsonIgnore]
+	public string artist { get; set; }
+	[JsonIgnore]
 	public TimeSpan length { get; set; }
+	[JsonIgnore]
+	public SongAlbum Album { get; set; }
 
-	private Song()
+	internal Song()
 	{
 		name = string.Empty;
 		path = string.Empty;
@@ -20,28 +26,28 @@ public class Song
 	{
 		try
 		{
-			this.path = Path.GetFullPath(path);
-			name = Path.GetFileName(path);
-			using (var reader = new NAudio.Wave.AudioFileReader(path))
-			{
-				length = reader.TotalTime;
-			}
+			var song = SongManager.Instance.SongFromPath(path);
+			this.path = song.path;
+			this.name = song.name;
+			this.length = song.length;
+			this.Album = song.Album;
+			this.artist = song.artist;
+			//this.path = Path.GetFullPath(path);
+			//name = Path.GetFileName(path);
+			//using (var reader = new NAudio.Wave.AudioFileReader(path))
+			//{
+			//	length = reader.TotalTime;
+			//}
 		} catch
 		{
 			this.path = string.Empty;
-			name = string.Empty;
-			length = TimeSpan.Zero;
+			this.name = string.Empty;
+			this.length = TimeSpan.Zero;
 		}
 	}
 	static public Song fromPath(string path)
 	{
-		Song song = new();
-		song.path = Path.GetFullPath(path);
-		song.name = Path.GetFileName(path);
-		using (var reader = new NAudio.Wave.AudioFileReader(path))
-		{
-			song.length = reader.TotalTime;
-		}
+		var song = SongManager.Instance.SongFromPath(path);
 		return song;
 	}
 	public override string ToString()
