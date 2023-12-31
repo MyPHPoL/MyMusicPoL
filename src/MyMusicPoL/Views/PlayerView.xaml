@@ -185,7 +185,7 @@
                         </Style>
                     </Button.Resources>
                 </Button>
-                <Label x:Name="volIcon" Content="" FontFamily="{StaticResource Segoe}" Foreground="#cacfd2" FontSize="20" VerticalAlignment="Center" Margin="30 0 0 0"/>
+                <Label x:Name="volIcon" Content="{Binding VolumeIcon.Value}" FontFamily="{StaticResource Segoe}" Foreground="#cacfd2" FontSize="20" VerticalAlignment="Center" Margin="30 0 0 0"/>
                 <Slider 
                     x:Name="volume"
                     Style="{StaticResource Horizontal_Slider}"

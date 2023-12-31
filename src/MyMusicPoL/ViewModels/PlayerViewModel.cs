@@ -168,11 +168,7 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		Value = ""
 	};
-	public ButtonNotify RepeatLabel	{ get; set; } = new()
-	{
-		Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush,
-		Content = ""
-	};
+	public ButtonNotify RepeatLabel { get; set; } = new();
 	public ButtonNotify ShuffleLabel { get; set; } = new()
 	{
 		Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush,
@@ -206,6 +202,7 @@ internal class PlayerViewModel : ViewModelBase
 		//setup data bindings
 		setupTimer();
 		UpdateVolumeIcon(PlayerModel.Instance.currentVolume());
+		ChangeRepeatLabel(QueueModel.Instance.repeat);
 
 		Volume.Value = PlayerModel.Instance.currentVolume() * 100;
 		ProgressValue = new()
@@ -253,16 +250,7 @@ internal class PlayerViewModel : ViewModelBase
 
 		QueueModel.Instance.OnRepeatChange += (repeat) =>
 		{
-			if (repeat)
-			{
-				RepeatLabel.Content = "\uE8EE";
-				RepeatLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
-			}
-			else
-			{
-				RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
-				RepeatLabel.Content = "\uE8ED";
-			}
+			ChangeRepeatLabel(repeat);
 		};
 
 		PlayerModel.Instance.OnTimeChange += (time) =>
@@ -275,7 +263,7 @@ internal class PlayerViewModel : ViewModelBase
 		{
 			QueueModel.Instance.nextSong();
 		});
-		VolumeIcon.PropertyChanged += (sender, e) =>
+		Volume.PropertyChanged += (sender, e) =>
 		{
 			PlayerModel.Instance.setVolume((float)Volume.Value / 100);
 		};
@@ -292,16 +280,29 @@ internal class PlayerViewModel : ViewModelBase
 
 	}
 
-	private void UpdateVolumeIcon(float value)
+	private void ChangeRepeatLabel(bool repeat)
 	{
-		if (value == 0)
+		if (repeat)
 		{
-			VolumeIcon.Value = "";
+			RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+			RepeatLabel.Content = "\uE8ED";
 		}
 		else
 		{
-			VolumeIcon.Value = "";
+			RepeatLabel.Content = "\uE8EE";
+			RepeatLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
 		}
+	}
+	private void UpdateVolumeIcon(float value)
+	{
+		VolumeIcon.Value = value switch
+		{
+			<= 0 => "\ue74f",
+			>  0.00F and < 0.25F => "\ue992",
+			>= 0.25F and < 0.50F => "\ue993",
+			>= 0.50F and < 0.75F => "\ue994",
+			>= 0.75F => "\ue995",
+		};
 	}
 
 	private void FillSelectedList()
