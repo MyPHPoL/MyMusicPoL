@@ -40,6 +40,7 @@ public class PlayerModel
 	AudioFileReader? audioFileReader;
 	WaveOutEvent waveOut;
 	SampleAccumulator? sampleAccumulator;
+	const int BUFFER_SIZE = 8192;
 	// workaround for weird design of stop events
 	private string? fileNameToSet = null;
 
@@ -106,6 +107,11 @@ public class PlayerModel
 		return (wf.SampleRate, wf.BitsPerSample, wf.Channels);
 	}
 
+	public int BufferedSamplesLength()
+	{
+		return BUFFER_SIZE;
+	}
+
 /*	public bool TryReadSamples(ref byte[] samples)
 	{
 		if (is null)
@@ -148,7 +154,7 @@ public class PlayerModel
 	private void waveInit(string filename)
 	{
 		audioFileReader = new(filename);
-		sampleAccumulator = new(audioFileReader, 2048);
+		sampleAccumulator = new(audioFileReader, BUFFER_SIZE);
 		sampleAccumulator.SamplesAccumulated +=
 			(s, e) =>
 			{

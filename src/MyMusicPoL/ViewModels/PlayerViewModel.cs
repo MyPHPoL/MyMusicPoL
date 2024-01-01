@@ -298,10 +298,9 @@ internal class PlayerViewModel : ViewModelBase
 		VolumeIcon.Value = value switch
 		{
 			<= 0 => "\ue74f",
-			>  0.00F and < 0.25F => "\ue992",
-			>= 0.25F and < 0.50F => "\ue993",
-			>= 0.50F and < 0.75F => "\ue994",
-			>= 0.75F => "\ue995",
+			>= 0.00F and < 0.33F => "\ue993",
+			>= 0.33F and < 0.66F => "\ue994",
+			>= 0.66F => "\ue995",
 		};
 	}
 
