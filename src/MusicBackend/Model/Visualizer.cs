@@ -15,6 +15,7 @@ public sealed class Visualizer : IDisposable
 	private IFilter fftFilter;
 	private IFilter[] filters;
 	private IFilter smoothingFilter;
+	private IFilter interpolateFilter;
 	private double power;
 	private double smoothPower;
 
@@ -48,16 +49,19 @@ public sealed class Visualizer : IDisposable
 		sampleBuffer = new double[length];
 		processedBuffer = new double[length];
 		smoothedArray = new double[length];
-		windowFunction = new WindowFunction(new RectangularWindow(length));
+		windowFunction = new WindowFunction(new HammingWindow(length));
 		fftFilter = new FftFilter();
 		filters =
 		[
-			new LogScale(1.02,length/2),
-			new LogBinFilter(1.02,1.5),
 			new MovingAverage(),
-			new ClampBinFilter(0.10),
+			new LogScale(1.02,length/2),
+			new LerpFilter(10, length),
+			new MovingAverage(),
+			new LogBinFilter(1.02,5),
+			new ClampBinFilter(0.30),
 		];
-		smoothingFilter = new SmoothingFilter(0.2);
+		interpolateFilter = new LerpFilter(10, length);
+		smoothingFilter = new SmoothingFilter(0.4);
 	}
 
 	/**
@@ -82,6 +86,7 @@ public sealed class Visualizer : IDisposable
 				processedBuffer = filter.process(processedBuffer);
 			}
 			power = CalculatePower();
+			//processedBuffer = interpolateFilter.process(processedBuffer);
 			if (processedBuffer.Length != smoothedArray.Length)
 			{
 				smoothedArray = new double[processedBuffer.Length];
@@ -110,12 +115,11 @@ public sealed class Visualizer : IDisposable
 	double CalculatePower()
 	{
 		double power = 0;
-		for (int i = 3; i < 20; i++)
+		for (int i = 0; i < 70; i++)
 		{
 			power += processedBuffer[i];
 		}
-		power /= 17;
-		return 5*power;
+		return 5 * (power / 140);
 	}
 
 	public void Dispose()

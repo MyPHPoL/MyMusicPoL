@@ -31,4 +31,10 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="assets\background.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

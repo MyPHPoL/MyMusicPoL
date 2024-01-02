@@ -40,7 +40,7 @@ public class PlayerModel
 	AudioFileReader? audioFileReader;
 	WaveOutEvent waveOut;
 	SampleAccumulator? sampleAccumulator;
-	const int BUFFER_SIZE = 8192;
+	const int BUFFER_SIZE = 4096;
 	// workaround for weird design of stop events
 	private string? fileNameToSet = null;
 
