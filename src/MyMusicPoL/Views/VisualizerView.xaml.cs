@@ -17,14 +17,8 @@ namespace mymusicpol.Views
 		public VisualizerView()
 		{
 			InitializeComponent();
-			//PlayerModel.Instance.SamplesAccumulated += SamplesNotify;
-			//PlayerModel.Instance.Subscribe(this);
 			QueueModel.Instance.OnSongChange += OnSongChanged;
 			CreateCircleImage(QueueModel.Instance.currentSong());
-			//Loaded += delegate
-			//{
-			//	SetBackground(ActualWidth, ActualHeight);
-			//};
 			visualizer = new();
 			timer = new DispatcherTimer();
 			timer.Interval = TimeSpan.FromMilliseconds(25);
@@ -38,8 +32,6 @@ namespace mymusicpol.Views
 		SKMatrix scaleMatrix;
 		SKBitmap? circleImage;
 		SKShader circleShader;
-		//SKShader? background;
-		//SKImage rawBackgroundImage = SKImage.FromEncodedData("assets/background.jpg");
 
 		private void OnTimerTick(object? s,EventArgs e)
 		{
@@ -56,25 +48,6 @@ namespace mymusicpol.Views
 
 			var width = e.Info.Width;
 			var height = e.Info.Height;
-
-
-			// draw rectangle with background shader
-			//if (background is not null)
-			//{
-			//	var backgroundPaint = new SKPaint
-			//	{
-			//		Style = SKPaintStyle.Fill,
-			//	};
-
-			//	var backgroundMatrix = SKMatrix.CreateScale(
-			//		circleBump/100,
-			//		circleBump/100
-			//		);
-
-			//	backgroundPaint.Shader = background.WithLocalMatrix(backgroundMatrix);
-
-			//	canvas.DrawRect(new SKRect(0, 0, width, height), backgroundPaint);
-			//}
 
 			// draw text in top left corner
 			var textPaint = new SKPaint
@@ -139,12 +112,7 @@ namespace mymusicpol.Views
 					circleBump / 100,
 					width / 2 - circleBump,
 					height / 2 - circleBump);
-				//scaleMatrix.ScaleX = circleBump / 100;
-				//scaleMatrix.ScaleY = circleBump / 100;
-				//circleShader = circleShader.WithLocalMatrix(scaleMatrix);
 				circlePaint.Shader = circleShader.WithLocalMatrix(scaleMatrix);
-				//circlePaint.Shader = SKShader.CreateBitmap(circleImage, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp, scaleMatrix);
-				// resize matrix to fit the circle
 			}
 			// draw circle in the middle with circleBump width
 			var circleRect = new SKRect (
@@ -192,12 +160,6 @@ namespace mymusicpol.Views
 			}
 
 		}
-		//private void SetBackground(double width, double height)
-		//{
-		//	var bitmap = SKBitmap.FromImage(rawBackgroundImage);
-		//	var image = bitmap.Resize(new SKImageInfo((int)width, (int)height), SKFilterQuality.High);
-		//	background = SKShader.CreateBitmap(image, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
-		//}
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			timer.Stop();
@@ -205,10 +167,5 @@ namespace mymusicpol.Views
 			QueueModel.Instance.OnSongChange -= OnSongChanged;
 			visualizer.Dispose();
 		}
-
-		//private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-		//{
-		//	SetBackground(e.NewSize.Width, e.NewSize.Height);
-		//}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mymusicpol.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,6 +41,58 @@ namespace mymusicpol.Views
 				visualizerWindow.Focus();
 			}
 		}
+
+		//private void Playlists_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		//{
+		//	if (DataContext is PlayerViewModel playerViewModel)
+		//	{
+		//		playerViewModel.ShowPlaylist();
+		//	}
+		//}
+
+		private void MenuItemShow_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.ShowPlaylist();
+			}
+		}
+		private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.DeletePlaylist(PlaylistListBox.SelectedIndex);
+			}
+		}
+		private void SelectedListRemove_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListRemove(SelectedList.SelectedIndex);
+			}
+		}
+		private void SelectedListAddQueue_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListAddQueue(SelectedList.SelectedIndex);
+			}
+		}
+		private void SelectedListAddPlaylist_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListAddPlaylist(SelectedList.SelectedIndex);
+			}
+		}
+		private void SelectedList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListPlay(SelectedList.SelectedIndex);
+			}
+		}
+
 
 		////only for test purposes
 		//private void shuffle_Click(object sender, RoutedEventArgs e)

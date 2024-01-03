@@ -15,6 +15,7 @@ public class QueueModel
 {
 	public List<Song> songs { get; private set; } = new();
 	int current = 0;
+	public int Current { get => current; }
 	public bool repeat { get; private set; } = false;
 	public event Action OnQueueModified = delegate { };
 	public event Action<Song> OnSongChange = delegate { };
@@ -76,14 +77,34 @@ public class QueueModel
 	public void appendSong(Song song)
 	{
 		songs.Add(song);
+		OnQueueModified();
 	}
+	//public void appendSongByPath(string path)
+	//{
+	//	songs.Add(Song.fromPath(path));
+	//}
 	public void removeSong(Song song)
 	{
-		songs.Remove(song);
+		var index = songs.Select((p, i) => (p, i)).First(p => p.p == song).i;
+		if (index < 0 || songs.Count <= index) return;
+		songs.RemoveAt(index);
+		if (index <= current)
+		{
+			current--;
+			OnSongChange(songs[current]);
+		}
+		OnQueueModified();
 	}
 	public void removeSong(int index)
 	{
+		if (index < 0 || songs.Count <= index) return;
 		songs.RemoveAt(index);
+		if (index <= current)
+		{
+			current--;
+			OnSongChange(songs[current]);
+		}
+		OnQueueModified();
 	}
 	public Song? currentSong()
 	{

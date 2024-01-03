@@ -45,10 +45,17 @@ public class Song
 			this.length = TimeSpan.Zero;
 		}
 	}
-	static public Song fromPath(string path)
+	static public Song? fromPath(string path)
 	{
-		var song = SongManager.Instance.SongFromPath(path);
-		return song;
+		try
+		{
+			var song = SongManager.Instance.SongFromPath(path);
+			return song;
+		}
+		catch
+		{
+			return null;
+		}
 	}
 	public override string ToString()
 	{
