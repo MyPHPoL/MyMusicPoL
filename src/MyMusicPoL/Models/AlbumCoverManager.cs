@@ -41,10 +41,6 @@ public class AlbumCoverManager
 		{
 			return value;
 		}
-		//if (covers.ContainsKey(song.Album.Name))
-		//{
-		//	return covers[song.Album.Name];
-		//}
 		var cover = song.Album.Cover;
 		var image = new BitmapImage();
 

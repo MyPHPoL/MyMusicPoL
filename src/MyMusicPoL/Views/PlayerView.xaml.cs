@@ -57,6 +57,19 @@ namespace mymusicpol.Views
                 playerViewModel.ShowPlaylist();
 			}
 		}
+		private void MenuItemEdit_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new InputBoxView("Enter new playlist name");
+				dialog.ShowDialog();
+				if (dialog.TextBody is not null)
+				{
+					playerViewModel.EditPlaylist(PlaylistListBox.SelectedIndex, dialog.TextBody);
+				}
+			}
+		}
+
 		private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
 		{
             if (DataContext is PlayerViewModel playerViewModel)
@@ -82,7 +95,12 @@ namespace mymusicpol.Views
 		{
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                playerViewModel.SelectedListAddPlaylist(SelectedList.SelectedIndex);
+				var dialog = new InputBoxView("Enter playlist name to add song");
+				dialog.ShowDialog();
+				if (dialog.TextBody is not null)
+				{
+					playerViewModel.SelectedListAddPlaylist(SelectedList.SelectedIndex, dialog.TextBody);
+				}
 			}
 		}
 		private void SelectedList_MouseDoubleClick(object sender, MouseButtonEventArgs e)

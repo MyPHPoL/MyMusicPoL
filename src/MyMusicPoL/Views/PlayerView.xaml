@@ -223,7 +223,7 @@
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
                 <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Button Command="{Binding ShowLibrary}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
+                <Button Command="{Binding ShowLibaryCommand}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
             </StackPanel>
 
             <!-- play from web -->
@@ -248,23 +248,19 @@
                 </StackPanel>
 
                 <!-- playlist list (select, edit name, delete)-->
-                <ListBox x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListBox x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23">
+                            <StackPanel Orientation="Horizontal" Width="418">
+                                <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
                                     <Label.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Show" Click="MenuItemShow_Click"/>
-                                            <MenuItem Header="Edit name" Command="{Binding EditPlaylistNameButton}"/>
-                                            <MenuItem Header="Delete" Click="MenuItemDelete_Click" Command="{Binding DeletePlaylistButton}"/>
+                                            <MenuItem Header="Edit name" Click="MenuItemEdit_Click"/>
+                                            <MenuItem Header="Delete" Click="MenuItemDelete_Click"/>
                                         </ContextMenu>
                                     </Label.ContextMenu>
                                 </Label>
-                                <!-- idk how to move these buttons on the right side -->
-                                <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="&#xE70F;" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="&#xE74D;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -344,15 +340,15 @@
                                 </StackPanel.ContextMenu>
                                 <!-- mby later add row number on the left -->
                                 <Image Source="{Binding cover}" Height="30" Width="30"/>
-                                <Label Foreground="#ecf0f1" FontSize="19" Width="100">
-                                    <AccessText Text="{Binding title}" TextTrimming="CharacterEllipsis" />
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="246">
+                                    <AccessText Text="{Binding title}" TextTrimming="CharacterEllipsis"/>
                                 </Label>
-                                <Label Content="{Binding artist}" Foreground="#af7ac5" FontSize="19"/>
-                                <Label Content="{Binding album}" Foreground="#ecf0f1" FontSize="19"/>
-                                <!-- idk how to move these buttons on the right side -->
-                                <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                                <Label Foreground="#af7ac5" FontSize="19" Width="246">
+                                    <AccessText Text="{Binding artist}" TextTrimming="CharacterEllipsis"/>
+                                </Label>
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="246">
+                                    <AccessText Text="{Binding album}" TextTrimming="CharacterEllipsis"/>
+                                </Label>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

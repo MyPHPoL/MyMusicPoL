@@ -33,7 +33,7 @@ internal class SongViewModel : INotifyPropertyChanged
 		else
 		{
 			this.title = "No song selected";
-			this.artist = "";
+			this.artist = "Unknown";
 			this.album = "Unknown";
 			this.path = "";
 		}

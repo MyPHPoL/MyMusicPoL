@@ -108,6 +108,7 @@ public class PlaylistManager
 		bool status = Playlists.Remove(oldName,out Playlist? playlist);
 		if (status is true && playlist is not null)
 		{
+			playlist.Name = newName;
 			Playlists.Add(newName,playlist);
 			NotifyPlaylistEdited(oldName, newName);
 		}

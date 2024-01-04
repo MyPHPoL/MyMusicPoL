@@ -8,7 +8,7 @@ namespace MusicBackend.Model;
 public class Playlist
 {
 	public List<Song> Songs { get; private set; } = new();
-	public string Name { get; }
+	public string Name { get; internal set; }
 	public Playlist(string name)
 	{
 		Name = name;

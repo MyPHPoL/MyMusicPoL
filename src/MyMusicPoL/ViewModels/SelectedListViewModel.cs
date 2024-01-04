@@ -23,6 +23,24 @@ internal class SelectedListViewModel : ViewModelBase
 	}
 	public ObservableCollection<SongViewModel> Items { get; set; } = new();
 	public int SelectedIndex { get; set; }
+
+	class LibraryObserver : ILibraryObserver
+	{
+		private readonly SelectedListViewModel selectedListViewModel;
+		public LibraryObserver(SelectedListViewModel playerViewModel)
+		{
+			this.selectedListViewModel = playerViewModel;
+		}
+		public void OnLibraryChange()
+		{
+			App.Current.Dispatcher.Invoke(() =>
+			{
+				selectedListViewModel.ShowLibrary();
+			});
+		}
+	}
+
+
 	class PlaylistObserver : IPlaylistObserver
 	{
 		private readonly SelectedListViewModel selectedListViewModel;
@@ -89,6 +107,7 @@ internal class SelectedListViewModel : ViewModelBase
 		ArtistSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByArtist));
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
+		LibraryManager.Instance.Subscribe(new LibraryObserver(this));
 
 		ShowQueue();
 		QueueModel.Instance.OnQueueModified += () =>
@@ -127,6 +146,10 @@ internal class SelectedListViewModel : ViewModelBase
 		if (IsQueue)
 		{
 			QueueModel.Instance.removeSong(index);
+		}
+		else if (IsLibrary)
+		{
+			// DO NOTHING
 		}
 		else
 		{
@@ -172,7 +195,7 @@ internal class SelectedListViewModel : ViewModelBase
 
 	private void Sort()
 	{
-		//if (Name == "Queue") return;
+		if (Name == "Queue") return;
 
 		var query = sortMode switch
 		{
@@ -192,6 +215,16 @@ internal class SelectedListViewModel : ViewModelBase
 		}
 	}
 
+	public void ShowLibrary()
+	{
+		Name = "Library";
+		Items.Clear();
+		foreach (var song in LibraryManager.Instance.Songs)
+		{
+			Items.Add(new SongViewModel(song.Value));
+		}
+		Sort();
+	}
 	public void ShowQueue()
 	{
 		Name = "Queue";
