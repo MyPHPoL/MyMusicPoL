@@ -276,7 +276,7 @@
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Width="Auto" Height="Auto"/>
 
             <StackPanel Grid.Row="0">
-              
+
                 <!-- undo and redo buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 20 0 0">
                     <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
@@ -319,10 +319,12 @@
                     <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
 
                     <!-- sort checkbox -->
-                    <Label Content="Sort by: " VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19"/>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
+                    <Label Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
                     <!--<RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>-->
                 </StackPanel>
 
@@ -340,15 +342,19 @@
                                 </StackPanel.ContextMenu>
                                 <!-- mby later add row number on the left -->
                                 <Image Source="{Binding cover}" Height="30" Width="30"/>
-                                <Label Foreground="#ecf0f1" FontSize="19" Width="246">
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="215">
                                     <AccessText Text="{Binding title}" TextTrimming="CharacterEllipsis"/>
                                 </Label>
-                                <Label Foreground="#af7ac5" FontSize="19" Width="246">
+                                <Label Foreground="#af7ac5" FontSize="19" Width="215">
                                     <AccessText Text="{Binding artist}" TextTrimming="CharacterEllipsis"/>
                                 </Label>
-                                <Label Foreground="#ecf0f1" FontSize="19" Width="246">
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="215">
                                     <AccessText Text="{Binding album}" TextTrimming="CharacterEllipsis"/>
                                 </Label>
+                                <TextBlock Foreground="#ecf0f1" FontSize="19" Width="85" 
+                                       VerticalAlignment="Center"
+                                       d:Text="00:00:00"
+                                       Text="{Binding duration,StringFormat=h\\:mm\\:ss}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

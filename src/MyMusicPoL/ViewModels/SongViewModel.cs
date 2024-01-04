@@ -15,6 +15,7 @@ internal class SongViewModel : INotifyPropertyChanged
 	private string _album { get; set; } 
 	private BitmapSource _cover { get; set; }
 	private string _path { get; set; }
+	private TimeSpan _duration { get; set; }
 
 	public SongViewModel(MusicBackend.Model.Song? song)
 	{
@@ -29,6 +30,7 @@ internal class SongViewModel : INotifyPropertyChanged
 			this.artist = song.artist;
 			this.album = song.Album.Name;
 			this.path = song.path;
+			this.duration = song.length;
 		}
 		else
 		{
@@ -36,6 +38,7 @@ internal class SongViewModel : INotifyPropertyChanged
 			this.artist = "Unknown";
 			this.album = "Unknown";
 			this.path = "";
+			this.duration = TimeSpan.Zero;
 		}
 		var image = AlbumCoverManager.Instance.GetCover(song);
 		this.cover = image;
@@ -75,6 +78,16 @@ internal class SongViewModel : INotifyPropertyChanged
 		{
 			_path = value;
 			OnPropertyChanged(nameof(path));
+		}
+	}
+
+	public TimeSpan duration
+	{
+		get => _duration;
+		set
+		{
+			_duration = value;
+			OnPropertyChanged(nameof(duration));
 		}
 	}
 

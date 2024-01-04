@@ -91,20 +91,26 @@ internal class SelectedListViewModel : ViewModelBase
 	public ICommand DefaultSortCommand { get; }
 	public ICommand AlbumSortCommand { get; }
 	public ICommand ArtistSortCommand { get; }
+	public ICommand TimeSortCommand { get; }
+	public ICommand TitleSortCommand { get; }
 
 	private SortMode sortMode = SortMode.ByTitle;
 	public enum SortMode
 	{
+		ByDefault,
 		ByTitle,
 		ByArtist,
 		ByAlbum,
+		ByTime
 	}
 
 	public SelectedListViewModel()
 	{
-		DefaultSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByTitle));
+		DefaultSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByDefault));
 		AlbumSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByAlbum));
 		ArtistSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByArtist));
+		TimeSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByTime));
+		TitleSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByTitle));
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
 		LibraryManager.Instance.Subscribe(new LibraryObserver(this));
@@ -199,12 +205,16 @@ internal class SelectedListViewModel : ViewModelBase
 
 		var query = sortMode switch
 		{
+			SortMode.ByTitle =>
+				Items.OrderBy(song => song.title),
 			SortMode.ByArtist =>
 				Items.OrderBy(song => song.artist),
 			SortMode.ByAlbum =>
 				Items.OrderBy(song => song.album),
-			_ =>
-				Items.OrderBy(song => song.title)
+			SortMode.ByTime =>
+				Items.OrderBy(song => song.duration),
+			SortMode.ByDefault =>
+				(IEnumerable<SongViewModel>)Items,
 		};
 		var sortedList = query.ToList();
 

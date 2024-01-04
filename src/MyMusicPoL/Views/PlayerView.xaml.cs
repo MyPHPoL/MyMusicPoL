@@ -65,6 +65,11 @@ namespace mymusicpol.Views
 				dialog.ShowDialog();
 				if (dialog.TextBody is not null)
 				{
+					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
+					{
+						MessageBox.Show($"Cannot change name of playlist to {dialog.TextBody}");
+						return;
+					}
 					playerViewModel.EditPlaylist(PlaylistListBox.SelectedIndex, dialog.TextBody);
 				}
 			}
@@ -99,6 +104,11 @@ namespace mymusicpol.Views
 				dialog.ShowDialog();
 				if (dialog.TextBody is not null)
 				{
+					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
+					{
+						MessageBox.Show("Cannot add song to playlist "  + dialog.TextBody);
+						return;
+					}
 					playerViewModel.SelectedListAddPlaylist(SelectedList.SelectedIndex, dialog.TextBody);
 				}
 			}

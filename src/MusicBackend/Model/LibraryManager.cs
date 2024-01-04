@@ -27,14 +27,20 @@ public class LibraryManager
 		fsWatcher.Path = musicPath;
 		fsWatcher.IncludeSubdirectories = true;
 		fsWatcher.NotifyFilter = System.IO.NotifyFilters.FileName;
-		fsWatcher.Filter = "*.mp3";
+		fsWatcher.Filters.Add("*.mp3");
+		fsWatcher.Filters.Add("*.wav");
 		fsWatcher.Created += FsWatcher_Created;
 		fsWatcher.Deleted += FsWatcher_Deleted;
 		fsWatcher.Renamed += FsWatcher_Renamed;
 		fsWatcher.EnableRaisingEvents = true;
 
-		// read all files from subdirectories
-		var files = System.IO.Directory.GetFiles(musicPath, "*.mp3", System.IO.SearchOption.AllDirectories);
+		// read all files in directory and select mp3 and wav files
+		var files = System.IO.Directory.EnumerateFiles(musicPath, "*.*", System.IO.SearchOption.AllDirectories)
+			.Where(s =>
+			{
+				var ext = Path.GetExtension(s);
+				return ext == ".mp3" || ext == ".wav";
+			});
 
 		foreach (var file in files)
 		{

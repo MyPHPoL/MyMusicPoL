@@ -22,7 +22,7 @@ public sealed class Visualizer : IDisposable
 	public Visualizer()
 	{
 		PlayerModel.Instance.SamplesAccumulated += SamplesNotify;
-		var bufferLength = PlayerModel.Instance.BufferedSamplesLength();
+		var bufferLength = PlayerModel.BUFFER_SIZE;
 		CreateFilters(bufferLength);
 		shouldUpdate = true;
 	}

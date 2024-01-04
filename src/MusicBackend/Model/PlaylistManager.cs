@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MusicBackend.Model;
@@ -12,6 +13,14 @@ public interface IPlaylistObserver
 	void OnPlaylistRemoved(string name);
 	void OnPlaylistNameEdited(string oldName, string newName);
 }
+
+
+internal class PlaylistManagerState
+{
+	[JsonInclude]
+	public PlaylistState[] Playlists { get; set; }
+}
+
 public class PlaylistManager
 {
 
@@ -24,6 +33,29 @@ public class PlaylistManager
 
 	private PlaylistManager()
 	{
+	}
+
+	private PlaylistManager(PlaylistManagerState state)
+	{
+		foreach (var playlistState in state.Playlists)
+		{
+			var playlist = new Playlist(playlistState);
+			Playlists.Add(playlist.Name,playlist);
+		}
+	}
+
+	internal static void InitWithState(PlaylistManagerState state)
+	{
+		instance = new PlaylistManager(state);
+	}
+
+	internal PlaylistManagerState DumpState()
+	{
+		var state = new PlaylistManagerState()
+		{
+			Playlists = Playlists.Select(x => x.Value.DumpState()).ToArray()
+		};
+		return state;
 	}
 
 	public void Subscribe(IPlaylistObserver observer)

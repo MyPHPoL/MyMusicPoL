@@ -9,10 +9,13 @@ using NAudio.Wave;
 
 namespace MusicBackend.Model;
 
-public class PlayerModelState
+internal class PlayerModelState
 {
+	[JsonInclude]
 	public float volume { get; set; } = 0.5F;
+	[JsonInclude]
 	public TimeSpan currentTime { get; set; } = TimeSpan.Zero;
+	[JsonInclude]
 	public string? currentSong { get; set; } = null;
 }
 public enum PlaybackState { Stopped, Playing, Paused }
@@ -40,7 +43,7 @@ public class PlayerModel
 	AudioFileReader? audioFileReader;
 	WaveOutEvent waveOut;
 	SampleAccumulator? sampleAccumulator;
-	const int BUFFER_SIZE = 4096;
+	internal const int BUFFER_SIZE = 4096;
 	// workaround for weird design of stop events
 	private string? fileNameToSet = null;
 
@@ -50,7 +53,7 @@ public class PlayerModel
 		get => _instance ??= new PlayerModel();
 	}
 
-	public static void InitWithState(PlayerModelState a)
+	internal static void InitWithState(PlayerModelState a)
 	{
 		_instance = new PlayerModel(a);
 	}
@@ -106,23 +109,7 @@ public class PlayerModel
 		var wf = sampleAccumulator.WaveFormat;
 		return (wf.SampleRate, wf.BitsPerSample, wf.Channels);
 	}
-
-	public int BufferedSamplesLength()
-	{
-		return BUFFER_SIZE;
-	}
-
-/*	public bool TryReadSamples(ref byte[] samples)
-	{
-		if (is null)
-		{
-			return false;
-		}
-		bufferedWaveProvider.Read(samples, 0, samples.Length);
-		return true;
-	}
-*/
-	public PlayerModelState DumpState()
+	internal PlayerModelState DumpState()
 	{
 		var ct = audioFileReader?.CurrentTime ?? TimeSpan.Zero;
 		ct = TimeSpan.FromSeconds(Math.Floor(ct.TotalSeconds));

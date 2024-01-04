@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
 
 [DataContract]
-public class QueueModelState
+internal class QueueModelState
 {
+	[JsonInclude]
 	public List<Song> songs { get; set; } = new();
+	[JsonInclude]
 	public int current { get; set; } = 0;
+	[JsonInclude]
 	public bool repeat { get; set; } = false;
 }
 
@@ -28,7 +32,7 @@ public class QueueModel
 	{
 	}
 
-	public static void InitWithState(QueueModelState qms)
+	internal static void InitWithState(QueueModelState qms)
 	{
 		_instance = new QueueModel(qms);
 	}
@@ -58,7 +62,7 @@ public class QueueModel
 		OnRepeatChange(repeat);
 	}
 
-	public QueueModelState DumpState()
+	internal QueueModelState DumpState()
 	{
 		return new QueueModelState()
 		{

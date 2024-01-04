@@ -149,6 +149,7 @@ internal class PlayerViewModel : ViewModelBase
 		//PlaylistEditedButton = new RelayCommand<string>(EditedPlaylistCallback);
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
+		FillPlaylists();
 		//setup data bindings
 		setupTimer();
 		UpdateVolumeIcon(PlayerModel.Instance.currentVolume());
