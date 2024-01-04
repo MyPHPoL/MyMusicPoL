@@ -232,7 +232,7 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		SelectedList.ShowQueue();
 	}
-
+  
 	private void ChangeRepeatLabel(bool repeat)
 	{
 		if (repeat)
