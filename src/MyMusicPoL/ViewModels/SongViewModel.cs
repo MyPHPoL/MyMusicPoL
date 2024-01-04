@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mymusicpol.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -20,7 +21,6 @@ internal class SongViewModel : INotifyPropertyChanged
 		SetSong(song);
 	}
 
-	// TODO: Implement caching of images with albums
 	public void SetSong(MusicBackend.Model.Song? song)
 	{
 		if (song is not null)
@@ -34,30 +34,10 @@ internal class SongViewModel : INotifyPropertyChanged
 		{
 			this.title = "No song selected";
 			this.artist = "";
-			this.album = "";
+			this.album = "Unknown";
 			this.path = "";
 		}
-		var cover = song?.Album.Cover;
-		var image = new BitmapImage();
-		if (cover is not null)
-		{
-			using var ms = new System.IO.MemoryStream(cover);
-			ms.Position = 0;
-			image.BeginInit();
-			image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-			image.CacheOption = BitmapCacheOption.OnLoad;
-			image.UriSource = null;
-			image.StreamSource = ms;
-			image.EndInit();
-		}
-		else
-		{
-			image.BeginInit();
-			image.UriSource = new Uri("pack://application:,,,/assets/TEST-BOX-100px-100px.png");
-			image.EndInit();
-		}
-
-		image.Freeze();
+		var image = AlbumCoverManager.Instance.GetCover(song);
 		this.cover = image;
 	}
 
