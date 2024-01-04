@@ -22,7 +22,16 @@ internal class SelectedListViewModel : ViewModelBase
 		}
 	}
 	public ObservableCollection<SongViewModel> Items { get; set; } = new();
-	public int SelectedIndex { get; set; }
+
+	public int _selectedIndex = -1;
+	public int SelectedIndex
+	{
+		get => _selectedIndex;
+		set 
+		{
+			_selectedIndex = value; OnPropertyChanged(nameof(SelectedIndex));
+		}
+	}
 
 	class LibraryObserver : ILibraryObserver
 	{
