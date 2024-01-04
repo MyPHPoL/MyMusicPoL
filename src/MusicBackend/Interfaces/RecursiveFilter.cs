@@ -10,11 +10,11 @@ namespace MusicBackend.Interfaces;
 
 public class RecursiveFilter : IFilter
 {
-    protected double[] previousBuffer { get; private set; }
+    protected double[] targetBuffer { get; private set; }
 
     public double[] process(double[] buffer)
     {
-        var minLength = Math.Min(buffer.Length, previousBuffer.Length);
+        var minLength = Math.Min(buffer.Length, targetBuffer.Length);
         for (int i = 0; i != minLength; ++i)
         {
             buffer[i] = processBin(buffer[i], i);
@@ -24,7 +24,7 @@ public class RecursiveFilter : IFilter
 
     public void refresh(double[] newBuffer)
     {
-        previousBuffer = newBuffer;
+        targetBuffer = newBuffer;
     }
 
     public virtual double processBin(double channels, int index)

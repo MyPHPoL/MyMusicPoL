@@ -5,15 +5,15 @@ namespace MusicBackend.Model;
 
 public class Song
 {
-	public string path { get; set; }
+	public string path { get; internal set; }
 	[JsonIgnore]
-	public string name { get; set; }
+	public string name { get; internal set; }
 	[JsonIgnore]
-	public string artist { get; set; }
+	public string artist { get; internal set; }
 	[JsonIgnore]
-	public TimeSpan length { get; set; }
+	public TimeSpan length { get; internal set; }
 	[JsonIgnore]
-	public SongAlbum Album { get; set; }
+	public SongAlbum Album { get; internal set; }
 
 	internal Song()
 	{
@@ -32,12 +32,6 @@ public class Song
 			this.length = song.length;
 			this.Album = song.Album;
 			this.artist = song.artist;
-			//this.path = Path.GetFullPath(path);
-			//name = Path.GetFileName(path);
-			//using (var reader = new NAudio.Wave.AudioFileReader(path))
-			//{
-			//	length = reader.TotalTime;
-			//}
 		} catch
 		{
 			this.path = string.Empty;
@@ -45,10 +39,17 @@ public class Song
 			this.length = TimeSpan.Zero;
 		}
 	}
-	static public Song fromPath(string path)
+	static public Song? fromPath(string path)
 	{
-		var song = SongManager.Instance.SongFromPath(path);
-		return song;
+		try
+		{
+			var song = SongManager.Instance.SongFromPath(path);
+			return song;
+		}
+		catch
+		{
+			return null;
+		}
 	}
 	public override string ToString()
 	{

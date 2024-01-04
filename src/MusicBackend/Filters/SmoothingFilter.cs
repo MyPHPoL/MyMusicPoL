@@ -14,10 +14,9 @@ public sealed class SmoothingFilter : RecursiveFilter
     public SmoothingFilter(double dampingFactor) { this.dampingFactor = dampingFactor; }
     public override double processBin(double channels, int index)
     {
-        var prevChannel = previousBuffer[index];
-        channels -= prevChannel;
-        previousBuffer[index] = prevChannel * dampingFactor;
-        return channels;
+        var prevChannel = targetBuffer[index];
+        var delta = prevChannel - channels;
+        return channels + delta * dampingFactor;
     }
 
 }

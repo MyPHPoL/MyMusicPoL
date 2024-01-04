@@ -23,100 +23,6 @@ public struct TimeControl
 	public Notify<string> TimeValue { get; set; }
 }
 
-internal class SongViewModel : INotifyPropertyChanged
-{
-	private string _title { get; set; }
-	private string _artist { get; set; }
-	private string _album { get; set; } 
-	private BitmapSource _cover { get; set; }
-
-	public SongViewModel(MusicBackend.Model.Song? song)
-	{
-		SetSong(song);
-	}
-
-	public void SetSong(MusicBackend.Model.Song? song)
-	{
-		if (song is not null)
-		{
-			this.title = song.name;
-			this.artist = song.artist;
-			this.album = song.Album.Name;
-		}
-		else
-		{
-			this.title = "No song selected";
-			this.artist = "";
-			this.album = "";
-		}
-		var cover = song?.Album.Cover;
-		var image = new BitmapImage();
-		if (cover is not null)
-		{
-			using var ms = new System.IO.MemoryStream(cover);
-			ms.Position = 0;
-			image.BeginInit();
-			image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-			image.CacheOption = BitmapCacheOption.OnLoad;
-			image.UriSource = null;
-			image.StreamSource = ms;
-			image.EndInit();
-		}
-		else
-		{
-			image.BeginInit();
-			image.UriSource = new Uri("pack://application:,,,/assets/TEST-BOX-100px-100px.png");
-			image.EndInit();
-		}
-
-		image.Freeze();
-		this.cover = image;
-	}
-
-	public string title
-	{
-		get => _title;
-		set
-		{
-			_title = value;
-			OnPropertyChanged(nameof(title));
-		}
-	}
-	public string artist
-	{
-		get => _artist;
-		set
-		{
-			_artist = value;
-			OnPropertyChanged(nameof(artist));
-		}
-	}
-	public string album
-	{
-		get => _album;
-		set
-		{
-			_album = value;
-			OnPropertyChanged(nameof(album));
-		}
-	}
-	public BitmapSource cover
-	{
-		get => _cover;
-		set
-		{
-			_cover = value;
-			OnPropertyChanged(nameof(cover));
-		}
-	}
-	#region INotifyPropertyChanged Members
-	public event PropertyChangedEventHandler PropertyChanged;
-	protected void OnPropertyChanged(string propertyName)
-	{
-		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-	}
-	#endregion
-}
 
 
 //this is a test (i copied youtube tutorial video like a monkey)
@@ -139,31 +45,26 @@ internal class PlayerViewModel : ViewModelBase
 	public Notify<string> TotalTime { get; set; }
 
 	public Notify<double> ProgressValue { get; set; } // current song progress
-
-	private string selectedListName; // current selected playlist name
-	public string SelectedListName
-	{
-		get { return selectedListName; }
-		set
-		{
-			selectedListName = value;
-			OnPropertyChanged(nameof(SelectedListName));
-		}
-	}
 	// timer for song progress
 	private DispatcherTimer timer; 
 	// hack to avoid infinite recursion
-	public bool isChangingSlider = false;
-	
-	private readonly ObservableCollection<SonglistViewModel> playlists; // all playlists
-	public ObservableCollection<SongViewModel> SelectedList { get; set; } = new();
-	public IEnumerable<SonglistViewModel> Playlists => playlists;
-	public ICommand Show_Library { get; }
+	private bool isChangingSlider = false;
+	// all playlists
+	public ObservableCollection<SonglistViewModel> Playlists { get; set; } = new();
+	// view model for selected library/playlist/queue
+	public SelectedListViewModel SelectedList { get; set; } = new();
+	// Index of selected playlist
+	public int SelectedIndex { get; set; } = -1;
+
 	public ICommand ShuffleButton { get; }
 	public ICommand RepeatButton { get; }
 	public ICommand PlayPauseButton { get; }
 	public ICommand PreviousButton { get; }
 	public ICommand NextButton { get; }
+	public ICommand NewPlaylistButton { get; }
+	public ICommand ShowQueueButton { get; }
+	public ICommand ShowPlaylistCommand { get; }
+	public ICommand ShowLibaryCommand { get; }
 	public Notify<string> PlayPauseLabel { get; set; } = new()
 	{
 		Value = ""
@@ -174,31 +75,81 @@ internal class PlayerViewModel : ViewModelBase
 		Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush,
 		Content = "\uE8B1"
 	};
-	public Notify<double> Volume { get; set; } = new(); // current volume
-	public Notify<string> VolumeIcon { get; set; } = new(); // volume icon
+	// current volume
+	public Notify<double> Volume { get; set; } = new(); 
+	// volume icon
+	public Notify<string> VolumeIcon { get; set; } = new(); 
+
+
+	class PlaylistObserver : IPlaylistObserver
+	{
+		private readonly PlayerViewModel playerViewModel;
+		public PlaylistObserver(PlayerViewModel playerViewModel)
+		{
+			this.playerViewModel = playerViewModel;
+		}
+		public void OnNewPlaylist(string name)
+		{
+			playerViewModel.Playlists.Add(new(name, []));
+		}
+
+		public void OnPlaylistChange(string name)
+		{
+			playerViewModel.FillPlaylist(name);
+		}
+
+		public void OnPlaylistNameEdited(string oldName, string newName)
+		{
+			playerViewModel.Playlists.First(p => p.Name == oldName).Name = newName;
+		}
+
+		public void OnPlaylistRemoved(string name)
+		{
+			var index = playerViewModel.Playlists.Select((p, i) => (p, i)).First(p => p.p.Name == name).i;
+			playerViewModel.Playlists.RemoveAt(index);
+			//if (playerViewModel.SelectedList.Name == name)
+			//{
+			//	playerViewModel.SelectedList.ClearAll();
+			//}
+		}
+	}
+
+	private void FillPlaylists()
+	{
+		foreach (var playlist in PlaylistManager.Instance.Playlists)
+		{
+			Playlists.Add(new(playlist.Value.Name, playlist.Value.Songs));
+		}
+	}
+	private void FillPlaylist(string name)
+	{
+		var playlist = PlaylistManager.Instance.GetPlaylist(name);
+		if (playlist is null) return;
+		// find index of playlist
+		var index = Playlists.Select((p, i) => (p, i)).First(p => p.p.Name == name).i;
+
+		Playlists[index].Name = playlist.Name;
+		Playlists[index].Songs.Clear();
+		Playlists[index].SetSongs(playlist.Songs);
+	}
+
 
 	public PlayerViewModel()
 	{
-		playlists =
-		[
-			new SonglistViewModel(new Songlist("Playlist 1", new())),
-			new SonglistViewModel(new Songlist("Playlist 2 Different Name", new())),
-			new SonglistViewModel(new Songlist("Playlist 3 LOLOLO", new())),
-			new SonglistViewModel(new Songlist("Playlist 4 xdd", new())),
-			new SonglistViewModel(new Songlist("Playlist 5 test", new())),
-			new SonglistViewModel(new Songlist("Playlist 6 oho", new())),
-			new SonglistViewModel(new Songlist("Playlist 7 haahahahahah", new())),
-		];
-
-		FillSelectedList();
-
 		// fill commands
 		PreviousButton = new RelayCommand(PreviousSongCallback);
 		PlayPauseButton = new RelayCommand(PlayPauseSongCallback);
 		NextButton = new RelayCommand(NextSongCallback);
 		ShuffleButton = new RelayCommand(ShuffleSongCallback);
 		RepeatButton = new RelayCommand(RepeatSongCallback);
+		NewPlaylistButton = new RelayCommand(NewPlaylistCallback);
+		ShowPlaylistCommand = new RelayCommand(ShowPlaylist);
+		ShowQueueButton = new RelayCommand(ShowQueue);
+		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
+		//PlaylistEditedButton = new RelayCommand<string>(EditedPlaylistCallback);
 
+		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
+		FillPlaylists();
 		//setup data bindings
 		setupTimer();
 		UpdateVolumeIcon(PlayerModel.Instance.currentVolume());
@@ -216,7 +167,7 @@ internal class PlayerViewModel : ViewModelBase
 		timeElapsed = formatTime(PlayerModel.Instance.currentTime());
 		var curSong = QueueModel.Instance.currentSong();
 		CurrentSong = new (curSong);
-		selectedListName = "Test Playlist Name";
+
 		QueueModel.Instance.OnSongChange += (song) =>
 		{
 			CurrentSong.SetSong(song);
@@ -242,17 +193,10 @@ internal class PlayerViewModel : ViewModelBase
 			}
 		};
 
-		QueueModel.Instance.OnQueueModified += () =>
-		{
-			SelectedList.Clear();
-			FillSelectedList();
-		};
-
 		QueueModel.Instance.OnRepeatChange += (repeat) =>
 		{
 			ChangeRepeatLabel(repeat);
 		};
-
 		PlayerModel.Instance.OnTimeChange += (time) =>
 		{
 			isChangingSlider = true;
@@ -277,9 +221,18 @@ internal class PlayerViewModel : ViewModelBase
 			}
 			OnSliderValueChanged(ProgressValue.Value);
 		};
-
 	}
 
+	private void ShowLibaryCallback()
+	{
+		SelectedList.ShowLibrary();
+	}
+
+	private void ShowQueue()
+	{
+		SelectedList.ShowQueue();
+	}
+  
 	private void ChangeRepeatLabel(bool repeat)
 	{
 		if (repeat)
@@ -298,19 +251,10 @@ internal class PlayerViewModel : ViewModelBase
 		VolumeIcon.Value = value switch
 		{
 			<= 0 => "\ue74f",
-			>  0.00F and < 0.25F => "\ue992",
-			>= 0.25F and < 0.50F => "\ue993",
-			>= 0.50F and < 0.75F => "\ue994",
-			>= 0.75F => "\ue995",
+			>= 0.00F and < 0.33F => "\ue993",
+			>= 0.33F and < 0.66F => "\ue994",
+			>= 0.66F => "\ue995",
 		};
-	}
-
-	private void FillSelectedList()
-	{
-		foreach (var song in QueueModel.Instance.songs)
-		{
-			SelectedList.Add(new(song));
-		}
 	}
 
 	public void OnSliderValueChanged(double value)
@@ -394,6 +338,47 @@ internal class PlayerViewModel : ViewModelBase
 	private void ShuffleSongCallback()
 	{
 		QueueModel.Instance.shuffleQueue();
+	}
+	private void NewPlaylistCallback()
+	{
+		PlaylistManager.Instance.CreatePlaylist();
+	}
 
+	public void EditPlaylist(int index, string newName)
+	{
+		if (index < 0 || index >= Playlists.Count) return;
+		var oldName = Playlists[index].Name;
+		PlaylistManager.Instance.EditPlaylistName(oldName,newName);
+	}
+	public void ShowPlaylist()
+	{
+		if (SelectedIndex < 0 || SelectedIndex >= Playlists.Count) return;
+		SelectedList.Name = Playlists[SelectedIndex].Name;
+		SelectedList.Clear();
+		foreach (var song in Playlists[SelectedIndex].Songs)
+		{
+			SelectedList.Add(new(song));
+		}
+	}
+	public void DeletePlaylist(int index)
+	{
+		if (index < 0 || index >= Playlists.Count) return;
+		PlaylistManager.Instance.RemovePlaylist(Playlists[index].Name);
+	}
+	public void SelectedListRemove(int index)
+	{
+		SelectedList.RemoveSong(index);
+	}
+	public void SelectedListAddQueue(int index)
+	{
+		SelectedList.AddToQueue(index);
+	}
+	public void SelectedListPlay(int index)
+	{
+		SelectedList.PlayNth(index);
+	}
+	public void SelectedListAddPlaylist(int index, string playlistName)
+	{
+		SelectedList.AddToPlaylist(playlistName,index);
 	}
 }

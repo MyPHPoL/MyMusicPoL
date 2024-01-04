@@ -102,8 +102,8 @@
             <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                 <Image Source="{Binding CurrentSong.cover}" Height="60" Width="60" Margin="20 20" HorizontalAlignment="Left"/>
                 <StackPanel Orientation="Vertical" Margin="0 20" VerticalAlignment="Center" HorizontalAlignment="Left">
-                    <Label Content="{Binding CurrentSong.title}" Foreground="#ecf0f1" FontSize="15"/>
-                    <Label Content="{Binding CurrentSong.artist}" Foreground="#cacfd2" FontSize="15"/>
+                    <Label Content="{Binding CurrentSong.title}" d:Content="Title" Foreground="#ecf0f1" FontSize="15"/>
+                    <Label Content="{Binding CurrentSong.artist}" d:Content="Artist" Foreground="#cacfd2" FontSize="15"/>
                 </StackPanel>
             </StackPanel>
 
@@ -178,7 +178,7 @@
                     </Button.Resources>
                 </Button>
 
-                <Button Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                <Button Height="35" Width="35" Command="{Binding ShowQueueButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="100"/>
@@ -223,7 +223,7 @@
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
                 <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Button Command="{Binding ShowLibrary}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
+                <Button Command="{Binding ShowLibaryCommand}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
             </StackPanel>
 
             <!-- play from web -->
@@ -244,19 +244,23 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                     <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                    <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                    <Button Command="{Binding NewPlaylistButton}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 </StackPanel>
 
                 <!-- playlist list (select, edit name, delete)-->
-                <ListBox ItemsSource="{Binding Playlists}" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListBox x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding name}" Foreground="#ecf0f1" FontSize="23"/>
-                                <!-- idk how to move these buttons on the right side -->
-                                <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="&#xE70F;" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="&#xE74D;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                            <StackPanel Orientation="Horizontal" Width="418">
+                                <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
+                                    <Label.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Show" Click="MenuItemShow_Click"/>
+                                            <MenuItem Header="Edit name" Click="MenuItemEdit_Click"/>
+                                            <MenuItem Header="Delete" Click="MenuItemDelete_Click"/>
+                                        </ContextMenu>
+                                    </Label.ContextMenu>
+                                </Label>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -272,7 +276,7 @@
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Width="Auto" Height="Auto"/>
 
             <StackPanel Grid.Row="0">
-              
+
                 <!-- undo and redo buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 20 0 0">
                     <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
@@ -292,7 +296,7 @@
                 </StackPanel>
 
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
-                <Label Content="{Binding SelectedListName}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
+                <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
                 <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
 
                     <!-- you can't put 2 fonts inside the same button (or maybe you can idk) so 2 buttons with the same icon but 1 exports as JSON and the other as XML (to be changed later) -->
@@ -315,29 +319,42 @@
                     <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
 
                     <!-- sort checkbox -->
-                    <Label Content="Sort by: " VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19"/>
-                    <RadioButton GroupName="sort" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
-                    <RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
-                    <RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
-                    <RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>
+                    <Label Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
+                    <!--<RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>-->
                 </StackPanel>
 
                 <!-- song list (the same problem as with the playlist list: idk how to set float right on those buttons) -->
-                <ListBox ItemsSource="{Binding SelectedList}" Background="Transparent" Height="403" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}">
+                <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="403" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add to queue" Click="SelectedListAddQueue_Click"/>
+                                        <MenuItem Header="Add to playlist" Click="SelectedListAddPlaylist_Click"/>
+                                        <MenuItem Header="Remove" Click="SelectedListRemove_Click" Command="{Binding DeletePlaylistButton}"/>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
                                 <!-- mby later add row number on the left -->
                                 <Image Source="{Binding cover}" Height="30" Width="30"/>
-                                <Label Foreground="#ecf0f1" FontSize="19" Width="100">
-                                    <AccessText Text="{Binding title}" TextTrimming="CharacterEllipsis" />
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="215">
+                                    <AccessText Text="{Binding title}" TextTrimming="CharacterEllipsis"/>
                                 </Label>
-                                <Label Content="{Binding artist}" Foreground="#af7ac5" FontSize="19"/>
-                                <Label Content="{Binding album}" Foreground="#ecf0f1" FontSize="19"/>
-                                <!-- idk how to move these buttons on the right side -->
-                                <Button Content="&#xE72A;" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#ecf0f1" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-                                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="19" VerticalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                                <Label Foreground="#af7ac5" FontSize="19" Width="215">
+                                    <AccessText Text="{Binding artist}" TextTrimming="CharacterEllipsis"/>
+                                </Label>
+                                <Label Foreground="#ecf0f1" FontSize="19" Width="215">
+                                    <AccessText Text="{Binding album}" TextTrimming="CharacterEllipsis"/>
+                                </Label>
+                                <TextBlock Foreground="#ecf0f1" FontSize="19" Width="85" 
+                                       VerticalAlignment="Center"
+                                       d:Text="00:00:00"
+                                       Text="{Binding duration,StringFormat=h\\:mm\\:ss}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using mymusicpol.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,6 +41,86 @@ namespace mymusicpol.Views
 				visualizerWindow.Focus();
 			}
 		}
+
+		//private void Playlists_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		//{
+		//	if (DataContext is PlayerViewModel playerViewModel)
+		//	{
+		//		playerViewModel.ShowPlaylist();
+		//	}
+		//}
+
+		private void MenuItemShow_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.ShowPlaylist();
+			}
+		}
+		private void MenuItemEdit_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new InputBoxView("Enter new playlist name");
+				dialog.ShowDialog();
+				if (dialog.TextBody is not null)
+				{
+					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
+					{
+						MessageBox.Show($"Cannot change name of playlist to {dialog.TextBody}");
+						return;
+					}
+					playerViewModel.EditPlaylist(PlaylistListBox.SelectedIndex, dialog.TextBody);
+				}
+			}
+		}
+
+		private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.DeletePlaylist(PlaylistListBox.SelectedIndex);
+			}
+		}
+		private void SelectedListRemove_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListRemove(SelectedList.SelectedIndex);
+			}
+		}
+		private void SelectedListAddQueue_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListAddQueue(SelectedList.SelectedIndex);
+			}
+		}
+		private void SelectedListAddPlaylist_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new InputBoxView("Enter playlist name to add song");
+				dialog.ShowDialog();
+				if (dialog.TextBody is not null)
+				{
+					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
+					{
+						MessageBox.Show("Cannot add song to playlist "  + dialog.TextBody);
+						return;
+					}
+					playerViewModel.SelectedListAddPlaylist(SelectedList.SelectedIndex, dialog.TextBody);
+				}
+			}
+		}
+		private void SelectedList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.SelectedListPlay(SelectedList.SelectedIndex);
+			}
+		}
+
 
 		////only for test purposes
 		//private void shuffle_Click(object sender, RoutedEventArgs e)
