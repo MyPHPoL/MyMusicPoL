@@ -61,7 +61,6 @@ internal class PlayerViewModel : ViewModelBase
 	public ICommand PlayPauseButton { get; }
 	public ICommand PreviousButton { get; }
 	public ICommand NextButton { get; }
-	public ICommand NewPlaylistButton { get; }
 	public ICommand ShowQueueButton { get; }
 	public ICommand ShowPlaylistCommand { get; }
 	public ICommand ShowLibaryCommand { get; }
@@ -142,7 +141,6 @@ internal class PlayerViewModel : ViewModelBase
 		NextButton = new RelayCommand(NextSongCallback);
 		ShuffleButton = new RelayCommand(ShuffleSongCallback);
 		RepeatButton = new RelayCommand(RepeatSongCallback);
-		NewPlaylistButton = new RelayCommand(NewPlaylistCallback);
 		ShowPlaylistCommand = new RelayCommand(ShowPlaylist);
 		ShowQueueButton = new RelayCommand(ShowQueue);
 		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
@@ -339,9 +337,9 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		QueueModel.Instance.shuffleQueue();
 	}
-	private void NewPlaylistCallback()
+	public bool NewPlaylist(string name)
 	{
-		PlaylistManager.Instance.CreatePlaylist();
+		return PlaylistManager.Instance.CreatePlaylist(name);
 	}
 
 	public void EditPlaylist(int index, string newName)

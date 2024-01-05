@@ -124,19 +124,22 @@ public class PlaylistManager
 		}
 	}
 
-	public void CreatePlaylist()
+	public bool CreatePlaylist(string name)
 	{
-		var name = "Playlist " + Playlists.Count;
 		bool status = Playlists.TryAdd(name,new Playlist(name));
 		if (status is true)
 		{
 			NotifyNewPlaylist(name);
+			return true;
 		}
+		return false;
 	}
 	public void EditPlaylistName(string oldName, string newName)
 	{
 		if (oldName == newName) return;
 		if (newName == "Library" || newName == "Queue") return;
+		if (Playlists.ContainsKey(newName)) return;
+
 		bool status = Playlists.Remove(oldName,out Playlist? playlist);
 		if (status is true && playlist is not null)
 		{

@@ -74,6 +74,27 @@ namespace mymusicpol.Views
 				}
 			}
 		}
+		private void NewPlaylist_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new InputBoxView("Enter new playlist name");
+				dialog.ShowDialog();
+				if (dialog.TextBody is not null)
+				{
+					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
+					{
+						MessageBox.Show($"Cannot name playlist as {dialog.TextBody}");
+						return;
+					}
+					var res = playerViewModel.NewPlaylist(dialog.TextBody);
+					if (res is false)
+					{
+						MessageBox.Show($"Playlist {dialog.TextBody} already exists");
+					}
+				}
+			}
+		}
 
 		private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
 		{
