@@ -87,27 +87,43 @@ public class QueueModel
 	//{
 	//	songs.Add(Song.fromPath(path));
 	//}
-	public void removeSong(Song song)
+
+	private void removeSongAt(int index)
 	{
-		var index = songs.Select((p, i) => (p, i)).First(p => p.p == song).i;
-		if (index < 0 || songs.Count <= index) return;
+		var song = songs[index];
 		songs.RemoveAt(index);
 		if (index <= current)
 		{
 			current--;
-			OnSongChange(songs[current]);
+			if (songs.Count == 0)
+			{
+				throw new NotImplementedException("TODO: Player doesnt support not playing any song");
+			}
+
+			var curSong = currentSong();
+			if (curSong == song)
+			{
+				current = 0;
+			}
+			if (currentSong() is not null)
+			{
+				OnSongChange(songs[current]);
+			}
 		}
+	}
+
+
+	public void removeSong(Song song)
+	{
+		var index = songs.Select((p, i) => (p, i)).First(p => p.p == song).i;
+		if (index < 0 || songs.Count <= index) return;
+		removeSongAt(index);
 		OnQueueModified();
 	}
 	public void removeSong(int index)
 	{
 		if (index < 0 || songs.Count <= index) return;
-		songs.RemoveAt(index);
-		if (index <= current)
-		{
-			current--;
-			OnSongChange(songs[current]);
-		}
+		removeSongAt(index);
 		OnQueueModified();
 	}
 	public Song? currentSong()
