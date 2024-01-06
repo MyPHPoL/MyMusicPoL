@@ -22,7 +22,7 @@ public class QueueModel
 	public int Current { get => current; }
 	public bool repeat { get; private set; } = false;
 	public event Action OnQueueModified = delegate { };
-	public event Action<Song> OnSongChange = delegate { };
+	public event Action<Song?> OnSongChange = delegate { };
 	public event Action<bool> OnRepeatChange = delegate { };
 
 	private static QueueModel? _instance;
@@ -97,7 +97,7 @@ public class QueueModel
 			current--;
 			if (songs.Count == 0)
 			{
-				throw new NotImplementedException("TODO: Player doesnt support not playing any song");
+				OnSongChange(null);
 			}
 
 			var curSong = currentSong();

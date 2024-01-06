@@ -131,7 +131,8 @@ internal class SelectedListViewModel : ViewModelBase
 		};
 		QueueModel.Instance.OnSongChange += (song) =>
 		{
-			SelectedIndex = QueueModel.Instance.Current;
+			if (IsQueue)
+				SelectedIndex = QueueModel.Instance.Current;
 		};
 	}
 

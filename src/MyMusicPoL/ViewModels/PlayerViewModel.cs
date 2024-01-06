@@ -169,11 +169,21 @@ internal class PlayerViewModel : ViewModelBase
 		QueueModel.Instance.OnSongChange += (song) =>
 		{
 			CurrentSong.SetSong(song);
-			TotalTime.Value = formatTime(song.length);
-			timeElapsed = formatTime(TimeSpan.Zero);
 
-			startTimer();
-			PlayerModel.Instance.selectSong(song.path);
+			TimeElapsed = formatTime(TimeSpan.Zero);
+			ProgressValue.Value = 0.0;
+			if (song is null)
+			{
+				TotalTime.Value = formatTime(TimeSpan.Zero);
+				pauseTimer();
+				PlayerModel.Instance.selectSong(null);
+			}
+			else
+			{
+				TotalTime.Value = formatTime(song.length);
+				startTimer();
+				PlayerModel.Instance.selectSong(song.path);
+			}
 		};
 		PlayerModel.Instance.OnVolumeChange += (vol) =>
 		{
