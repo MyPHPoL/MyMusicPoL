@@ -42,11 +42,6 @@ public class QueueModel
 	private QueueModel()
 	{
 	}
-
-	internal static void InitWithState(QueueModelState qms)
-	{
-		_instance = new QueueModel(qms);
-	}
 	private QueueModel (QueueModelState qms)
 	{
 		songs = qms.songs;
@@ -67,7 +62,10 @@ public class QueueModel
 		//};
 		fixupSongs();
 	}
-
+	internal static void InitWithState(QueueModelState qms)
+	{
+		_instance = new QueueModel(qms);
+	}
 
 	private void fixupSongs()
 	{
@@ -179,6 +177,19 @@ public class QueueModel
 		OnSongChange(songs[current]);
 		OnSkip();
 	}
+	public void PlayPlaylist(string playlistName)
+	{
+		var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
+		if (playlist is null) return;
+		songs.Clear();
+		foreach (var song in playlist.Songs)
+		{
+			songs.Add(song);
+		}
+		current = 0;
+		OnQueueModified();
+		OnSongChange(songs[current]);
+	}
 	public void forceNextSong()
 	{
 		if (songs.Count == 0)
@@ -193,20 +204,6 @@ public class QueueModel
 		OnSongChange(songs[current]);
 		OnSkip();
 	} 
-
-	public void PlayPlaylist(string playlistName)
-	{
-		var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
-		if (playlist is null) return;
-		songs.Clear();
-		foreach (var song in playlist.Songs)
-		{
-			songs.Add(song);
-		}
-		current = 0;
-		OnQueueModified();
-		OnSongChange(songs[current]);
-	}
 	public void forcePrevSong()
 	{
 		if (songs.Count == 0)
@@ -237,12 +234,14 @@ public class QueueModel
 
 		public Song Next()
 		{
-			index++;
-			if (index >= queueModel.songs.Count)
-			{
-				index = 0;
-			}
-			var song = queueModel.songs[index];
+			queueModel.forceNextSong();
+			var song = queueModel.songs[queueModel.current];
+			//index++;
+			//if (index >= queueModel.songs.Count)
+			//{
+			//	index = 0;
+			//}
+			//var song = queueModel.songs[index];
 			return song;
 		}
 	}
