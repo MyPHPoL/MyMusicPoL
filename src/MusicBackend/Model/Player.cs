@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using MusicBackend.Interfaces;
+using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
 
@@ -22,8 +23,10 @@ public class PlayerModel
 	public event Action<PlaybackState> OnPlaybackChange = delegate { };
 	public event Action<float> OnVolumeChange = delegate { };
 	public event Action<TimeSpan> OnTimeChange = delegate { };
+	public event Action<Song?> OnSongChange = delegate { };
 	//private List<SampleObserver> sampleObservers = new();
 	internal AudioWrapper audioWrapper;
+	private IIterator<Song> queueIterator;
 
 	private static PlayerModel? _instance;
 	public static PlayerModel Instance
@@ -39,12 +42,42 @@ public class PlayerModel
 	private PlayerModel()
 	{
 		audioWrapper = new();
-		audioWrapper.OnPlaybackChange += (ps) => OnPlaybackChange(ps);
+		attachCallbacks();
 	}
 	private PlayerModel(PlayerModelState a)
 	{
 		audioWrapper = new (a.volume, a.currentTime, a.currentSong);
+		attachCallbacks();
+	}
+
+	private void attachCallbacks()
+	{
 		audioWrapper.OnPlaybackChange += (ps) => OnPlaybackChange(ps);
+		attachOnSongEnd(OnSongEnd);
+		QueueModel.Instance.OnQueueModified += () => refreshIterator();
+		QueueModel.Instance.OnSongChange += (s) =>
+		{
+			selectSong(s?.path);
+		};
+		QueueModel.Instance.OnRepeatChange += (q) => refreshIterator();
+		QueueModel.Instance.OnSkip += () => refreshIterator();
+	}
+
+	private void refreshIterator() => queueIterator = QueueModel.Instance.GetIterator();
+
+	private void OnSongEnd()
+	{
+		if (queueIterator.HasNext())
+		{
+			var song = queueIterator.Next();
+			selectSong(song.path);
+			OnSongChange(song);
+		}
+		else
+		{
+			audioWrapper.reset();
+			OnPlaybackChange(PlaybackState.Stopped);
+		}
 	}
 
 	//public void Subscribe(SampleObserver observer)

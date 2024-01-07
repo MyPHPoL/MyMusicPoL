@@ -127,13 +127,14 @@ internal class SelectedListViewModel : ViewModelBase
 		ShowQueue();
 		QueueModel.Instance.OnQueueModified += () =>
 		{
-			ShowQueue();
-		};
-		QueueModel.Instance.OnSongChange += (song) =>
-		{
 			if (IsQueue)
-				SelectedIndex = QueueModel.Instance.Current;
+				ShowQueue();
 		};
+		//QueueModel.Instance.OnSongChange += (song) =>
+		//{
+		//	if (IsQueue)
+		//		SelectedIndex = QueueModel.Instance.Current;
+		//};
 	}
 
 	public void Clear()
@@ -176,7 +177,20 @@ internal class SelectedListViewModel : ViewModelBase
 	public void PlayNth(int index)
 	{
 		if (Name == "Queue")
+		{
 			QueueModel.Instance.playNth(index);
+		}
+		else if (Name == "Library")
+		{
+			var song = Song.fromPath(Items[index].path);
+			if (song is null) return;
+			QueueModel.Instance.appendSong(song);
+		}
+		else
+		{
+			QueueModel.Instance.PlayPlaylist(Name);
+		}
+			
 	}
 	
 	public void AddToQueue(int index)

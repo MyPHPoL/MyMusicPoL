@@ -95,12 +95,18 @@ namespace mymusicpol.Views
 				}
 			}
 		}
-
 		private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
 		{
             if (DataContext is PlayerViewModel playerViewModel)
             {
                 playerViewModel.DeletePlaylist(PlaylistListBox.SelectedIndex);
+			}
+		}
+		private void MenuItemPlay_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				playerViewModel.PlayPlaylist(PlaylistListBox.SelectedIndex);
 			}
 		}
 		private void SelectedListRemove_Click(object sender, RoutedEventArgs e)

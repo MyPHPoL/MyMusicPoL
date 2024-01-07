@@ -275,6 +275,7 @@
                                     <Label.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Show" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
+                                            <MenuItem Header="Play" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
                                             <MenuItem Header="Edit name" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
                                             <MenuItem Header="Delete" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
                                         </ContextMenu>

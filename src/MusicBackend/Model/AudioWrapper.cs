@@ -11,12 +11,6 @@ public static class PlaybackStateExtensions
 		return ps == PlaybackState.Playing;
 	}
 }
-internal class AudioWrapperState
-{
-	public float volume { get; set; } = 0.5F;
-	public TimeSpan currentTime { get; set; } = TimeSpan.Zero;
-	public string? currentSong { get; set; } = null;
-}
 internal class AudioWrapper : IDisposable
 {
 	//public event Action<PlaybackState> OnPlaybackChange = delegate { };
@@ -83,17 +77,6 @@ internal class AudioWrapper : IDisposable
 		}
 		var wf = sampleAccumulator.WaveFormat;
 		return (wf.SampleRate, wf.BitsPerSample, wf.Channels);
-	}
-	internal PlayerModelState DumpState()
-	{
-		var ct = audioFileReader?.CurrentTime ?? TimeSpan.Zero;
-		ct = TimeSpan.FromSeconds(Math.Floor(ct.TotalSeconds));
-		return new PlayerModelState()
-		{
-			volume = waveOut.Volume,
-			currentTime = ct,
-			currentSong = audioFileReader?.FileName ?? string.Empty
-		};
 	}
 
 	public void attachOnSongEnd(Action fn)

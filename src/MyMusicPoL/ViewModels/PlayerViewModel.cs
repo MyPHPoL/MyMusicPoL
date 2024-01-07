@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Windows;
 
 namespace mymusicpol.ViewModels;
 
@@ -151,7 +152,7 @@ internal class PlayerViewModel : ViewModelBase
 		//setup data bindings
 		setupTimer();
 		UpdateVolumeIcon(PlayerModel.Instance.currentVolume());
-		ChangeRepeatLabel(QueueModel.Instance.repeat);
+		ChangeRepeatLabel(QueueModel.Instance.QueueMode);
 
 		Volume.Value = PlayerModel.Instance.currentVolume() * 100;
 		ProgressValue = new()
@@ -166,25 +167,8 @@ internal class PlayerViewModel : ViewModelBase
 		var curSong = QueueModel.Instance.currentSong();
 		CurrentSong = new (curSong);
 
-		QueueModel.Instance.OnSongChange += (song) =>
-		{
-			CurrentSong.SetSong(song);
-
-			TimeElapsed = formatTime(TimeSpan.Zero);
-			ProgressValue.Value = 0.0;
-			if (song is null)
-			{
-				TotalTime.Value = formatTime(TimeSpan.Zero);
-				pauseTimer();
-				PlayerModel.Instance.selectSong(null);
-			}
-			else
-			{
-				TotalTime.Value = formatTime(song.length);
-				startTimer();
-				PlayerModel.Instance.selectSong(song.path);
-			}
-		};
+		QueueModel.Instance.OnSongChange += OnSongChange;
+		PlayerModel.Instance.OnSongChange += OnSongChange;
 		PlayerModel.Instance.OnVolumeChange += (vol) =>
 		{
 			UpdateVolumeIcon(vol);
@@ -211,10 +195,6 @@ internal class PlayerViewModel : ViewModelBase
 			TimeElapsed = formatTime(time);
 			ProgressValue.Value = time.TotalSeconds / PlayerModel.Instance.songLength().TotalSeconds;
 		};
-		PlayerModel.Instance.attachOnSongEnd(() =>
-		{
-			QueueModel.Instance.nextSong();
-		});
 		Volume.PropertyChanged += (sender, e) =>
 		{
 			PlayerModel.Instance.setVolume((float)Volume.Value / 100);
@@ -240,18 +220,60 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		SelectedList.ShowQueue();
 	}
-  
-	private void ChangeRepeatLabel(bool repeat)
+
+	private void OnSongChange(Song? song)
 	{
-		if (repeat)
+		CurrentSong.SetSong(song);
+
+		TimeElapsed = formatTime(TimeSpan.Zero);
+		ProgressValue.Value = 0.0;
+		if (song is null)
+		{
+			TotalTime.Value = formatTime(TimeSpan.Zero);
+			pauseTimer();
+		}
+		else
+		{
+			TotalTime.Value = formatTime(song.length);
+			startTimer();
+		}
+	}
+  
+	private void ChangeRepeatLabel(QueueMode queueMode)
+	{
+
+		var (repeat,random) = queueMode switch
+		{
+			QueueMode.Loop => (1,false),
+			QueueMode.OneLoop => (0,false),
+			//QueueMode.Random => (1,true),
+			QueueMode.RandomLoop => (1,true),
+			QueueMode.Single => (2,false),
+			_ => (0,false),
+		};
+
+		if (repeat == 0)
 		{
 			RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
 			RepeatLabel.Content = "\uE8ED";
 		}
-		else
+		else if (repeat == 1)
+		{
+			RepeatLabel.Content = "\uE8EE";
+			RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+		}
+		else if (repeat == 2)
 		{
 			RepeatLabel.Content = "\uE8EE";
 			RepeatLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
+		}
+		if (random)
+		{
+			ShuffleLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+		}
+		else
+		{
+			ShuffleLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
 		}
 	}
 	private void UpdateVolumeIcon(float value)
@@ -341,11 +363,29 @@ internal class PlayerViewModel : ViewModelBase
 	}
 	private void RepeatSongCallback()
 	{
-		QueueModel.Instance.toggleRepeat();
+		var mode = QueueModel.Instance.QueueMode;
+		var nextMode = mode switch
+		{
+			QueueMode.Loop => QueueMode.OneLoop,
+			QueueMode.OneLoop => QueueMode.Single,
+			QueueMode.Single => QueueMode.Loop,
+			//QueueMode.RandomLoop => QueueMode.Random,
+			//QueueMode.Random => QueueMode.RandomLoop,
+			_ => QueueMode.Loop,
+		};
+
+		QueueModel.Instance.SetQueueMode(nextMode);
 	}
 	private void ShuffleSongCallback()
 	{
-		QueueModel.Instance.shuffleQueue();
+		var mode = QueueModel.Instance.QueueMode;
+		var nextMode = mode switch
+		{
+			//QueueMode.Random => QueueMode.Loop,
+			QueueMode.RandomLoop => QueueMode.Loop,
+			_ => QueueMode.RandomLoop,
+		};
+		QueueModel.Instance.SetQueueMode(nextMode);
 	}
 	public bool NewPlaylist(string name)
 	{
@@ -372,6 +412,12 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		if (index < 0 || index >= Playlists.Count) return;
 		PlaylistManager.Instance.RemovePlaylist(Playlists[index].Name);
+	}
+	public void PlayPlaylist(int index)
+	{
+		if (index < 0 || index >= Playlists.Count) return;
+		QueueModel.Instance.PlayPlaylist(Playlists[index].Name);
+		SelectedList.ShowQueue();
 	}
 	public void SelectedListRemove(int index)
 	{
