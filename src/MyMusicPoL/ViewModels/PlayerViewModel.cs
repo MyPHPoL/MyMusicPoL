@@ -435,4 +435,12 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		SelectedList.AddToPlaylist(playlistName,index);
 	}
+	public void SelectedListImport(string filename)
+	{
+		SelectedList.ImportPlaylist(filename);
+	}
+	public void SelectedListExport(string filename)
+	{
+		SelectedList.ExportPlaylist(filename);
+	}
 }

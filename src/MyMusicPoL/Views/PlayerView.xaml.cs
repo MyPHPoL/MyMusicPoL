@@ -148,6 +148,47 @@ namespace mymusicpol.Views
 			}
 		}
 
+		private void SelectedListExport_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new System.Windows.Forms.SaveFileDialog();
+				dialog.Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
+				if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				{
+					var path = dialog.FileName;
+					try
+					{
+						playerViewModel.SelectedListExport(path);
+					}
+					catch
+					{
+						MessageBox.Show("Failed to export playlist");
+					}
+				}
+			}
+		}
+		private void SelectedListImport_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new System.Windows.Forms.OpenFileDialog();
+				dialog.Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
+				if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				{
+					var path = dialog.FileName;
+					try
+					{
+						playerViewModel.SelectedListImport(path);
+					}
+					catch
+					{
+						MessageBox.Show("Failed to import playlist");
+					}
+				}
+			}
+		}
+
 
 		////only for test purposes
 		//private void shuffle_Click(object sender, RoutedEventArgs e)

@@ -249,6 +249,16 @@ internal class SelectedListViewModel : ViewModelBase
 		}
 	}
 
+	public void ExportPlaylist(string filename)
+	{
+		PlaylistManager.Instance.ExportPlaylist(Name, filename);
+	}
+
+	public void ImportPlaylist(string filename)
+	{
+		PlaylistManager.Instance.ImportPlaylist(filename);
+	}
+
 	public void ShowLibrary()
 	{
 		Name = "Library";

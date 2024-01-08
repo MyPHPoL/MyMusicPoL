@@ -318,16 +318,14 @@
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
                 <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
                 <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
+                        <Button Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
+                                <MenuItem Header="Export" Click="SelectedListExport_Click" Style="{StaticResource MenuItemStyle}"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
 
-                    <!-- you can't put 2 fonts inside the same button (or maybe you can idk) so 2 buttons with the same icon but 1 exports as JSON and the other as XML (to be changed later) -->
-                    <Button Command="{Binding ExportJSONButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Command="{Binding ExportXMLButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="100"/>

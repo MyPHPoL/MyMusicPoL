@@ -58,6 +58,19 @@ public class Playlist
 		return true;
 	}
 
+	public static Playlist? Import(string path)
+	{
+		var importer = new PlaylistImporter(path);
+		var playlist = importer.Import();
+		return playlist;
+	}
+
+	public void Export(string path)
+	{
+		var exporter = new PlaylistImporter(path);
+		exporter.Export(this);
+	}
+
 	public bool Remove(string path)
 	{
 		var status = Songs.RemoveAll(x => x.path == path);

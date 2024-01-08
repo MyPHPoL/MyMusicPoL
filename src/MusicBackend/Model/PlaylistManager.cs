@@ -183,6 +183,29 @@ public class PlaylistManager
 		}
 	}
 
+	public void ExportPlaylist(string playlistName,string path)
+	{
+		bool status = Playlists.TryGetValue(playlistName,out Playlist? playlist);
+		if (status is true && playlist is not null)
+		{
+			playlist.Export(path);
+		}
+	}
+
+	public void ImportPlaylist(string path)
+	{
+		var playlist = Playlist.Import(path);
+		if (playlist is not null)
+		{
+			var res = Playlists.TryAdd(playlist.Name,playlist);
+			if (res == true)
+			{
+				NotifyNewPlaylist(playlist.Name);
+				NotifyPlaylistChange(playlist.Name);
+			}
+		}
+	}
+
 	public Playlist? GetPlaylist(string name)
 	{
 		bool status = Playlists.TryGetValue(name,out Playlist? playlist);
