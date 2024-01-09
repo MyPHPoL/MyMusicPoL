@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace MusicBackend.Model;
-interface ImporterStrategy
+interface IPlaylistImportExport
 {
 	public string Name { get; set; }
 	public string[] Songs { get; set; }
@@ -17,7 +17,7 @@ interface ImporterStrategy
 }
 
 // must be public for xml serializer to work
-public class PlaylistXML : ImporterStrategy
+public class PlaylistXML : IPlaylistImportExport
 {
 	public string Name { get; set; }
 	public string[] Songs { get; set; }
@@ -44,7 +44,7 @@ public class PlaylistXML : ImporterStrategy
 	}
 }
 
-internal class PlaylistJSON : ImporterStrategy
+internal class PlaylistJSON : IPlaylistImportExport
 {
 	[JsonInclude]
 	public string Name { get; set; }
@@ -89,7 +89,7 @@ internal class PlaylistJSON : ImporterStrategy
 internal class PlaylistImporter
 {
 
-	ImporterStrategy strategy;
+	IPlaylistImportExport strategy;
 	string path;
 
 	public PlaylistImporter(string path)
@@ -120,7 +120,7 @@ internal class PlaylistImporter
 		var playlist = new Playlist(strategy.Name);
 		foreach (var songPath in strategy.Songs)
 		{
-			var song = Song.fromPath(songPath);
+			var song = Song.fromPath(Path.Combine(LibraryManager.MusicPath,songPath));
 			if (song is not null)
 			{
 				playlist.Songs.Add(song);
@@ -132,7 +132,8 @@ internal class PlaylistImporter
 	public void Export(Playlist playlist)
 	{
 		strategy.Name = playlist.Name;
-		strategy.Songs = playlist.Songs.Select(x => x.path).ToArray();
+		strategy.Songs = playlist.Songs.Select(x => 
+			x.path.Replace(LibraryManager.MusicPath + '\\',"")).ToArray();
 		strategy.Export(path);
 	}
 

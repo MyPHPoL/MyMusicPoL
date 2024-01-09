@@ -317,8 +317,14 @@
 
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
                 <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
-                <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
-                        <Button Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
+                <StackPanel Orientation="Horizontal" Margin="5 10 0 0">
+                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    </Button>
+                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    </Button>
+
+
+                    <Button Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
@@ -333,13 +339,13 @@
                         </Button.Resources>
                     </Button>
 
-                    <!-- filter textbox (mby ill add placeholder text later) -->
-                    <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                    <!-- filter textbox -->
+                    <TextBox Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
 
                     <!-- sort checkbox -->
                     <Label Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>

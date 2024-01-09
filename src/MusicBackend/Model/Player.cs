@@ -53,6 +53,7 @@ public class PlayerModel
 	private void attachCallbacks()
 	{
 		audioWrapper.OnPlaybackChange += (ps) => OnPlaybackChange(ps);
+		queueIterator = QueueModel.Instance.GetIterator();
 		attachOnSongEnd(OnSongEnd);
 		QueueModel.Instance.OnQueueModified += () => refreshIterator();
 		QueueModel.Instance.OnSongChange += (s) =>
