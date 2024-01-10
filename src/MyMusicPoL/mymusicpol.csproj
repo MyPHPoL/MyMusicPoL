@@ -12,7 +12,7 @@
     <DefineConstants>$(DefineConstants);DEBUGNOHWACCEL</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="assets\TEST-BOX-100px-100px.png" />
+    <None Remove="assets\default.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="assets\TEST-BOX-100px-100px.png">
+    <Resource Include="assets\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

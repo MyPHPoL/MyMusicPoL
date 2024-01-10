@@ -20,7 +20,7 @@ public class AlbumCoverManager
 	{
 		var image = new BitmapImage();
 		image.BeginInit();
-		image.UriSource = new Uri("pack://application:,,,/assets/TEST-BOX-100px-100px.png");
+		image.UriSource = new Uri("pack://application:,,,/assets/default.png");
 		image.EndInit();
 		image.Freeze();
 		covers["Unknown"] = image;
@@ -58,7 +58,7 @@ public class AlbumCoverManager
 		else
 		{
 			image.BeginInit();
-			image.UriSource = new Uri("pack://application:,,,/assets/TEST-BOX-100px-100px.png");
+			image.UriSource = new Uri("pack://application:,,,/assets/default.png");
 			image.EndInit();
 		}
 		image.Freeze();

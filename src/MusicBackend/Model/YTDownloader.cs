@@ -1,4 +1,5 @@
 ﻿using MusicBackend.Interfaces;
+using TagLib;
 using YoutubeExplode;
 using YoutubeExplode.Converter;
 
@@ -26,15 +27,16 @@ internal class YTDownloader : IYTDownloader
 		// download song
 		await this.client.Videos.DownloadAsync(url, filePath).ConfigureAwait(false);
 
-		AddTitle(filePath, title);
+		AddMetaData(filePath, title, artist);
 
 		return Song.fromPath(filePath);
 	}
 
-	private void AddTitle(string filePath, string title)
+	private void AddMetaData(string filePath, string title, string artist)
 	{
 		var file = TagLib.File.Create(filePath);
 		file.Tag.Title = title;
+		file.Tag.Performers = new string[] { artist };
 		file.Save();
 	}
 }
