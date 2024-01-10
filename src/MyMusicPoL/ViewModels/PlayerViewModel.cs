@@ -43,9 +43,20 @@ internal class PlayerViewModel : ViewModelBase
 		}
 	}
 
-	public Notify<string> TotalTime { get; set; }
+	private string fromWebText; // play from web text input
+	public string FromWebText
+	{
+		get { return fromWebText; }
+		set
+		{
+			fromWebText = value;
+			OnPropertyChanged(nameof(FromWebText));
+		}
+	}
 
-	public Notify<double> ProgressValue { get; set; } // current song progress
+	public Notify<string> TotalTime { get; set; }
+	// current song progress
+	public Notify<double> ProgressValue { get; set; } 
 	// timer for song progress
 	private DispatcherTimer timer; 
 	// hack to avoid infinite recursion
@@ -65,6 +76,7 @@ internal class PlayerViewModel : ViewModelBase
 	public ICommand ShowQueueButton { get; }
 	public ICommand ShowPlaylistCommand { get; }
 	public ICommand ShowLibaryCommand { get; }
+	public ICommand PlayFromWebCommand { get; }
 	public Notify<string> PlayPauseLabel { get; set; } = new()
 	{
 		Value = ""
@@ -145,6 +157,7 @@ internal class PlayerViewModel : ViewModelBase
 		ShowPlaylistCommand = new RelayCommand(ShowPlaylist);
 		ShowQueueButton = new RelayCommand(ShowQueue);
 		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
+		PlayFromWebCommand = new RelayCommand<string>(PlayFromWebCallback);
 		//PlaylistEditedButton = new RelayCommand<string>(EditedPlaylistCallback);
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
@@ -448,5 +461,14 @@ internal class PlayerViewModel : ViewModelBase
 	public void SelectedListExport(string filename)
 	{
 		SelectedList.ExportPlaylist(filename);
+	}
+	private void PlayFromWebCallback(string? text)
+	{
+		if (String.IsNullOrWhiteSpace(text)) return;
+		var song = Song.fromUrl(text);
+		if (song is not null)
+		{
+			QueueModel.Instance.appendSong(song);
+		}
 	}
 }

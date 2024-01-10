@@ -1,6 +1,8 @@
 ﻿using MusicBackend.Model;
 using mymusicpol.ViewModels;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace mymusicpol;
 /// <summary>
