@@ -18,6 +18,7 @@ namespace mymusicpol.Views
 		{
 			InitializeComponent();
 			QueueModel.Instance.OnSongChange += OnSongChanged;
+			PlayerModel.Instance.OnSongChange += OnSongChanged;
 			CreateCircleImage(QueueModel.Instance.currentSong());
 			visualizer = new();
 			timer = new DispatcherTimer();
@@ -165,6 +166,7 @@ namespace mymusicpol.Views
 			timer.Stop();
 			timer.Tick -= OnTimerTick;
 			QueueModel.Instance.OnSongChange -= OnSongChanged;
+			PlayerModel.Instance.OnSongChange -= OnSongChanged;
 			visualizer.Dispose();
 		}
 	}

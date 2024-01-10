@@ -183,10 +183,67 @@ public class PlaylistManager
 		}
 	}
 
+	public void ExportPlaylist(string playlistName,string path)
+	{
+		bool status = Playlists.TryGetValue(playlistName,out Playlist? playlist);
+		if (status is true && playlist is not null)
+		{
+			playlist.Export(path);
+		}
+	}
+
+	public void ImportPlaylist(string path)
+	{
+		var playlist = Playlist.Import(path);
+		if (playlist is not null)
+		{
+			var res = Playlists.TryAdd(playlist.Name,playlist);
+			if (res == true)
+			{
+				NotifyNewPlaylist(playlist.Name);
+				NotifyPlaylistChange(playlist.Name);
+			}
+		}
+	}
+
 	public Playlist? GetPlaylist(string name)
 	{
 		bool status = Playlists.TryGetValue(name,out Playlist? playlist);
 		return status is true ? playlist : null;
+	}
+
+	/// <summary>
+	/// Move song in a playlist one index up
+	/// </summary>
+	/// <param name="name">Playlist to move song in</param>
+	/// <param name="index">Index of the song to move</param>
+	public int MoveSongUp(string name, int index)
+	{
+		bool status = Playlists.TryGetValue(name,out Playlist? playlist);
+		if (status is true && playlist is not null)
+		{
+			var ret = playlist.MoveSongUp(index);
+			NotifyPlaylistChange(name);
+			return ret;
+		}
+		return -1;
+	}
+
+	/// <summary>
+	/// Move song in a playlist one index down
+	/// </summary>
+	/// <param name="name">Playlist to move song in</param>
+	/// <param name="index">Index of the song to move</param>
+	public int MoveSongDown(string name, int index)
+	{
+		bool status = Playlists.TryGetValue(name,out Playlist? playlist);
+		if (status is true && playlist is not null)
+		{
+			int ret = playlist.MoveSongDown(index);
+			NotifyPlaylistChange(name);
+			return ret;
+		}
+		return -1;
 	}
 
 }

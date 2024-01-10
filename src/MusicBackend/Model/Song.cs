@@ -51,6 +51,18 @@ public class Song
 			return null;
 		}
 	}
+	static public Song? fromUrl(string url)
+	{
+		try
+		{
+			var song = SongManager.Instance.SongFromUrl(url);
+			return song;
+		}
+		catch
+		{
+			return null;
+		}
+	}
 	public override string ToString()
 	{
 		return name;

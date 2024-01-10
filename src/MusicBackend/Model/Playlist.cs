@@ -58,6 +58,19 @@ public class Playlist
 		return true;
 	}
 
+	public static Playlist? Import(string path)
+	{
+		var importer = new PlaylistImporter(path);
+		var playlist = importer.Import();
+		return playlist;
+	}
+
+	public void Export(string path)
+	{
+		var exporter = new PlaylistImporter(path);
+		exporter.Export(this);
+	}
+
 	public bool Remove(string path)
 	{
 		var status = Songs.RemoveAll(x => x.path == path);
@@ -71,5 +84,45 @@ public class Playlist
 		}
 		Songs.RemoveAt(index);
 		return true;
+	}
+
+	public int MoveSongUp(int index)
+	{
+		if (index < 0 || index >= Songs.Count)
+		{
+			return -1;
+		}
+		var song = Songs[index];
+		Songs.RemoveAt(index);
+		if (index - 1 == -1)
+		{
+			Songs.Add(song);
+			return Songs.Count - 1;
+		}
+		else
+		{
+			Songs.Insert(index - 1, song);
+			return index - 1;
+		}
+	}
+
+	public int MoveSongDown(int index)
+	{
+		if (index < 0 || index >= Songs.Count)
+		{
+			return -1;
+		}
+		var song = Songs[index];
+		Songs.RemoveAt(index);
+		if (index + 1 > Songs.Count)
+		{
+			Songs.Insert(0,song);
+			return 0;
+		}
+		else
+		{
+			Songs.Insert(index+1, song);
+			return index + 1;
+		}
 	}
 }

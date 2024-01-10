@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using MusicBackend.Interfaces;
+using MusicBackend.Utils;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
 
-[DataContract]
 internal class QueueModelState
 {
 	[JsonInclude]
@@ -12,7 +13,16 @@ internal class QueueModelState
 	[JsonInclude]
 	public int current { get; set; } = 0;
 	[JsonInclude]
-	public bool repeat { get; set; } = false;
+	public QueueMode queueMode { get; set; } = QueueMode.Loop;
+}
+
+public enum QueueMode
+{
+	Loop,
+	OneLoop,
+	//Random,
+	RandomLoop,
+	Single,
 }
 
 public class QueueModel
@@ -20,21 +30,17 @@ public class QueueModel
 	public List<Song> songs { get; private set; } = new();
 	int current = 0;
 	public int Current { get => current; }
-	public bool repeat { get; private set; } = false;
+	public QueueMode QueueMode { get; private set; }
 	public event Action OnQueueModified = delegate { };
-	public event Action<Song> OnSongChange = delegate { };
-	public event Action<bool> OnRepeatChange = delegate { };
+	public event Action<Song?> OnSongChange = delegate { };
+	public event Action<QueueMode> OnRepeatChange = delegate { };
+	public event Action OnSkip = delegate { };
 
 	private static QueueModel? _instance;
 	public static QueueModel Instance { get => _instance ??= new QueueModel(); }
 
 	private QueueModel()
 	{
-	}
-
-	internal static void InitWithState(QueueModelState qms)
-	{
-		_instance = new QueueModel(qms);
 	}
 	private QueueModel (QueueModelState qms)
 	{
@@ -44,9 +50,23 @@ public class QueueModel
 			current = 0;
 		else
 			current = qms.current;
-		repeat = qms.repeat;
+		QueueMode = qms.queueMode;
+		//QueueMode = qms.queueMode switch 
+		//{
+		//	0 => QueueMode.Loop,
+		//	1 => QueueMode.OneLoop,
+		//	//2 => QueueMode.Random,
+		//	3 => QueueMode.RandomLoop,
+		//	4 => QueueMode.Single,
+		//	_ => QueueMode.Loop,
+		//};
 		fixupSongs();
 	}
+	internal static void InitWithState(QueueModelState qms)
+	{
+		_instance = new QueueModel(qms);
+	}
+
 	private void fixupSongs()
 	{
 		var currentCount = songs.Count;
@@ -56,10 +76,23 @@ public class QueueModel
 			current = 0;
 		}
 	}
-	public void toggleRepeat()
+
+	public void SetQueueMode(QueueMode mode)
 	{
-		repeat = !repeat;
-		OnRepeatChange(repeat);
+		QueueMode = mode;
+		OnRepeatChange(mode);
+	}
+
+	public IIterator<Song> GetIterator()
+	{
+		return QueueMode switch
+		{
+			QueueMode.Loop => new LoopIterator(this),
+			QueueMode.OneLoop => new OneLoopIterator(this),
+			QueueMode.RandomLoop => new RandomLoopIterator(this),
+			QueueMode.Single => new SingleIterator(this),
+			_ => new LoopIterator(this),
+		};
 	}
 
 	internal QueueModelState DumpState()
@@ -68,7 +101,16 @@ public class QueueModel
 		{
 			songs = songs,
 			current = current,
-			repeat = repeat,
+			queueMode = QueueMode
+			//queueMode = QueueMode switch
+			//{
+			//	QueueMode.Loop => 0,
+			//	QueueMode.OneLoop => 1,
+			//	//QueueMode.Random => 2,
+			//	QueueMode.RandomLoop => 3,
+			//	QueueMode.Single => 4,
+			//	_ => 0,
+			//}
 		};
 	}
 
@@ -97,7 +139,7 @@ public class QueueModel
 			current--;
 			if (songs.Count == 0)
 			{
-				throw new NotImplementedException("TODO: Player doesnt support not playing any song");
+				OnSongChange(null);
 			}
 
 			var curSong = currentSong();
@@ -111,8 +153,6 @@ public class QueueModel
 			}
 		}
 	}
-
-
 	public void removeSong(Song song)
 	{
 		var index = songs.Select((p, i) => (p, i)).First(p => p.p == song).i;
@@ -130,23 +170,24 @@ public class QueueModel
 	{
 		return songs.Count == 0 ? null : songs[current];
 	}
-	private static Random rng = new Random();
-	public void shuffleQueue()
-	{
-		//dont shuffle empty queue and dont invoke callbacks
-		if (songs.Count <= 1) return;
-		// Fisher-Yates shuffle
-		for (int i = songs.Count-1; i != 0; --i)
-		{
-			var j = rng.Next(i + 1);
-			(songs[i], songs[j]) = (songs[j], songs[i]);
-		}
-		OnQueueModified();
-	}
 	public void playNth(int index)
 	{
 		if (index < 0 || songs.Count < index) return;
 		current = index;
+		OnSongChange(songs[current]);
+		OnSkip();
+	}
+	public void PlayPlaylist(string playlistName)
+	{
+		var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
+		if (playlist is null) return;
+		songs.Clear();
+		foreach (var song in playlist.Songs)
+		{
+			songs.Add(song);
+		}
+		current = 0;
+		OnQueueModified();
 		OnSongChange(songs[current]);
 	}
 	public void forceNextSong()
@@ -161,17 +202,7 @@ public class QueueModel
 			current = 0;
 		}
 		OnSongChange(songs[current]);
-	} 
-	public void nextSong()
-	{
-		if (repeat && songs.Count != 0)
-		{
-			OnSongChange(songs[current]);
-		}
-		else
-		{
-			forceNextSong();
-		}
+		OnSkip();
 	} 
 	public void forcePrevSong()
 	{
@@ -185,5 +216,143 @@ public class QueueModel
 			current = songs.Count-1;
 		}
 		OnSongChange(songs[current]);
+		OnSkip();
 	} 
+	internal class LoopIterator : IIterator<Song>
+	{
+		private readonly QueueModel queueModel;
+		private int index;
+		public LoopIterator(QueueModel queueModel)
+		{
+			this.queueModel = queueModel;
+			index = queueModel.current;
+		}
+		public bool HasNext()
+		{
+			return queueModel.songs.Count != 0;
+		}
+
+		public Song Next()
+		{
+			queueModel.forceNextSong();
+			var song = queueModel.songs[queueModel.current];
+			//index++;
+			//if (index >= queueModel.songs.Count)
+			//{
+			//	index = 0;
+			//}
+			//var song = queueModel.songs[index];
+			return song;
+		}
+	}
+	internal class SingleIterator : IIterator<Song>
+	{
+		private readonly QueueModel queueModel;
+		public SingleIterator(QueueModel queueModel)
+		{
+			this.queueModel = queueModel;
+		}
+		public bool HasNext()
+		{
+			return false;
+		}
+
+		public Song Next()
+		{
+			return queueModel.songs[queueModel.current];
+		}
+	}
+	internal class OneLoopIterator : IIterator<Song>
+	{
+		private readonly QueueModel queueModel;
+		private Song song;
+		public OneLoopIterator(QueueModel queueModel)
+		{
+			this.queueModel = queueModel;
+			song = queueModel.songs[queueModel.current];
+		}
+		public bool HasNext()
+		{
+			return true;
+		}
+
+		public Song Next()
+		{
+			return song;
+		}
+	}
+
+	internal class RandomLoopIterator : IIterator<Song>
+	{
+		private readonly QueueModel queueModel;
+		private readonly Random rng = new Random();
+		private readonly List<int> indices = new();
+
+		public RandomLoopIterator(QueueModel queueModel)
+		{
+			this.queueModel = queueModel;
+			shuffle();
+		}
+		public bool HasNext()
+		{
+			return queueModel.songs.Count != 0;
+		}
+		public Song Next()
+		{
+			var song = queueModel.songs[indices[0]];
+			indices.RemoveAt(0);
+			if (indices.Count == 0)
+			{
+				shuffle();
+			}
+			return song;
+		}
+		private void shuffle()
+		{
+			for (int i = 0; i < queueModel.songs.Count; i++)
+			{
+				indices.Add(i);
+			}
+			Shuffle.ShuffleList(indices, rng);
+		}
+	}
+
+	//internal class RandomIterator : IIterator<Song>
+	//{
+	//	private readonly QueueModel queueModel;
+	//	private readonly List<Song> songs = new();
+	//	private int index;
+	//	private int startingIndex;
+	//	private bool hasLooped;
+	//	public RandomIterator(QueueModel queueModel)
+	//	{
+	//		this.queueModel = queueModel;
+	//		shuffle();
+	//	}
+	//	public bool HasNext()
+	//	{
+	//		return index == startingIndex && hasLooped;
+	//	}
+
+	//	public Song Next()
+	//	{
+	//		var song = queueModel.songs[index];
+	//		index++;
+	//		if (index == queueModel.songs.Count)
+	//		{
+	//			index = 0;
+	//			hasLooped = true;
+	//		}
+	//		return song;
+	//	}
+	//	private void shuffle()
+	//	{
+	//		foreach (var song in queueModel.songs)
+	//		{
+	//			songs.Add(song);
+	//		}
+	//		Shuffle.ShuffleList(songs, new Random());
+	//	}
+	//}
+
 }

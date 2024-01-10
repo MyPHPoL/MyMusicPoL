@@ -250,7 +250,11 @@
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
                 <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 <Label Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145"/>
+                <TextBox x:Name="fromWebBox" Text="{Binding FromWebText}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
+                    </TextBox.InputBindings>
+                </TextBox>
                 <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
                 <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
             </StackPanel>
@@ -275,6 +279,7 @@
                                     <Label.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Show" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
+                                            <MenuItem Header="Play" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
                                             <MenuItem Header="Edit name" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
                                             <MenuItem Header="Delete" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
                                         </ContextMenu>
@@ -296,51 +301,37 @@
 
             <StackPanel Grid.Row="0">
 
-                <!-- undo and redo buttons -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 20 0 0">
-                    <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </StackPanel>
-
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
                 <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
-                <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
+                <StackPanel Orientation="Horizontal" Margin="5 10 0 0">
+                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    </Button>
+                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    </Button>
 
-                    <!-- you can't put 2 fonts inside the same button (or maybe you can idk) so 2 buttons with the same icon but 1 exports as JSON and the other as XML (to be changed later) -->
-                    <Button Command="{Binding ExportJSONButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+
+                    <Button Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
+                                <MenuItem Header="Export" Click="SelectedListExport_Click" Style="{StaticResource MenuItemStyle}"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="100"/>
                             </Style>
                         </Button.Resources>
                     </Button>
-                    <Button Command="{Binding ExportXMLButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
 
-                    <!-- filter textbox (mby ill add placeholder text later) -->
-                    <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                    <!-- filter textbox -->
+                    <TextBox Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
 
                     <!-- sort checkbox -->
                     <Label Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
+                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
                     <RadioButton GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
@@ -348,7 +339,7 @@
                 </StackPanel>
 
                 <!-- song list (the same problem as with the playlist list: idk how to set float right on those buttons) -->
-                <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="403" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}">
+                <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="459" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
