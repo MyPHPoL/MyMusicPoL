@@ -310,7 +310,7 @@
                     </Button>
 
 
-                    <Button Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
+                    <Button Visibility="{Binding SelectedList.FilterVisiblity}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
@@ -326,15 +326,15 @@
                     </Button>
 
                     <!-- filter textbox -->
-                    <TextBox Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                    <TextBox Visibility="{Binding SelectedList.FilterVisiblity}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
 
                     <!-- sort checkbox -->
-                    <Label Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
+                    <Label Visibility="{Binding SelectedList.FilterVisiblity}" Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
                     <!--<RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>-->
                 </StackPanel>
 
