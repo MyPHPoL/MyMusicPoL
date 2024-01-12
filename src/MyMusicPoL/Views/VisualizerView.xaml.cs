@@ -63,6 +63,7 @@ namespace mymusicpol.Views
 				Style = SKPaintStyle.Fill,
 				Color = SKColors.HotPink
 			};
+
 			// draw rectangle for each bin starting from bottom of screen
 			// with width of 8 pixels
 
@@ -103,6 +104,13 @@ namespace mymusicpol.Views
 			if (circleImage is null)
 			{
 				circlePaint.Color = SKColors.HotPink;
+				// create circle with gradient
+				circlePaint.Shader = SKShader.CreateRadialGradient(
+					new SKPoint(width / 2, height / 2),
+					circleBump,
+					new SKColor[] { SKColors.White, SKColors.HotPink },
+					new float[] { 0.0F, 1.0F },
+					SKShaderTileMode.Clamp);
 			}
 			else
 			{

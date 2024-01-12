@@ -118,8 +118,6 @@ public class PlayerModel
 		if (audioWrapper.UpdateTime())
 			OnTimeChange(audioWrapper.currentTime());
 	}
-	// requires stopped playback
-
 	public TimeSpan songLength()
 	{
 		return audioWrapper.songLength();
@@ -148,14 +146,10 @@ public class PlayerModel
 	public void pause()
 	{
 		audioWrapper.pause();
-		//if (audioWrapper.pause() is true)
-		//	OnPlaybackChange(PlaybackState.Paused);
 	}
 	public void play()
 	{
 		audioWrapper.play();
-		//if (audioWrapper.play() is true)
-		//	OnPlaybackChange(PlaybackState.Playing);
 	}
 	public PlaybackState playbackState()
 	{
