@@ -119,10 +119,6 @@ internal class PlayerViewModel : ViewModelBase
 		{
 			var index = playerViewModel.Playlists.Select((p, i) => (p, i)).First(p => p.p.Name == name).i;
 			playerViewModel.Playlists.RemoveAt(index);
-			//if (playerViewModel.SelectedList.Name == name)
-			//{
-			//	playerViewModel.SelectedList.ClearAll();
-			//}
 		}
 	}
 
@@ -158,7 +154,6 @@ internal class PlayerViewModel : ViewModelBase
 		ShowQueueButton = new RelayCommand(ShowQueue);
 		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
 		PlayFromWebCommand = new RelayCommand<string>(PlayFromWebCallback);
-		//PlaylistEditedButton = new RelayCommand<string>(EditedPlaylistCallback);
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
 		FillPlaylists();
@@ -177,7 +172,6 @@ internal class PlayerViewModel : ViewModelBase
 			Value = formatTime(PlayerModel.Instance.songLength())
 		};
 		timeElapsed = formatTime(PlayerModel.Instance.currentTime());
-		//var curSong = QueueModel.Instance.currentSong();
 		var curSongPath = PlayerModel.Instance.currentSong();
 		if (curSongPath == null)
 		{
@@ -399,7 +393,6 @@ internal class PlayerViewModel : ViewModelBase
 		var mode = QueueModel.Instance.QueueMode;
 		var nextMode = mode switch
 		{
-			//QueueMode.Random => QueueMode.Loop,
 			QueueMode.RandomLoop => QueueMode.Loop,
 			_ => QueueMode.RandomLoop,
 		};
@@ -420,12 +413,6 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		if (SelectedIndex < 0 || SelectedIndex >= Playlists.Count) return;
 		SelectedList.ShowPlaylist(Playlists[SelectedIndex].Name);
-		//SelectedList.Name = Playlists[SelectedIndex].Name;
-		//SelectedList.Clear();
-		//foreach (var song in Playlists[SelectedIndex].Songs)
-		//{
-		//	SelectedList.Add(new(song));
-		//}
 	}
 	public void DeletePlaylist(int index)
 	{

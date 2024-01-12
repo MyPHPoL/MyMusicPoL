@@ -149,11 +149,6 @@ internal class SelectedListViewModel : ViewModelBase
 			if (IsQueue)
 				ShowQueue();
 		};
-		//QueueModel.Instance.OnSongChange += (song) =>
-		//{
-		//	if (IsQueue)
-		//		SelectedIndex = QueueModel.Instance.Current;
-		//};
 	}
 
 	private void SwapUpCallback()

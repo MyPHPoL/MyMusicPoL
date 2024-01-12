@@ -13,10 +13,6 @@ public static class PlaybackStateExtensions
 }
 internal class AudioWrapper : IDisposable
 {
-	//public event Action<PlaybackState> OnPlaybackChange = delegate { };
-	//public event Action<float> OnVolumeChange = delegate { };
-	//public event Action<TimeSpan> OnTimeChange = delegate { };
-	//private List<SampleObserver> sampleObservers = new();
 	internal event Action<float[]>? SamplesAccumulated;
 	internal Action<PlaybackState>? OnPlaybackChange = delegate { };
 	private Action? OnSongEnd = delegate { };
@@ -131,7 +127,6 @@ internal class AudioWrapper : IDisposable
 	{
 		if (audioFileReader is not null)
 			return true;
-			//OnTimeChange(audioFileReader.CurrentTime);
 		return false;
 	}
 
@@ -197,7 +192,6 @@ internal class AudioWrapper : IDisposable
 		{
 			waveOut.Volume = vol;
 			return true;
-			//OnVolumeChange(vol);
 		}
 		return false;
 	}
@@ -208,7 +202,6 @@ internal class AudioWrapper : IDisposable
 		{
 			waveOut.Volume = vol;
 			return true;
-			//OnVolumeChange(vol);
 		}
 		return false;
 	}
@@ -219,7 +212,6 @@ internal class AudioWrapper : IDisposable
 		{
 			audioFileReader.CurrentTime = time;
 			return true;
-			//OnTimeChange(audioFileReader.CurrentTime);
 		}
 		return false;
 	}
@@ -232,7 +224,6 @@ internal class AudioWrapper : IDisposable
 		{
 			audioFileReader.CurrentTime = ct;
 			return true;
-			//OnTimeChange(audioFileReader.CurrentTime);
 		}
 		return false;
 	}

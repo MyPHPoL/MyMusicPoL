@@ -22,7 +22,7 @@ namespace mymusicpol.Views
 			CreateCircleImage(QueueModel.Instance.currentSong());
 			visualizer = new();
 			timer = new DispatcherTimer();
-			timer.Interval = TimeSpan.FromMilliseconds(25);
+			timer.Interval = TimeSpan.FromMilliseconds(16);
 			timer.Tick += OnTimerTick;
 			timer.Start();
 		}
