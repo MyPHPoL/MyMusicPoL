@@ -20,7 +20,8 @@ internal class AudioWrapper : IDisposable
 	internal event Action<float[]>? SamplesAccumulated;
 	internal Action<PlaybackState>? OnPlaybackChange = delegate { };
 	private Action? OnSongEnd = delegate { };
-	AudioFileReader? audioFileReader;
+	MediaFoundationReader? audioFileReader;
+	private string currentFileName = "";
 	WaveOutEvent waveOut;
 	SampleAccumulator? sampleAccumulator;
 
@@ -101,14 +102,23 @@ internal class AudioWrapper : IDisposable
 
 	private void waveInit(string filename)
 	{
-		audioFileReader = new(filename);
-		sampleAccumulator = new(audioFileReader, BUFFER_SIZE);
-		sampleAccumulator.SamplesAccumulated +=
-			(s, e) =>
-			{
-				SamplesAccumulated?.Invoke(e);
-			};
-		waveOut.Init(sampleAccumulator);
+		try
+		{
+			audioFileReader = new(filename);
+			currentFileName = filename;
+			sampleAccumulator = new(audioFileReader.ToSampleProvider(), BUFFER_SIZE);
+			sampleAccumulator.SamplesAccumulated +=
+				(s, e) =>
+				{
+					SamplesAccumulated?.Invoke(e);
+				};
+			waveOut.Init(sampleAccumulator);
+		}
+		catch
+		{
+			currentFileName = "";
+			audioFileReader = null;
+		}
 	}
 	public void reset()
 	{
@@ -136,7 +146,7 @@ internal class AudioWrapper : IDisposable
 	public string? currentSong()
 	{
 		if (audioFileReader is null) return null;
-		return audioFileReader.FileName;
+		return currentFileName;
 	}
 	/// <summary>
 	/// Returns with playback enabled
