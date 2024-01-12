@@ -57,7 +57,6 @@ namespace mymusicpol.Views
 				Color = SKColors.White,
 				TextSize = 20
 			};
-			canvas.DrawText($"Frame: {counter++}", 0, 20, textPaint);
 
 			var fillPaint = new SKPaint
 			{

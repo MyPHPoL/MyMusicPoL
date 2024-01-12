@@ -254,6 +254,7 @@ internal class SelectedListViewModel : ViewModelBase
 			var song = Song.fromPath(Items[index].path);
 			if (song is null) return;
 			QueueModel.Instance.appendSong(song);
+			ShowQueue();
 		}
 		else
 		{
