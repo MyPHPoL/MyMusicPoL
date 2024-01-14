@@ -5,6 +5,7 @@ using SkiaSharp;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace mymusicpol.Views
@@ -33,6 +34,7 @@ namespace mymusicpol.Views
 		SKMatrix scaleMatrix;
 		SKBitmap? circleImage;
 		SKShader circleShader;
+		string songTitle = "";
 
 		private void OnTimerTick(object? s,EventArgs e)
 		{
@@ -50,19 +52,24 @@ namespace mymusicpol.Views
 			var width = e.Info.Width;
 			var height = e.Info.Height;
 
-			// draw text in top left corner
-			var textPaint = new SKPaint
-			{
-				Style = SKPaintStyle.Fill,
-				Color = SKColors.White,
-				TextSize = 20
-			};
+
 
 			var fillPaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
 				Color = SKColors.HotPink
 			};
+
+			// draw text in top left corner
+			var textPaint = new SKPaint
+			{
+				Style = SKPaintStyle.Fill,
+				Color = SKColors.White,
+				TextSize = 20,
+				IsAntialias = true,
+				TextAlign = SKTextAlign.Center
+		};
+			canvas.DrawText(songTitle, width / 2f, height-10, textPaint);
 
 			// draw rectangle for each bin starting from bottom of screen
 			// with width of 8 pixels
@@ -141,6 +148,15 @@ namespace mymusicpol.Views
 
 		void CreateCircleImage(Song? song)
 		{
+			if (song?.name is null)
+			{
+				this.songTitle = "";
+			}
+			else
+			{
+				this.songTitle = song.name;
+			}
+
 			if (song?.Album.Cover is null)
 			{
 				this.circleImage = null;
@@ -168,6 +184,7 @@ namespace mymusicpol.Views
 			}
 
 		}
+
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			timer.Stop();
