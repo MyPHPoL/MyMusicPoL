@@ -18,10 +18,11 @@ namespace mymusicpol.Views
 		{
 			InitializeComponent();
 			QueueModel.Instance.OnSongChange += OnSongChanged;
+			PlayerModel.Instance.OnSongChange += OnSongChanged;
 			CreateCircleImage(QueueModel.Instance.currentSong());
 			visualizer = new();
 			timer = new DispatcherTimer();
-			timer.Interval = TimeSpan.FromMilliseconds(25);
+			timer.Interval = TimeSpan.FromMilliseconds(16);
 			timer.Tick += OnTimerTick;
 			timer.Start();
 		}
@@ -56,13 +57,13 @@ namespace mymusicpol.Views
 				Color = SKColors.White,
 				TextSize = 20
 			};
-			canvas.DrawText($"Frame: {counter++}", 0, 20, textPaint);
 
 			var fillPaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
 				Color = SKColors.HotPink
 			};
+
 			// draw rectangle for each bin starting from bottom of screen
 			// with width of 8 pixels
 
@@ -103,6 +104,13 @@ namespace mymusicpol.Views
 			if (circleImage is null)
 			{
 				circlePaint.Color = SKColors.HotPink;
+				// create circle with gradient
+				circlePaint.Shader = SKShader.CreateRadialGradient(
+					new SKPoint(width / 2, height / 2),
+					circleBump,
+					new SKColor[] { SKColors.White, SKColors.HotPink },
+					new float[] { 0.0F, 1.0F },
+					SKShaderTileMode.Clamp);
 			}
 			else
 			{
@@ -165,6 +173,7 @@ namespace mymusicpol.Views
 			timer.Stop();
 			timer.Tick -= OnTimerTick;
 			QueueModel.Instance.OnSongChange -= OnSongChanged;
+			PlayerModel.Instance.OnSongChange -= OnSongChanged;
 			visualizer.Dispose();
 		}
 	}

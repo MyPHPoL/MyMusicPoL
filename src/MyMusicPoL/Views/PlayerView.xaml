@@ -30,6 +30,90 @@
             </Style.Triggers>
         </Style>
 
+        <Style TargetType="{x:Type ToolTip}">
+            <Setter Property="BorderBrush" Value="#af7ac5"></Setter>
+            <Setter Property="Background" Value="#202124"></Setter>
+            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="FontSize" Value="14"></Setter>
+            <Setter Property="FontFamily" Value="{StaticResource MainFont}"></Setter>
+        </Style>
+
+
+        <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid x:Name="Grid">
+                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="Transparent" />
+                            <Border x:Name="Rectangle1" CornerRadius="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Background="{TemplateBinding Background}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Tag" Value="Horizontal">
+                                <Setter TargetName="Rectangle1" Property="Width" Value="Auto" />
+                                <Setter TargetName="Rectangle1" Property="Height" Value="7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--ScrollBars-->
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
+            <Setter Property="Foreground" Value="#cacfd2" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot" Width="8" Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.00001*" />
+                            </Grid.RowDefinitions>
+                            <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true" Focusable="false">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" Style="{DynamicResource ScrollThumbs}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton x:Name="PageUp" Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
+                                </Track.IncreaseRepeatButton>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton x:Name="PageDown" Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
+                                </Track.DecreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                <Setter Value="{DynamicResource ButtonSelectBrush}" TargetName="Thumb" Property="Background" />
+                            </Trigger>
+                            <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                <Setter Value="{DynamicResource DarkBrush}" TargetName="Thumb" Property="Background" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="GridRoot" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="PART_Track" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Width" Value="Auto" />
+                                <Setter Property="Height" Value="8" />
+                                <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
+                                <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
+                                <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
             <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -189,7 +273,7 @@
 
             <!-- visualizer, queue and volume slider -->
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button Click="VisualizerClick" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                <Button ToolTip="Open Visualizer" Click="VisualizerClick" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="100"/>
@@ -197,7 +281,7 @@
                     </Button.Resources>
                 </Button>
 
-                <Button Height="35" Width="35" Command="{Binding ShowQueueButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                <Button ToolTip="Open Queue" Height="35" Width="35" Command="{Binding ShowQueueButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="100"/>
@@ -250,8 +334,12 @@
             <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
                 <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 <Label Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145"/>
-                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                <TextBox x:Name="fromWebBox" Text="{Binding FromWebText}" Background="#202124" Foreground="#ecf0f1" Height="35px" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
                 <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
             </StackPanel>
 
@@ -263,11 +351,11 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                     <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                    <Button Command="{Binding NewPlaylistButton}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                    <Button Click="NewPlaylist_Click" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 </StackPanel>
 
                 <!-- playlist list (select, edit name, delete)-->
-                <ListBox x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListBox ToolTip="Left click to open playlist&#x0a;Right click to open additional context menu" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Width="418">
@@ -275,6 +363,7 @@
                                     <Label.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Show" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
+                                            <MenuItem Header="Play" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
                                             <MenuItem Header="Edit name" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
                                             <MenuItem Header="Delete" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
                                         </ContextMenu>
@@ -296,59 +385,44 @@
 
             <StackPanel Grid.Row="0">
 
-                <!-- undo and redo buttons -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 20 0 0">
-                    <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Command="{Binding UndoButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </StackPanel>
-
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
                 <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20 0 0 0"/>
-                <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
+                <StackPanel Orientation="Horizontal" Margin="5 10 0 0">
+                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    </Button>
+                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    </Button>
 
-                    <!-- you can't put 2 fonts inside the same button (or maybe you can idk) so 2 buttons with the same icon but 1 exports as JSON and the other as XML (to be changed later) -->
-                    <Button Command="{Binding ExportJSONButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
+                    <Button ToolTip="Left click to export&#x0a;Right click to open additional context menu" Visibility="{Binding SelectedList.FilterVisiblity}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
+                                <MenuItem Header="Export" Click="SelectedListExport_Click" Style="{StaticResource MenuItemStyle}"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="100"/>
                             </Style>
                         </Button.Resources>
                     </Button>
-                    <Button Command="{Binding ExportXMLButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="20 0 0 0">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
 
-                    <!-- filter textbox (mby ill add placeholder text later) -->
-                    <TextBox Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                    <!-- filter textbox -->
+                    <TextBox Visibility="{Binding SelectedList.FilterVisiblity}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
 
                     <!-- sort checkbox -->
-                    <Label Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
-                    <RadioButton GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
+                    <Label Visibility="{Binding SelectedList.FilterVisiblity}" Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
                     <!--<RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>-->
                 </StackPanel>
 
                 <!-- song list (the same problem as with the playlist list: idk how to set float right on those buttons) -->
-                <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="403" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}">
+                <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="459" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}" ToolTip='Double click to instantly add to queue &#x0a;Right click to open additional context menu'>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

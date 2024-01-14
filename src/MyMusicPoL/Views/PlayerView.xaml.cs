@@ -74,12 +74,39 @@ namespace mymusicpol.Views
 				}
 			}
 		}
-
+		private void NewPlaylist_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new InputBoxView("Enter new playlist name");
+				dialog.ShowDialog();
+				if (dialog.TextBody is not null)
+				{
+					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
+					{
+						MessageBox.Show($"Cannot name playlist as {dialog.TextBody}");
+						return;
+					}
+					var res = playerViewModel.NewPlaylist(dialog.TextBody);
+					if (res is false)
+					{
+						MessageBox.Show($"Playlist {dialog.TextBody} already exists");
+					}
+				}
+			}
+		}
 		private void MenuItemDelete_Click(object sender, RoutedEventArgs e)
 		{
             if (DataContext is PlayerViewModel playerViewModel)
             {
                 playerViewModel.DeletePlaylist(PlaylistListBox.SelectedIndex);
+			}
+		}
+		private void MenuItemPlay_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				playerViewModel.PlayPlaylist(PlaylistListBox.SelectedIndex);
 			}
 		}
 		private void SelectedListRemove_Click(object sender, RoutedEventArgs e)
@@ -121,62 +148,45 @@ namespace mymusicpol.Views
 			}
 		}
 
-
-		////only for test purposes
-		//private void shuffle_Click(object sender, RoutedEventArgs e)
-		//{
-		//	if (shuffle.Background.ToString() == "#FFCACFD2")
-		//	{
-		//		shuffle.Background = (Brush)(new BrushConverter().ConvertFrom("#d2b4de"));
-		//	}
-		//	else if (shuffle.Background.ToString() == "#FFD2B4DE")
-		//	{
-		//		shuffle.Background = (Brush)(new BrushConverter().ConvertFrom("#cacfd2"));
-		//	}
-		//}
-
-		//private void repeat_Click(object sender, RoutedEventArgs e)
-		//{
-		//	// if repeat is disabled
-		//	if (repeat.Background.ToString() == "#FFCACFD2" && repeat.Content.ToString() == "")
-		//	{
-		//		repeat.Background = (Brush)(new BrushConverter().ConvertFrom("#d2b4de"));
-		//	}
-		//	// if repeat is enabled
-		//	else if (repeat.Background.ToString() == "#FFD2B4DE" && repeat.Content.ToString() == "")
-		//	{
-		//		repeat.Content = "";
-		//	}
-		//	// if repeat is loop song
-		//	else if (repeat.Background.ToString() == "#FFD2B4DE" && repeat.Content.ToString() == "")
-		//	{
-		//		repeat.Content = "";
-		//		repeat.Background = (Brush)(new BrushConverter().ConvertFrom("#cacfd2"));
-		//	}
-		//}
-
-		//private void play_pause_Click(object sender, RoutedEventArgs e)
-		//{
-		//	if (play_pause.Content.ToString() == "")
-		//	{
-		//		play_pause.Content = "";
-		//	}
-		//	else if (play_pause.Content.ToString() == "")
-		//	{
-		//		play_pause.Content = "";
-		//	}
-		//}
-
-		//private void volume_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		//{
-		//	if (volume.Value == 0)
-		//	{
-		//		volIcon.Content = "";
-		//	}
-		//	else
-		//	{
-		//		volIcon.Content = "";
-		//	}
-		//}
+		private void SelectedListExport_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new System.Windows.Forms.SaveFileDialog();
+				dialog.Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
+				if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				{
+					var path = dialog.FileName;
+					try
+					{
+						playerViewModel.SelectedListExport(path);
+					}
+					catch
+					{
+						MessageBox.Show("Failed to export playlist");
+					}
+				}
+			}
+		}
+		private void SelectedListImport_Click(object sender, RoutedEventArgs e)
+		{
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+				var dialog = new System.Windows.Forms.OpenFileDialog();
+				dialog.Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
+				if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				{
+					var path = dialog.FileName;
+					try
+					{
+						playerViewModel.SelectedListImport(path);
+					}
+					catch
+					{
+						MessageBox.Show("Failed to import playlist");
+					}
+				}
+			}
+		}
 	}
 }

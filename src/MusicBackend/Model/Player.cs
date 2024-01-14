@@ -1,11 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using MusicBackend.Interfaces;
 using System.Text.Json.Serialization;
-using System.Timers;
-using MusicBackend.Utils;
-using NAudio.Extras;
-using NAudio.Wave;
 
 namespace MusicBackend.Model;
 
@@ -18,15 +12,6 @@ internal class PlayerModelState
 	[JsonInclude]
 	public string? currentSong { get; set; } = null;
 }
-public enum PlaybackState { Stopped, Playing, Paused }
-
-public static class PlaybackStateExtensions
-{
-	public static bool isPlaying(this PlaybackState ps)
-	{
-		return ps == PlaybackState.Playing;
-	}
-}
 
 public interface SampleObserver
 {
@@ -38,14 +23,10 @@ public class PlayerModel
 	public event Action<PlaybackState> OnPlaybackChange = delegate { };
 	public event Action<float> OnVolumeChange = delegate { };
 	public event Action<TimeSpan> OnTimeChange = delegate { };
+	public event Action<Song?> OnSongChange = delegate { };
 	//private List<SampleObserver> sampleObservers = new();
-	public event Action<float[]>? SamplesAccumulated;
-	AudioFileReader? audioFileReader;
-	WaveOutEvent waveOut;
-	SampleAccumulator? sampleAccumulator;
-	internal const int BUFFER_SIZE = 4096;
-	// workaround for weird design of stop events
-	private string? fileNameToSet = null;
+	internal AudioWrapper audioWrapper;
+	private IIterator<Song> queueIterator;
 
 	private static PlayerModel? _instance;
 	public static PlayerModel Instance
@@ -60,21 +41,44 @@ public class PlayerModel
 
 	private PlayerModel()
 	{
-		waveOut = new();
+		audioWrapper = new();
+		attachCallbacks();
 	}
 	private PlayerModel(PlayerModelState a)
 	{
-		waveOut = new();
-		waveOut.Volume = a.volume;
-		try
+		audioWrapper = new (a.volume, a.currentTime, a.currentSong);
+		attachCallbacks();
+	}
+
+	private void attachCallbacks()
+	{
+		audioWrapper.OnPlaybackChange += (ps) => OnPlaybackChange(ps);
+		queueIterator = QueueModel.Instance.GetIterator();
+		attachOnSongEnd(OnSongEnd);
+		QueueModel.Instance.OnQueueModified += () => refreshIterator();
+		QueueModel.Instance.OnSongChange += (s) =>
 		{
-			if (!string.IsNullOrEmpty(a.currentSong))
-			{
-				waveInit(a.currentSong);
-			}
-			audioFileReader.CurrentTime = a.currentTime;
+			selectSong(s?.path);
+		};
+		QueueModel.Instance.OnRepeatChange += (q) => refreshIterator();
+		QueueModel.Instance.OnSkip += () => refreshIterator();
+	}
+
+	private void refreshIterator() => queueIterator = QueueModel.Instance.GetIterator();
+
+	private void OnSongEnd()
+	{
+		if (queueIterator.HasNext())
+		{
+			var song = queueIterator.Next();
+			selectSong(song.path);
+			OnSongChange(song);
 		}
-		catch { }
+		else
+		{
+			audioWrapper.reset();
+			OnPlaybackChange(PlaybackState.Stopped);
+		}
 	}
 
 	//public void Subscribe(SampleObserver observer)
@@ -92,162 +96,89 @@ public class PlayerModel
 	//			observer.SamplesNotify(samples);
 	//		}
 	//}
-
-	/**
-	 * @brief For the currently playing song returns:
-	 * - sample rate
-	 * - bits per sample
-	 * - number of channels
-	 * all zero if no song is selected
-	 */
-	public (int,int,int) WaveFormat()
-	{
-		if (sampleAccumulator is null)
-		{
-			return (0, 0, 0);
-		}
-		var wf = sampleAccumulator.WaveFormat;
-		return (wf.SampleRate, wf.BitsPerSample, wf.Channels);
-	}
 	internal PlayerModelState DumpState()
 	{
-		var ct = audioFileReader?.CurrentTime ?? TimeSpan.Zero;
+		var ct = audioWrapper.currentTime();
 		ct = TimeSpan.FromSeconds(Math.Floor(ct.TotalSeconds));
 		return new PlayerModelState()
 		{
-			volume = waveOut.Volume,
+			volume = audioWrapper.currentVolume(),
 			currentTime = ct,
-			currentSong = audioFileReader?.FileName ?? string.Empty
+			currentSong = audioWrapper.currentSong()
 		};
 	}
 
 	public void attachOnSongEnd(Action fn)
 	{
-		//callback is shared for waveout.Stop() and end of file
-		waveOut.PlaybackStopped += (arg1, arg2) =>
-		{
-			if (fileNameToSet is not null)
-			{
-				waveInit(fileNameToSet);
-				fileNameToSet = null;
-				play();
-			}
-			else
-			{
-				fn();
-			}
-		};
-	}
-	private void waveInit(string filename)
-	{
-		audioFileReader = new(filename);
-		sampleAccumulator = new(audioFileReader, BUFFER_SIZE);
-		sampleAccumulator.SamplesAccumulated +=
-			(s, e) =>
-			{
-				SamplesAccumulated?.Invoke(e);
-			};
-		waveOut.Init(sampleAccumulator);
+		audioWrapper.attachOnSongEnd(fn);
 	}
 
 	public void UpdateTime()
 	{
-		if (audioFileReader is not null)
-			OnTimeChange(audioFileReader.CurrentTime);
+		if (audioWrapper.UpdateTime())
+			OnTimeChange(audioWrapper.currentTime());
 	}
-	// requires stopped playback
-
 	public TimeSpan songLength()
 	{
-		if (audioFileReader is null) return TimeSpan.Zero;
-		return audioFileReader.TotalTime;
+		return audioWrapper.songLength();
 	}
 
-	public string currentSong()
+	public string? currentSong()
 	{
-		if (audioFileReader is null) return string.Empty;
-		return audioFileReader.FileName;
+		return audioWrapper.currentSong();
 	}
 	// returns with playback enabled
-	public void selectSong(string name)
+	public void selectSong(string? name)
 	{
-		if (audioFileReader is null || waveOut.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
+		if (name is null)
 		{
-			waveInit(name);
-			//var fileReader = new AudioFileReader(name);
-			//waveOut.Init(fileReader);
-			//audioFileReader = fileReader;
-			play();
+			audioWrapper.reset();
 		}
 		else
 		{
-			fileNameToSet = name;
-			waveOut.Stop();
+			audioWrapper.selectSong(name);
 		}
 	}
 	public TimeSpan currentTime()
 	{
-		if (audioFileReader is null) return TimeSpan.Zero;
-		return audioFileReader.CurrentTime;
+		return audioWrapper.currentTime();
 	}
 	public void pause()
 	{
-		if (audioFileReader is null) return;
-		waveOut.Pause();
-		OnPlaybackChange(PlaybackState.Paused);
+		audioWrapper.pause();
 	}
 	public void play()
 	{
-		if (audioFileReader is null) return;
-		waveOut.Play();
-		OnPlaybackChange(PlaybackState.Playing);
+		audioWrapper.play();
 	}
 	public PlaybackState playbackState()
 	{
-		return (PlaybackState)waveOut.PlaybackState;
+		return audioWrapper.playbackState();
 	}
 	public float currentVolume()
 	{
-		return waveOut.Volume;
+		return audioWrapper.currentVolume();
 	}
 	public void addVolume(float delta)
 	{
-		var vol = float.Round(waveOut.Volume + delta, 2);
-		if (vol >= 0 && vol <= 1.0F)
-		{
-			waveOut.Volume = vol;
-			OnVolumeChange(vol);
-		}
+		if (audioWrapper.addVolume(delta) is true)
+			OnVolumeChange(audioWrapper.currentVolume());
 	}
 
 	public void setVolume(float vol)
 	{
-		if (vol >= 0 && vol <= 1.0F)
-		{
-			waveOut.Volume = vol;
-			OnVolumeChange(vol);
-		}
+		if (audioWrapper.setVolume(vol) is true)
+			OnVolumeChange(audioWrapper.currentVolume());
 	}
 	public void setTime(TimeSpan time)
 	{
-		if (audioFileReader is null) return;
-		if (time >= TimeSpan.Zero && time <= audioFileReader.TotalTime)
-		{
-			audioFileReader.CurrentTime = time;
-			OnTimeChange(audioFileReader.CurrentTime);
-		}
+		if (audioWrapper.setTime(time) is true)
+			OnTimeChange(audioWrapper.currentTime());
 	}
 
 	public void addTime(float delta)
 	{
-		if (audioFileReader is null) return;
-		var ct = audioFileReader.CurrentTime + TimeSpan.FromSeconds(delta);
-		//if (delta > 0 && audioFileReader.CurrentTime < audioFileReader.TotalTime
-		// || delta < 0 && audioFileReader.CurrentTime > TimeSpan.FromSeconds(float.Abs(delta)))
-		if (ct >= TimeSpan.Zero && audioFileReader.CurrentTime <= audioFileReader.TotalTime)
-		{
-			audioFileReader.CurrentTime = ct;
-			OnTimeChange(audioFileReader.CurrentTime);
-		}
+		if (audioWrapper.addTime(delta) is true)
+			OnTimeChange(audioWrapper.currentTime());
 	}
 }

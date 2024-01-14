@@ -7,12 +7,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <Configurations>Debug;Release;DebugNoHwAccel</Configurations>
+    <ApplicationIcon>assets\default.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugNoHwAccel|AnyCPU'">
     <DefineConstants>$(DefineConstants);DEBUGNOHWACCEL</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="assets\TEST-BOX-100px-100px.png" />
+    <None Remove="assets\default.ico" />
+    <None Remove="assets\default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\default.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="assets\TEST-BOX-100px-100px.png">
+    <Resource Include="assets\default.ico" />
+    <Resource Include="assets\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

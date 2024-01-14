@@ -1,10 +1,15 @@
-﻿namespace MusicBackend.Model;
+﻿using MusicBackend.Interfaces;
+
+namespace MusicBackend.Model;
+
 internal class SongManager
 {
 	// cache album name -> album
 	private readonly Dictionary<string, SongAlbum> albums = new();
 	// cache path -> song
 	private readonly Dictionary<string, Song> songs = new();
+	// yt downloader
+	private IYTDownloader downloader = new YTDownloaderCache(new YTDownloader());
 
 	private static SongManager? instance;
 	public static SongManager Instance
@@ -15,6 +20,20 @@ internal class SongManager
 	private SongManager()
 	{
 		albums.Add("Unknown", new SongAlbum() { Cover = null, Name = "Unkown"});
+	}
+
+	internal void InitYtCache(YTDownloaderCacheState state)
+	{
+		downloader = new YTDownloaderCache(new YTDownloader(), state);
+	}
+
+	internal YTDownloaderCacheState? DumpYtCache()
+	{
+		if (downloader is YTDownloaderCache cache)
+		{
+			return cache.DumpState();
+		}
+		return null;
 	}
 
 	public Song SongFromPath(string path)
@@ -60,6 +79,13 @@ internal class SongManager
 			albums.Add(albumName, album);
 			return album;
 		}
+	}
+
+	public Song SongFromUrl(string url)
+	{
+		var songTask = Task.Run(async () => { return await downloader.DownloadVideoAsync(url).ConfigureAwait(false); });
+		songTask.Wait();
+		return songTask.Result;
 	}
 
 }

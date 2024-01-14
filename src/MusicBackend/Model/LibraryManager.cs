@@ -13,6 +13,7 @@ public class LibraryManager
 {
 	private static LibraryManager? instance;
 	public static LibraryManager Instance { get => instance ??= new(); }
+	public static string MusicPath { get => Environment.GetFolderPath(Environment.SpecialFolder.MyMusic); }
 
 	public Dictionary<string,Song> Songs { get; private set; } = new();
 	private object _songsLock = new();
@@ -22,7 +23,7 @@ public class LibraryManager
 
 	private LibraryManager()
 	{
-		var musicPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+		var musicPath = LibraryManager.MusicPath;
 		// initialize fs watcher
 		fsWatcher.Path = musicPath;
 		fsWatcher.IncludeSubdirectories = true;

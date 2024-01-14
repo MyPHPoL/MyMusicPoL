@@ -16,6 +16,8 @@ public class Serializer
     internal PlayerModelState? PlayerState { get; set; }
     [JsonInclude]
     internal PlaylistManagerState? PlaylistState {  get; set; }
+    [JsonInclude]
+    internal YTDownloaderCacheState? YTDownloaderCacheState { get; set; }
     public static void Deserialize()
     {
         Serializer appState;
@@ -45,6 +47,10 @@ public class Serializer
         {
 			PlaylistManager.InitWithState(appState.PlaylistState);
 		}
+        if (appState.YTDownloaderCacheState is not null)
+        {
+            SongManager.Instance.InitYtCache(appState.YTDownloaderCacheState);
+        }
     }
 
     private static (string,JsonSerializerOptions) CreateConfig()
@@ -70,7 +76,8 @@ public class Serializer
         {
 			QueueState = QueueModel.Instance.DumpState(),
 			PlayerState = PlayerModel.Instance.DumpState(),
-			PlaylistState = PlaylistManager.Instance.DumpState()
+			PlaylistState = PlaylistManager.Instance.DumpState(),
+            YTDownloaderCacheState = SongManager.Instance.DumpYtCache()
 		};
 
 		var str = JsonSerializer.Serialize(appState,jsonOptions);

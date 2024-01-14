@@ -21,8 +21,8 @@ public sealed class Visualizer : IDisposable
 
 	public Visualizer()
 	{
-		PlayerModel.Instance.SamplesAccumulated += SamplesNotify;
-		var bufferLength = PlayerModel.BUFFER_SIZE;
+		PlayerModel.Instance.audioWrapper.SamplesAccumulated += SamplesNotify;
+		var bufferLength = AudioWrapper.BUFFER_SIZE;
 		CreateFilters(bufferLength);
 		shouldUpdate = true;
 	}
@@ -124,7 +124,7 @@ public sealed class Visualizer : IDisposable
 
 	public void Dispose()
 	{
-		PlayerModel.Instance.SamplesAccumulated -= SamplesNotify;
+		PlayerModel.Instance.audioWrapper.SamplesAccumulated -= SamplesNotify;
 		GC.SuppressFinalize(this);
 	}
 }
