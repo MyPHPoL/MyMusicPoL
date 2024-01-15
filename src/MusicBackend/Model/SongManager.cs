@@ -22,6 +22,13 @@ internal class SongManager
 		albums.Add("Unknown", new SongAlbum() { Cover = null, Name = "Unkown"});
 	}
 
+	private class SongAlbum : ISongAlbum
+	{
+		public SongAlbum() { }
+		public string Name { get; init; }
+		public byte[]? Cover { get; init; }
+	}
+
 	internal void InitYtCache(YTDownloaderCacheState state)
 	{
 		downloader = new YTDownloaderCache(new YTDownloader(), state);

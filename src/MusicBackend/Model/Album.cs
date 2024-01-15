@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MusicBackend.Model;
-public class SongAlbum
+
+public interface ISongAlbum
 {
-	internal SongAlbum() { }
-	public string Name { get; init; }
-	public byte[]? Cover { get; init; }
+	string Name { get; }
+	byte[]? Cover { get; }
 }

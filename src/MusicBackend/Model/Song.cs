@@ -13,7 +13,7 @@ public class Song
 	[JsonIgnore]
 	public TimeSpan length { get; internal set; }
 	[JsonIgnore]
-	public SongAlbum Album { get; internal set; }
+	public ISongAlbum Album { get; internal set; }
 
 	internal Song()
 	{
