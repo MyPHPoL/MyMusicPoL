@@ -51,15 +51,6 @@ public class QueueModel
 		else
 			current = qms.current;
 		QueueMode = qms.queueMode;
-		//QueueMode = qms.queueMode switch 
-		//{
-		//	0 => QueueMode.Loop,
-		//	1 => QueueMode.OneLoop,
-		//	//2 => QueueMode.Random,
-		//	3 => QueueMode.RandomLoop,
-		//	4 => QueueMode.Single,
-		//	_ => QueueMode.Loop,
-		//};
 		fixupSongs();
 	}
 	internal static void InitWithState(QueueModelState qms)
@@ -102,15 +93,6 @@ public class QueueModel
 			songs = songs,
 			current = current,
 			queueMode = QueueMode
-			//queueMode = QueueMode switch
-			//{
-			//	QueueMode.Loop => 0,
-			//	QueueMode.OneLoop => 1,
-			//	//QueueMode.Random => 2,
-			//	QueueMode.RandomLoop => 3,
-			//	QueueMode.Single => 4,
-			//	_ => 0,
-			//}
 		};
 	}
 
@@ -236,12 +218,6 @@ public class QueueModel
 		{
 			queueModel.forceNextSong();
 			var song = queueModel.songs[queueModel.current];
-			//index++;
-			//if (index >= queueModel.songs.Count)
-			//{
-			//	index = 0;
-			//}
-			//var song = queueModel.songs[index];
 			return song;
 		}
 	}

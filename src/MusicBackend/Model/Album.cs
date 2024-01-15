@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace MusicBackend.Model;
 public class SongAlbum
 {
+	internal SongAlbum() { }
 	public string Name { get; init; }
 	public byte[]? Cover { get; init; }
 }
