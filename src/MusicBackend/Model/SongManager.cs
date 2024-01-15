@@ -4,8 +4,6 @@ namespace MusicBackend.Model;
 
 internal class SongManager
 {
-	// cache album name -> album
-	private readonly Dictionary<string, SongAlbum> albums = new();
 	// cache path -> song
 	private readonly Dictionary<string, Song> songs = new();
 	// yt downloader
@@ -19,14 +17,6 @@ internal class SongManager
 
 	private SongManager()
 	{
-		albums.Add("Unknown", new SongAlbum() { Cover = null, Name = "Unkown"});
-	}
-
-	private class SongAlbum : ISongAlbum
-	{
-		public SongAlbum() { }
-		public string Name { get; init; }
-		public byte[]? Cover { get; init; }
 	}
 
 	internal void InitYtCache(YTDownloaderCacheState state)
@@ -61,30 +51,10 @@ internal class SongManager
 				path = System.IO.Path.GetFullPath(path),
 				length = tagFile.Properties.Duration,
 				artist = tagFile.Tag.FirstPerformer is null ? "Unknown" : tagFile.Tag.FirstPerformer,
-				Album = GetAlbum(tagFile)
+				Album = SongAlbum.GetAlbum(tagFile)
 			};
 			songs.Add(path, song);
 			return song;
-		}
-	}
-
-	private SongAlbum GetAlbum(TagLib.File file)
-	{
-		var albumName = file.Tag.Album is null ? "Unknown" : file.Tag.Album;
-
-		if (albums.ContainsKey(albumName))
-		{
-			return albums[albumName];
-		}
-		else
-		{
-			var album = new SongAlbum()
-			{
-				Name = albumName,
-				Cover = file.Tag.Pictures.Length > 0 ? file.Tag.Pictures[0].Data.Data : null
-			};
-			albums.Add(albumName, album);
-			return album;
 		}
 	}
 
