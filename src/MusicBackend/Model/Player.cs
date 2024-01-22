@@ -60,7 +60,7 @@ public class PlayerModel
 		{
 			selectSong(s?.path);
 		};
-		QueueModel.Instance.OnRepeatChange += (q) => refreshIterator();
+		QueueModel.Instance.OnQueueModeChange += (q) => refreshIterator();
 		QueueModel.Instance.OnSkip += () => refreshIterator();
 	}
 
@@ -80,22 +80,6 @@ public class PlayerModel
 			OnPlaybackChange(PlaybackState.Stopped);
 		}
 	}
-
-	//public void Subscribe(SampleObserver observer)
-	//{
-	//	{ sampleObservers.Add(observer); }
-	//}
-	//public void Unsubscribe(SampleObserver observer)
-	//{
-	//		sampleObservers.Remove(observer);
-	//}
-	//private void NotifySamples(float[] samples)
-	//{
-	//		foreach (var observer in sampleObservers)
-	//		{
-	//			observer.SamplesNotify(samples);
-	//		}
-	//}
 	internal PlayerModelState DumpState()
 	{
 		var ct = audioWrapper.currentTime();

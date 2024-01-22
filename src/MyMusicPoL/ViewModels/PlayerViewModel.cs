@@ -200,7 +200,7 @@ internal class PlayerViewModel : ViewModelBase
 			}
 		};
 
-		QueueModel.Instance.OnRepeatChange += (repeat) =>
+		QueueModel.Instance.OnQueueModeChange += (repeat) =>
 		{
 			ChangeRepeatLabel(repeat);
 		};
@@ -256,7 +256,7 @@ internal class PlayerViewModel : ViewModelBase
   
 	private void ChangeRepeatLabel(QueueMode queueMode)
 	{
-
+		// seperate enum into two different cases
 		var (repeat,random) = queueMode switch
 		{
 			QueueMode.Loop => (1,false),

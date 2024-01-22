@@ -1,7 +1,5 @@
 ﻿using MusicBackend.Interfaces;
 using MusicBackend.Utils;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
@@ -20,7 +18,6 @@ public enum QueueMode
 {
 	Loop,
 	OneLoop,
-	//Random,
 	RandomLoop,
 	Single,
 }
@@ -33,7 +30,7 @@ public class QueueModel
 	public QueueMode QueueMode { get; private set; }
 	public event Action OnQueueModified = delegate { };
 	public event Action<Song?> OnSongChange = delegate { };
-	public event Action<QueueMode> OnRepeatChange = delegate { };
+	public event Action<QueueMode> OnQueueModeChange = delegate { };
 	public event Action OnSkip = delegate { };
 
 	private static QueueModel? _instance;
@@ -71,7 +68,7 @@ public class QueueModel
 	public void SetQueueMode(QueueMode mode)
 	{
 		QueueMode = mode;
-		OnRepeatChange(mode);
+		OnQueueModeChange(mode);
 	}
 
 	public IIterator<Song> GetIterator()
@@ -107,10 +104,6 @@ public class QueueModel
 		songs.Add(song);
 		OnQueueModified();
 	}
-	//public void appendSongByPath(string path)
-	//{
-	//	songs.Add(Song.fromPath(path));
-	//}
 
 	private void removeSongAt(int index)
 	{
@@ -292,43 +285,4 @@ public class QueueModel
 			Shuffle.ShuffleList(indices, rng);
 		}
 	}
-
-	//internal class RandomIterator : IIterator<Song>
-	//{
-	//	private readonly QueueModel queueModel;
-	//	private readonly List<Song> songs = new();
-	//	private int index;
-	//	private int startingIndex;
-	//	private bool hasLooped;
-	//	public RandomIterator(QueueModel queueModel)
-	//	{
-	//		this.queueModel = queueModel;
-	//		shuffle();
-	//	}
-	//	public bool HasNext()
-	//	{
-	//		return index == startingIndex && hasLooped;
-	//	}
-
-	//	public Song Next()
-	//	{
-	//		var song = queueModel.songs[index];
-	//		index++;
-	//		if (index == queueModel.songs.Count)
-	//		{
-	//			index = 0;
-	//			hasLooped = true;
-	//		}
-	//		return song;
-	//	}
-	//	private void shuffle()
-	//	{
-	//		foreach (var song in queueModel.songs)
-	//		{
-	//			songs.Add(song);
-	//		}
-	//		Shuffle.ShuffleList(songs, new Random());
-	//	}
-	//}
-
 }
