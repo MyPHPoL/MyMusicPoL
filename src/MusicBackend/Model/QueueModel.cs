@@ -112,6 +112,7 @@ public class QueueModel
 		if (index <= current)
 		{
 			current--;
+			if (current == -1) current = 0;
 			if (songs.Count == 0)
 			{
 				OnSongChange(null);
