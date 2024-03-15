@@ -339,6 +339,10 @@
                         <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
                     </TextBox.InputBindings>
                 </TextBox>
+                
+                <!--Condtitionaly show button or circular progress bar-->
+
+                
                 <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
                 <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
             </StackPanel>

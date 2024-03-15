@@ -58,11 +58,10 @@ internal class SongManager
 		}
 	}
 
-	public Song SongFromUrl(string url)
+	public async Task<Song> SongFromUrlAsync(string url)
 	{
-		var songTask = Task.Run(async () => { return await downloader.DownloadVideoAsync(url).ConfigureAwait(false); });
-		songTask.Wait();
-		return songTask.Result;
+		var songTask = await downloader.DownloadVideoAsync(url);
+		return songTask;
 	}
 
 }

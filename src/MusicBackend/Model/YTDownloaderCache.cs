@@ -19,63 +19,63 @@ internal class YTDownloaderCacheState
 	}
 }
 
-internal class YTDownloaderCache : IYTDownloader
+internal class YTDownloaderCache : YTDownloader, IYTDownloader
 {
-    private readonly IYTDownloader _downloader;
-    private readonly Dictionary<string, Song> _cache;
+	private readonly IYTDownloader _downloader;
+	private readonly Dictionary<string, Song> _cache;
 
-    public YTDownloaderCache(IYTDownloader downloader)
-    {
-        this._downloader = downloader;
-        this._cache = new ();
-    }
-
-    internal YTDownloaderCache(IYTDownloader downloader, YTDownloaderCacheState state)
-    {
+	public YTDownloaderCache(IYTDownloader downloader)
+	{
 		this._downloader = downloader;
-		this._cache = new ();
-        if (state.cache is null)
-        {
+		this._cache = new();
+	}
+
+	internal YTDownloaderCache(IYTDownloader downloader, YTDownloaderCacheState state)
+	{
+		this._downloader = downloader;
+		this._cache = new();
+		if (state.cache is null)
+		{
 			return;
 		}
 		foreach (var cache in state.cache)
-        {
-            var song = Song.fromPath(cache.songPath);
-            if (song is null) continue;
-			this._cache.Add(cache.url,song);
+		{
+			var song = Song.fromPath(cache.songPath);
+			if (song is null) continue;
+			this._cache.Add(cache.url, song);
 		}
 	}
 
-    internal YTDownloaderCacheState DumpState()
-    {
-        var state = new YTDownloaderCacheState()
-        {
+	internal YTDownloaderCacheState DumpState()
+	{
+		var state = new YTDownloaderCacheState()
+		{
 			cache = this._cache.Select(
-                x => new YTDownloaderCacheState.UrlSongPath()
-                {
-                    url = x.Key,
-                    songPath = x.Value.path
-                }).ToArray()
+				x => new YTDownloaderCacheState.UrlSongPath()
+				{
+					url = x.Key,
+					songPath = x.Value.path
+				}).ToArray()
 		};
 		return state;
-    }
+	}
 
-    public async Task<Song> DownloadVideoAsync(string url)
-    {
-        if (this._cache.ContainsKey(url) && Path.Exists(this._cache[url].path))
-        {
-            return this._cache[url];
-        }
-        else
-        {
-            var song = await this._downloader.DownloadVideoAsync(url).ConfigureAwait(false);
-            if(this._cache.ContainsKey(url))
-            {
-                this._cache[url] = song;
-            }
-            else
-            this._cache.Add(url, song);
-            return song;
-        }
-    }
+	public async Task<Song> DownloadVideoAsync(string url)
+	{
+		if (this._cache.ContainsKey(url) && Path.Exists(this._cache[url].path))
+		{
+			return this._cache[url];
+		}
+		else
+		{
+			var song = await this._downloader.DownloadVideoAsync(url).ConfigureAwait(false);
+			if (this._cache.ContainsKey(url))
+			{
+				this._cache[url] = song;
+			}
+			else
+				this._cache.Add(url, song);
+			return song;
+		}
+	}
 }

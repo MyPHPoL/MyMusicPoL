@@ -55,7 +55,22 @@ public class Song
 	{
 		try
 		{
-			var song = SongManager.Instance.SongFromUrl(url);
+			var song = Task.Run(
+					async () => await SongManager.Instance.SongFromUrlAsync(url).ConfigureAwait(false)
+				).Result;
+
+			return song;
+		}
+		catch
+		{
+			return null;
+		}
+	}
+	static async public Task<Song?> fromUrlAsync(string url)
+	{
+		try
+		{
+			var song = await SongManager.Instance.SongFromUrlAsync(url);
 			return song;
 		}
 		catch
