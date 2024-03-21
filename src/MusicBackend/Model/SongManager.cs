@@ -60,6 +60,9 @@ internal class SongManager
 
 	public async Task<Song> SongFromUrlAsync(string url)
 	{
+#if DEBUG
+		await Task.Delay(1000);
+#endif
 		var songTask = await downloader.DownloadVideoAsync(url);
 		return songTask;
 	}

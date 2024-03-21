@@ -77,6 +77,7 @@ internal class PlayerViewModel : ViewModelBase
 	public ICommand ShowPlaylistCommand { get; }
 	public ICommand ShowLibaryCommand { get; }
 	public IAsyncRelayCommand PlayFromWebCommand { get; }
+	public Notify<bool> PlayFromWebInProgress { get; set; } = new() { Value = false };
 	public Notify<string> PlayPauseLabel { get; set; } = new()
 	{
 		Value = ""
@@ -452,11 +453,13 @@ internal class PlayerViewModel : ViewModelBase
 	private async Task PlayFromWebCallback(string? text)
 	{
 		if (String.IsNullOrWhiteSpace(text)) return;
+		PlayFromWebInProgress.Value = true;
 		var song = await Song.fromUrlAsync(text);
 		if (song is not null)
 		{
 			QueueModel.Instance.appendSong(song);
 			MessageBox.Show("Song added to queue");
 		}
+		PlayFromWebInProgress.Value = false;
 	}
 }

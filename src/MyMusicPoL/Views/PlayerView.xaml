@@ -331,20 +331,46 @@
 
             <!-- play from web -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="2" Grid.Column="0" Margin="0 5 0 0"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Width="465">
                 <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 <Label Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <TextBox x:Name="fromWebBox" Text="{Binding FromWebText}" Background="#202124" Foreground="#ecf0f1" Height="35px" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
-                    <TextBox.InputBindings>
-                        <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
-                    </TextBox.InputBindings>
-                </TextBox>
-                
-                <!--Condtitionaly show button or circular progress bar-->
 
-                
-                <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
-                <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                <Grid>
+                    <StackPanel x:Name="fromWebPanel" Orientation="Horizontal">
+                        <TextBox x:Name="fromWebBox" Text="{Binding FromWebText}" Background="#202124" Foreground="#ecf0f1" Height="35px" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
+                            <TextBox.InputBindings>
+                                <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
+                    </StackPanel>
+                    <Grid.Style>
+                        <Style>
+                            <Setter Property="StackPanel.Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding PlayFromWebInProgress.Value}" Value="True">
+                                    <Setter Property="StackPanel.Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                </Grid>
+                <Grid>
+                    <Label x:Name="playFromWebLoading" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0">
+                        Loading...
+                        <Label.Style>
+                            <Style>
+                                <Setter Property="Label.Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PlayFromWebInProgress.Value}" Value="True">
+                                        <Setter Property="Label.Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Label.Style>
+                    </Label>
+                </Grid>
+                <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
             </StackPanel>
 
             <!-- playlists -->
