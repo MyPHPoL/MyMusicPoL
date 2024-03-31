@@ -5,10 +5,10 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using MusicBackend.Model;
 using System.Windows.Threading;
-using System.ComponentModel;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using Windows.Media;
 using System.Windows;
+using System.Windows.Automation.Peers;
 
 namespace mymusicpol.ViewModels;
 
@@ -23,8 +23,6 @@ public struct TimeControl
 	public Notify<double> SliderValue { get; set; }
 	public Notify<string> TimeValue { get; set; }
 }
-
-
 
 //this is a test (i copied youtube tutorial video like a monkey)
 internal class PlayerViewModel : ViewModelBase
@@ -92,7 +90,8 @@ internal class PlayerViewModel : ViewModelBase
 	public Notify<double> Volume { get; set; } = new(); 
 	// volume icon
 	public Notify<string> VolumeIcon { get; set; } = new(); 
-
+	
+	private readonly WindowsMediaController windowsMediaController;
 
 	class PlaylistObserver : IPlaylistObserver
 	{
@@ -142,7 +141,6 @@ internal class PlayerViewModel : ViewModelBase
 		Playlists[index].SetSongs(playlist.Songs);
 	}
 
-
 	public PlayerViewModel()
 	{
 		// fill commands
@@ -155,6 +153,7 @@ internal class PlayerViewModel : ViewModelBase
 		ShowQueueButton = new RelayCommand(ShowQueue);
 		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
 		PlayFromWebCommand = new AsyncRelayCommand<string?>(PlayFromWebCallback);
+		windowsMediaController = new(PlayerModel.Instance, QueueModel.Instance);
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
 		FillPlaylists();
@@ -240,6 +239,7 @@ internal class PlayerViewModel : ViewModelBase
 	private void OnSongChange(Song? song)
 	{
 		CurrentSong.SetSong(song);
+		windowsMediaController.UpdateSong(song);
 
 		TimeElapsed = formatTime(TimeSpan.Zero);
 		ProgressValue.Value = 0.0;
