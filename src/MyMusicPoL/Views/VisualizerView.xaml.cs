@@ -1,6 +1,4 @@
-﻿using MusicBackend.Filters;
-using MusicBackend.Interfaces;
-using MusicBackend.Model;
+﻿using MusicBackend.Model;
 using SkiaSharp;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -22,7 +20,7 @@ namespace mymusicpol.Views
 			CreateCircleImage(QueueModel.Instance.currentSong());
 			visualizer = new();
 			timer = new DispatcherTimer();
-			timer.Interval = TimeSpan.FromMilliseconds(16);
+			timer.Interval = TimeSpan.FromMilliseconds(10);
 			timer.Tick += OnTimerTick;
 			timer.Start();
 		}
@@ -45,7 +43,7 @@ namespace mymusicpol.Views
 			canvas.Clear();
 
 			var (processedBuffer,power) = visualizer.Update();
-			float circleBump = 80+100*(float)power;
+			float circleBump = 160+100*(float)power;
 
 			var width = e.Info.Width;
 			var height = e.Info.Height;
@@ -70,27 +68,30 @@ namespace mymusicpol.Views
 
 			fillPaint.IsAntialias = true;
 			canvas.Save();
-			canvas.RotateDegrees(-180,width / 2, height / 2);
-			for (int i = 0; i < 180*4 && i < processedBuffer.Length; ++i)
+			const float rotationAngle = 0.5F;
+			const float endAngle = 180F*2;
+			const float amplify = 400F;
+			canvas.RotateDegrees(-180-rotationAngle,width / 2, height / 2);
+			for (int i = 0; i < endAngle && i < processedBuffer.Length; ++i)
 			{
-				canvas.RotateDegrees(0.25F,width / 2, height / 2);
+				canvas.RotateDegrees(rotationAngle,width / 2, height / 2);
 				canvas.DrawRoundRect(
 					width / 2,
-					height/2 + circleBump - 1, 
+					height / 2 + circleBump - 1, 
 					3,
-					400*(float)processedBuffer[i],
+					amplify * (float)processedBuffer[i],
 					10,10,
 					fillPaint);
 			}
-			canvas.RotateDegrees(180,width / 2, height / 2);
-			for (int i = 0; i < 180*4 && i < processedBuffer.Length; ++i)
+			canvas.RotateDegrees(180+rotationAngle,width / 2, height / 2);
+			for (int i = 0; i < endAngle && i < processedBuffer.Length; ++i)
 			{
-				canvas.RotateDegrees(-0.25F,width / 2, height / 2);
+				canvas.RotateDegrees(-rotationAngle,width / 2, height / 2);
 				canvas.DrawRoundRect(
 					width / 2,
-					height/2 + circleBump - 1, 
+					height / 2 + circleBump - 1, 
 					3,
-					400*(float)processedBuffer[i],
+					amplify * (float)processedBuffer[i],
 					10,10,
 					fillPaint);
 			}
@@ -145,7 +146,7 @@ namespace mymusicpol.Views
 		void CalculateNewColor(float value)
 		{
 			// create new color as time progresses
-			var hue = Lerp(274f,344f,Math.Clamp(value,0f,1f));
+			var hue = Lerp(200f,344f,Math.Clamp(value,0f,1f));
 			//var hue = Math.Clamp(50 * value + 250, 274, 352);
 			spectrumColor = SKColor.FromHsv(hue,62,97);
 		}

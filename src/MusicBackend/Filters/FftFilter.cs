@@ -7,34 +7,46 @@ public sealed class FftFilter : IFilter
 	private readonly NWaves.Transforms.RealFft64 fft;
 	private readonly double[] re;
 	private readonly double[] im;
+	private readonly double[] inBuffer;
+	private readonly double[] outBuffer;
 	public FftFilter(int length)
 	{
-		fft = new(length);
+		var fftSize = length * 4;
+		fft = new(fftSize);
 		//fftBuffer = new double[length];
-		re = new double[length];
-		im = new double[length];
+		re = new double[fftSize];
+		im = new double[fftSize];
+		inBuffer = new double[fftSize];
+		outBuffer = new double[fftSize - 1];
 	}
 	public double[] process(double[] buffer)
 	{
-		fft.Direct(buffer,re,im);
 
-		
-		// normalize real and imaginary parts
-		//for (var i = 0; i < re.Length; i++)
-		//{
-		//	re[i] /= re.Length;
-		//	im[i] /= re.Length;
-		//}
+		for (var i = 0; i < buffer.Length; i++)
+		{
+			inBuffer[i] = buffer[i];
+		}
+		for (var i = buffer.Length; i < inBuffer.Length; i++)
+		{
+			inBuffer[i] = 0;
+		}
+
+		fft.Direct(inBuffer,re,im);
 		
 		for (var i = 0; i < re.Length; i++)
 		{
-			buffer[i] = Math.Sqrt(re[i] * re[i] + im[i] * im[i]);
+			inBuffer[i] = Math.Sqrt(re[i] * re[i] + im[i] * im[i]);
 		}
 		// normalize
 		for (var i = 0; i < buffer.Length; i++)
 		{
-			buffer[i] /= (buffer.Length);
+			inBuffer[i] /= (buffer.Length);
 		}
-		return buffer;
+
+		for (var i = 0; i < outBuffer.Length; i++)
+		{
+			outBuffer[i] = inBuffer[i+1];
+		}
+		return outBuffer;
 	}
 }
