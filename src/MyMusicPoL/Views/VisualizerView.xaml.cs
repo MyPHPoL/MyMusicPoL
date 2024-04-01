@@ -27,7 +27,7 @@ namespace mymusicpol.Views
 			timer.Start();
 		}
 
-		private int counter = 0;
+		SKColor spectrumColor = SKColors.White;
 		Visualizer visualizer;
 		DispatcherTimer timer;
 		SKMatrix scaleMatrix;
@@ -49,19 +49,20 @@ namespace mymusicpol.Views
 
 			var width = e.Info.Width;
 			var height = e.Info.Height;
+			CalculateNewColor((float)power);
 
 			// draw text in top left corner
-			var textPaint = new SKPaint
-			{
-				Style = SKPaintStyle.Fill,
-				Color = SKColors.White,
-				TextSize = 20
-			};
+			//var textPaint = new SKPaint
+			//{
+			//	Style = SKPaintStyle.Fill,
+			//	Color = SKColors.White,
+			//	TextSize = 20
+			//};
 
 			var fillPaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
-				Color = SKColors.HotPink
+				Color = spectrumColor,
 			};
 
 			// draw rectangle for each bin starting from bottom of screen
@@ -103,12 +104,12 @@ namespace mymusicpol.Views
 			};
 			if (circleImage is null)
 			{
-				circlePaint.Color = SKColors.HotPink;
+				//circlePaint.Color = SKColors.HotPink;
 				// create circle with gradient
 				circlePaint.Shader = SKShader.CreateRadialGradient(
 					new SKPoint(width / 2, height / 2),
 					circleBump,
-					new SKColor[] { SKColors.White, SKColors.HotPink },
+					new SKColor[] { SKColors.White, spectrumColor },
 					new float[] { 0.0F, 1.0F },
 					SKShaderTileMode.Clamp);
 			}
@@ -137,6 +138,16 @@ namespace mymusicpol.Views
 			{
 				CreateCircleImage(song);
 			});	
+		}
+
+		static float Lerp(float a, float b, float t) => a + (b - a) * t;
+
+		void CalculateNewColor(float value)
+		{
+			// create new color as time progresses
+			var hue = Lerp(274f,344f,Math.Clamp(value,0f,1f));
+			//var hue = Math.Clamp(50 * value + 250, 274, 352);
+			spectrumColor = SKColor.FromHsv(hue,62,97);
 		}
 
 		void CreateCircleImage(Song? song)
