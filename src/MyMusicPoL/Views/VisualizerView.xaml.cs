@@ -49,22 +49,11 @@ namespace mymusicpol.Views
 			var height = e.Info.Height;
 			CalculateNewColor((float)power);
 
-			// draw text in top left corner
-			//var textPaint = new SKPaint
-			//{
-			//	Style = SKPaintStyle.Fill,
-			//	Color = SKColors.White,
-			//	TextSize = 20
-			//};
-
 			var fillPaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
 				Color = spectrumColor,
 			};
-
-			// draw rectangle for each bin starting from bottom of screen
-			// with width of 8 pixels
 
 			fillPaint.IsAntialias = true;
 			canvas.Save();
@@ -97,7 +86,6 @@ namespace mymusicpol.Views
 			}
 			canvas.Restore();
 
-			// Draw circle
 			var circlePaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
@@ -105,13 +93,11 @@ namespace mymusicpol.Views
 			};
 			if (circleImage is null)
 			{
-				//circlePaint.Color = SKColors.HotPink;
-				// create circle with gradient
 				circlePaint.Shader = SKShader.CreateRadialGradient(
 					new SKPoint(width / 2, height / 2),
 					circleBump,
-					new SKColor[] { SKColors.White, spectrumColor },
-					new float[] { 0.0F, 1.0F },
+					[ SKColors.White, spectrumColor ],
+					[ 0.0F, 1.0F ],
 					SKShaderTileMode.Clamp);
 			}
 			else
