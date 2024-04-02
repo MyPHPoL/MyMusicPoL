@@ -1,6 +1,6 @@
 ﻿using MusicBackend.Interfaces;
-using TagLib;
 using YoutubeExplode;
+using YoutubeExplode.Common;
 using YoutubeExplode.Converter;
 
 namespace MusicBackend.Model;
@@ -27,16 +27,45 @@ internal class YTDownloader : IYTDownloader
 		// download song
 		await this.client.Videos.DownloadAsync(url, filePath).ConfigureAwait(false);
 
-		AddMetaData(filePath, title, artist);
 
-		return Song.fromPath(filePath);
+		var imageUrl = video.Thumbnails.FirstOrDefault()?.Url;
+
+		var (imageData,mimeType) = imageUrl is not null
+			? await FetchImage(imageUrl).ConfigureAwait(false)
+			: ([],null);
+
+
+		AddMetaData(filePath, title, artist, imageData,mimeType);
+
+		var song = Song.fromPath(filePath);
+		if (song is null) throw new Exception("Failed to create song from path");
+		return song;
 	}
 
-	private void AddMetaData(string filePath, string title, string artist)
+	private async Task<(byte[] data,string? mime)> FetchImage(string url)
+	{
+		using var client = new HttpClient();
+		var response = await client.GetAsync(url).ConfigureAwait(false);
+		var data = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+		return (data, response.Content.Headers.ContentType?.MediaType);
+	}
+
+	private void AddMetaData(string filePath, string title, string artist, byte[] data, string? mimeType)
 	{
 		var file = TagLib.File.Create(filePath);
 		file.Tag.Title = title;
-		file.Tag.Performers = new string[] { artist };
+		file.Tag.Performers = [artist];
+		if (data.Length != 0 || mimeType is not null)
+		{
+			var picture = new TagLib.Picture
+			{
+				Type = TagLib.PictureType.FrontCover,
+				Data = new TagLib.ByteVector(data),
+				MimeType = mimeType
+			};
+			file.Tag.Pictures = [picture];
+			file.Tag.Album = Guid.NewGuid().ToString();
+		}
 		file.Save();
 	}
 }
