@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Windows.Media;
 using System.Windows;
 using System.Windows.Automation.Peers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace mymusicpol.ViewModels;
 
@@ -25,33 +26,15 @@ public struct TimeControl
 }
 
 //this is a test (i copied youtube tutorial video like a monkey)
-internal class PlayerViewModel : ViewModelBase
+internal partial class PlayerViewModel : ViewModelBase
 {
 	// current song model
 	public SongViewModel CurrentSong { get; set; }
 
+	[ObservableProperty]
 	private string timeElapsed; // current song time elapsed
-	public string TimeElapsed
-	{
-		get { return timeElapsed; }
-		set
-		{
-			timeElapsed = value;
-			OnPropertyChanged(nameof(TimeElapsed));
-		}
-	}
-
+	[ObservableProperty]
 	private string fromWebText; // play from web text input
-	public string FromWebText
-	{
-		get { return fromWebText; }
-		set
-		{
-			fromWebText = value;
-			OnPropertyChanged(nameof(FromWebText));
-		}
-	}
-
 	public Notify<string> TotalTime { get; set; }
 	// current song progress
 	public Notify<double> ProgressValue { get; set; } 
@@ -59,6 +42,8 @@ internal class PlayerViewModel : ViewModelBase
 	private DispatcherTimer timer; 
 	// hack to avoid infinite recursion
 	private bool isChangingSlider = false;
+	[ObservableProperty]
+	public double playFromWebProgress;
 	// all playlists
 	public ObservableCollection<SonglistViewModel> Playlists { get; set; } = new();
 	// view model for selected library/playlist/queue
@@ -90,9 +75,8 @@ internal class PlayerViewModel : ViewModelBase
 	public Notify<double> Volume { get; set; } = new(); 
 	// volume icon
 	public Notify<string> VolumeIcon { get; set; } = new(); 
-	
+	// media controller
 	private readonly WindowsMediaController windowsMediaController;
-
 	class PlaylistObserver : IPlaylistObserver
 	{
 		private readonly PlayerViewModel playerViewModel;
@@ -454,12 +438,17 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		if (String.IsNullOrWhiteSpace(text)) return;
 		PlayFromWebInProgress.Value = true;
-		var song = await Song.fromUrlAsync(text);
+		var progressCallback = (double progress) =>
+		{
+			PlayFromWebProgress = progress;
+		};
+		var song = await Song.fromUrlAsync(text,progressCallback);
 		if (song is not null)
 		{
 			QueueModel.Instance.appendSong(song);
 			MessageBox.Show("Song added to queue");
 		}
 		PlayFromWebInProgress.Value = false;
+		PlayFromWebProgress = 0;
 	}
 }

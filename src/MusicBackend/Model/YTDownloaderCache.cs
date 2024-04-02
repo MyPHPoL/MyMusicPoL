@@ -3,23 +3,21 @@ using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
 
-
-
 internal class YTDownloaderCacheState
 {
-    [JsonInclude]
-    public UrlSongPath[]? cache;
+	[JsonInclude]
+	public UrlSongPath[]? cache;
 
-    public class UrlSongPath
-    {
-        [JsonInclude]
+	public class UrlSongPath
+	{
+		[JsonInclude]
 		public string url { get; set; }
-        [JsonInclude]
+		[JsonInclude]
 		public string songPath { get; set; }
 	}
 }
 
-internal class YTDownloaderCache : YTDownloader, IYTDownloader
+internal class YTDownloaderCache : IYTDownloader
 {
 	private readonly IYTDownloader _downloader;
 	private readonly Dictionary<string, Song> _cache;
@@ -60,7 +58,7 @@ internal class YTDownloaderCache : YTDownloader, IYTDownloader
 		return state;
 	}
 
-	public async Task<Song> DownloadVideoAsync(string url)
+	public async Task<Song> DownloadVideoAsync(string url, Action<double> progressFunc)
 	{
 		if (this._cache.ContainsKey(url) && Path.Exists(this._cache[url].path))
 		{
@@ -68,7 +66,7 @@ internal class YTDownloaderCache : YTDownloader, IYTDownloader
 		}
 		else
 		{
-			var song = await this._downloader.DownloadVideoAsync(url).ConfigureAwait(false);
+			var song = await this._downloader.DownloadVideoAsync(url, progressFunc).ConfigureAwait(false);
 			if (this._cache.ContainsKey(url))
 			{
 				this._cache[url] = song;

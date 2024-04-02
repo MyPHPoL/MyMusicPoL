@@ -8,7 +8,7 @@ namespace MusicBackend.Model;
 internal class YTDownloader : IYTDownloader
 {
 	private readonly YoutubeClient client = new YoutubeClient();
-	public async Task<Song> DownloadVideoAsync(string url)
+	public async Task<Song> DownloadVideoAsync(string url, Action<double> progressFunc)
 	{
 		var video = await this.client.Videos.GetAsync(url).ConfigureAwait(false);
 		var title = video.Title;
@@ -25,7 +25,9 @@ internal class YTDownloader : IYTDownloader
 
 		var filePath = Path.Combine(outputFilePath, fileName);
 		// download song
-		await this.client.Videos.DownloadAsync(url, filePath).ConfigureAwait(false);
+
+		var progressIndicator = new Progress<double>(progressFunc);
+		await this.client.Videos.DownloadAsync(url, filePath,progressIndicator).ConfigureAwait(false);
 
 
 		var imageUrl = video.Thumbnails.FirstOrDefault()?.Url;

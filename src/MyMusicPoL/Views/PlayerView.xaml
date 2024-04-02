@@ -331,11 +331,11 @@
 
             <!-- play from web -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="2" Grid.Column="0" Margin="0 5 0 0"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Width="465">
-                <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                <Label Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+            <DockPanel Grid.Row="2" HorizontalAlignment="Center" Width="465">
+                <Label DockPanel.Dock="Left" Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                <Label DockPanel.Dock="Left" Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
 
-                <Grid>
+                <Grid DockPanel.Dock="Left">
                     <StackPanel x:Name="fromWebPanel" Orientation="Horizontal">
                         <TextBox x:Name="fromWebBox" Text="{Binding FromWebText}" Background="#202124" Foreground="#ecf0f1" Height="35px" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
                             <TextBox.InputBindings>
@@ -343,6 +343,7 @@
                             </TextBox.InputBindings>
                         </TextBox>
                         <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
+                        <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
                     </StackPanel>
                     <Grid.Style>
                         <Style>
@@ -355,23 +356,28 @@
                         </Style>
                     </Grid.Style>
                 </Grid>
-                <Grid>
-                    <Label x:Name="playFromWebLoading" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0">
-                        Loading...
-                        <Label.Style>
-                            <Style>
-                                <Setter Property="Label.Visibility" Value="Collapsed" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding PlayFromWebInProgress.Value}" Value="True">
-                                        <Setter Property="Label.Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Label.Style>
-                    </Label>
-                </Grid>
-                <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
-            </StackPanel>
+                <ProgressBar 
+                    x:Name="playFromWebLoading"
+                    Background="#202124"
+                    Foreground="#ecf0f1"
+                    BorderBrush="#af7ac5"
+                    FontSize="25"
+                    Value="{Binding PlayFromWebProgress}"
+                    Minimum="0"
+                    Maximum="1"
+                    Margin="10 10 10 10">
+                    <ProgressBar.Style>
+                        <Style>
+                            <Setter Property="ProgressBar.Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding PlayFromWebInProgress.Value}" Value="True">
+                                    <Setter Property="ProgressBar.Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ProgressBar.Style>
+                </ProgressBar>
+            </DockPanel>
 
             <!-- playlists -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="3" Grid.Column="0" Margin="0,5,0,0" VerticalAlignment="Top" Height="308"/>
