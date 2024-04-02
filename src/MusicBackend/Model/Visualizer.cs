@@ -59,7 +59,7 @@ public sealed class Visualizer : IDisposable
 			new LogBinFilter(1.02,5),
 			//new ClampBinFilter(0.30),
 		];
-		smoothingFilter = new SmoothingFilter(0.4);
+		smoothingFilter = new SmoothingFilter(0.2);
 	}
 
 	/**

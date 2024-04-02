@@ -1,8 +1,10 @@
 ﻿using MusicBackend.Model;
 using SkiaSharp;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace mymusicpol.Views
@@ -19,34 +21,34 @@ namespace mymusicpol.Views
 			PlayerModel.Instance.OnSongChange += OnSongChanged;
 			CreateCircleImage(QueueModel.Instance.currentSong());
 			visualizer = new();
-			timer = new DispatcherTimer();
-			timer.Interval = TimeSpan.FromMilliseconds(10);
-			timer.Tick += OnTimerTick;
-			timer.Start();
+			CompositionTarget.Rendering += OnUpdate;
 		}
 
 		SKColor spectrumColor = SKColors.White;
 		Visualizer visualizer;
-		DispatcherTimer timer;
 		SKMatrix scaleMatrix;
 		SKBitmap? circleImage;
 		SKShader circleShader;
 
-		private void OnTimerTick(object? s,EventArgs e)
+		private void OnUpdate(object? s,EventArgs e)
 		{
 			Canvas.InvalidateVisual();
 		}
 
 		private void canvas_PaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs e)
 		{
-			SKCanvas canvas = e.Surface.Canvas;
+			DrawVisualizer(e.Surface.Canvas, e.Info.Width, e.Info.Height);
+		}
+
+		private void DrawVisualizer(SKCanvas canvas, int width, int height)
+		{
 			canvas.Clear();
 
 			var (processedBuffer,power) = visualizer.Update();
 			float circleBump = 160+100*(float)power;
 
-			var width = e.Info.Width;
-			var height = e.Info.Height;
+			//var width = e.Info.Width;
+			//var height = e.Info.Height;
 			CalculateNewColor((float)power);
 
 			var fillPaint = new SKPaint
@@ -168,8 +170,7 @@ namespace mymusicpol.Views
 		}
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			timer.Stop();
-			timer.Tick -= OnTimerTick;
+			CompositionTarget.Rendering -= OnUpdate;
 			QueueModel.Instance.OnSongChange -= OnSongChanged;
 			PlayerModel.Instance.OnSongChange -= OnSongChanged;
 			visualizer.Dispose();
