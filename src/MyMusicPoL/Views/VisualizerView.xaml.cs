@@ -20,6 +20,7 @@ namespace mymusicpol.Views
 			QueueModel.Instance.OnSongChange += OnSongChanged;
 			PlayerModel.Instance.OnSongChange += OnSongChanged;
 			CreateCircleImage(QueueModel.Instance.currentSong());
+			CreateBgImage();
 			visualizer = new();
 			CompositionTarget.Rendering += OnUpdate;
 		}
@@ -28,6 +29,7 @@ namespace mymusicpol.Views
 		Visualizer visualizer;
 		SKMatrix scaleMatrix;
 		SKBitmap? circleImage;
+		SKImage bgImage;
 		SKShader circleShader;
 
 		private void OnUpdate(object? s,EventArgs e)
@@ -40,6 +42,23 @@ namespace mymusicpol.Views
 			DrawVisualizer(e.Surface.Canvas, e.Info.Width, e.Info.Height);
 		}
 
+
+		float SmoothStep(float a, float b, float val)
+		{
+			val = Math.Clamp((val - a) / (b - a), 0, 1);
+			return val* val *(3 - 2 * val);
+		}
+
+		void DrawBg(SKCanvas canvas, int width, int height, float bump)
+		{
+			canvas.Save();
+			var shift = SmoothStep(0F,1F,bump);
+			canvas.Scale(1F+shift, 1F+shift, width / 2, height / 2);
+			//canvas.DrawBitmap(bgImage, new SKRect(0, 0, width, height));
+			canvas.DrawImage(bgImage, new SKRect(0, 0, width, height));
+			canvas.Restore();
+		}
+
 		private void DrawVisualizer(SKCanvas canvas, int width, int height)
 		{
 			canvas.Clear();
@@ -47,17 +66,17 @@ namespace mymusicpol.Views
 			var (processedBuffer,power) = visualizer.Update();
 			float circleBump = 160+100*(float)power;
 
-			//var width = e.Info.Width;
-			//var height = e.Info.Height;
 			CalculateNewColor((float)power);
+
+
+			DrawBg(canvas, width, height,(float)power);
 
 			var fillPaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
 				Color = spectrumColor,
+				IsAntialias = true,
 			};
-
-			fillPaint.IsAntialias = true;
 			canvas.Save();
 			const float rotationAngle = 0.5F;
 			const float endAngle = 180F*2;
@@ -139,6 +158,14 @@ namespace mymusicpol.Views
 			spectrumColor = SKColor.FromHsv(hue,62,97);
 		}
 
+		void CreateBgImage()
+		{
+			var assembly = GetType().Assembly;
+			using var stream = assembly.GetManifestResourceStream("mymusicpol.assets.background.jpg");
+			var bgBitmap = SKBitmap.Decode(stream);
+			bgImage = SKImage.FromBitmap(bgBitmap);
+		}
+
 		void CreateCircleImage(Song? song)
 		{
 			if (song?.Album.Cover is null)
@@ -163,8 +190,8 @@ namespace mymusicpol.Views
 				image.InstallPixels(info, gcHandle.AddrOfPinnedObject(), info.RowBytes, delegate { gcHandle.Free(); });
 				image = image.Resize(new SKImageInfo(200, 200), SKFilterQuality.High);
 
-				this.circleShader = SKShader.CreateBitmap(image, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
-				this.circleImage = image;
+				circleShader = SKShader.CreateBitmap(image, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
+				circleImage = image;
 			}
 
 		}

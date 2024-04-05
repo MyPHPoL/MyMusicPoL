@@ -15,10 +15,14 @@
     <DefineConstants>$(DefineConstants);DEBUGNOHWACCEL</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="assets\background.jpg" />
     <None Remove="assets\default.ico" />
     <None Remove="assets\default.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="assets\background.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="assets\default.ico" />
   </ItemGroup>
 
@@ -38,12 +42,6 @@
     <Resource Include="assets\default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="assets\background.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

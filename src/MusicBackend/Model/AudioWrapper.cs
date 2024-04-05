@@ -108,6 +108,7 @@ internal class AudioWrapper : IDisposable
 				{
 					SamplesAccumulated?.Invoke(e);
 				};
+			waveOut.DesiredLatency = 100;
 			waveOut.Init(sampleAccumulator);
 		}
 		catch
