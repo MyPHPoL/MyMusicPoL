@@ -153,8 +153,7 @@ namespace mymusicpol.Views
 		void CalculateNewColor(float value)
 		{
 			// create new color as time progresses
-			var hue = Lerp(200f,344f,Math.Clamp(value,0f,1f));
-			//var hue = Math.Clamp(50 * value + 250, 274, 352);
+			var hue = Lerp(200f,280F,Math.Clamp(value,0f,1f));
 			spectrumColor = SKColor.FromHsv(hue,62,97);
 		}
 
