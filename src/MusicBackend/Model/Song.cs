@@ -51,11 +51,11 @@ public class Song
 			return null;
 		}
 	}
-	static public Song? fromUrl(string url)
+	static async public Task<Song?> fromUrlAsync(string url, Action<double> progressFunc )
 	{
 		try
 		{
-			var song = SongManager.Instance.SongFromUrl(url);
+			var song = await SongManager.Instance.SongFromUrlAsync(url,progressFunc);
 			return song;
 		}
 		catch

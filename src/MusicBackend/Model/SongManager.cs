@@ -4,8 +4,6 @@ namespace MusicBackend.Model;
 
 internal class SongManager
 {
-	// cache album name -> album
-	private readonly Dictionary<string, SongAlbum> albums = new();
 	// cache path -> song
 	private readonly Dictionary<string, Song> songs = new();
 	// yt downloader
@@ -19,7 +17,6 @@ internal class SongManager
 
 	private SongManager()
 	{
-		albums.Add("Unknown", new SongAlbum() { Cover = null, Name = "Unkown"});
 	}
 
 	internal void InitYtCache(YTDownloaderCacheState state)
@@ -54,38 +51,20 @@ internal class SongManager
 				path = System.IO.Path.GetFullPath(path),
 				length = tagFile.Properties.Duration,
 				artist = tagFile.Tag.FirstPerformer is null ? "Unknown" : tagFile.Tag.FirstPerformer,
-				Album = GetAlbum(tagFile)
+				Album = SongAlbum.GetAlbum(tagFile)
 			};
 			songs.Add(path, song);
 			return song;
 		}
 	}
 
-	private SongAlbum GetAlbum(TagLib.File file)
+	public async Task<Song> SongFromUrlAsync(string url, Action<double> progressFunc)
 	{
-		var albumName = file.Tag.Album is null ? "Unknown" : file.Tag.Album;
-
-		if (albums.ContainsKey(albumName))
-		{
-			return albums[albumName];
-		}
-		else
-		{
-			var album = new SongAlbum()
-			{
-				Name = albumName,
-				Cover = file.Tag.Pictures.Length > 0 ? file.Tag.Pictures[0].Data.Data : null
-			};
-			albums.Add(albumName, album);
-			return album;
-		}
-	}
-
-	public Song SongFromUrl(string url)
-	{
-		var songTask = Task.Run(async () => { return await downloader.DownloadVideoAsync(url).ConfigureAwait(false); });
-		songTask.Wait();
-		return songTask.Result;
+#if DEBUG
+		await Task.Delay(1000);
+#endif
+		var songTask = await downloader.DownloadVideoAsync(url, progressFunc);
+		return songTask;
 	}
 
 }

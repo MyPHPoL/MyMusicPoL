@@ -5,10 +5,11 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using MusicBackend.Model;
 using System.Windows.Threading;
-using System.ComponentModel;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using Windows.Media;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace mymusicpol.ViewModels;
 
@@ -24,36 +25,16 @@ public struct TimeControl
 	public Notify<string> TimeValue { get; set; }
 }
 
-
-
 //this is a test (i copied youtube tutorial video like a monkey)
-internal class PlayerViewModel : ViewModelBase
+internal partial class PlayerViewModel : ViewModelBase
 {
 	// current song model
 	public SongViewModel CurrentSong { get; set; }
 
+	[ObservableProperty]
 	private string timeElapsed; // current song time elapsed
-	public string TimeElapsed
-	{
-		get { return timeElapsed; }
-		set
-		{
-			timeElapsed = value;
-			OnPropertyChanged(nameof(TimeElapsed));
-		}
-	}
-
+	[ObservableProperty]
 	private string fromWebText; // play from web text input
-	public string FromWebText
-	{
-		get { return fromWebText; }
-		set
-		{
-			fromWebText = value;
-			OnPropertyChanged(nameof(FromWebText));
-		}
-	}
-
 	public Notify<string> TotalTime { get; set; }
 	// current song progress
 	public Notify<double> ProgressValue { get; set; } 
@@ -61,6 +42,8 @@ internal class PlayerViewModel : ViewModelBase
 	private DispatcherTimer timer; 
 	// hack to avoid infinite recursion
 	private bool isChangingSlider = false;
+	[ObservableProperty]
+	public double playFromWebProgress;
 	// all playlists
 	public ObservableCollection<SonglistViewModel> Playlists { get; set; } = new();
 	// view model for selected library/playlist/queue
@@ -76,7 +59,8 @@ internal class PlayerViewModel : ViewModelBase
 	public ICommand ShowQueueButton { get; }
 	public ICommand ShowPlaylistCommand { get; }
 	public ICommand ShowLibaryCommand { get; }
-	public ICommand PlayFromWebCommand { get; }
+	public IAsyncRelayCommand PlayFromWebCommand { get; }
+	public Notify<bool> PlayFromWebInProgress { get; set; } = new() { Value = false };
 	public Notify<string> PlayPauseLabel { get; set; } = new()
 	{
 		Value = ""
@@ -91,8 +75,8 @@ internal class PlayerViewModel : ViewModelBase
 	public Notify<double> Volume { get; set; } = new(); 
 	// volume icon
 	public Notify<string> VolumeIcon { get; set; } = new(); 
-
-
+	// media controller
+	private readonly WindowsMediaController windowsMediaController;
 	class PlaylistObserver : IPlaylistObserver
 	{
 		private readonly PlayerViewModel playerViewModel;
@@ -141,7 +125,6 @@ internal class PlayerViewModel : ViewModelBase
 		Playlists[index].SetSongs(playlist.Songs);
 	}
 
-
 	public PlayerViewModel()
 	{
 		// fill commands
@@ -153,7 +136,8 @@ internal class PlayerViewModel : ViewModelBase
 		ShowPlaylistCommand = new RelayCommand(ShowPlaylist);
 		ShowQueueButton = new RelayCommand(ShowQueue);
 		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
-		PlayFromWebCommand = new RelayCommand<string>(PlayFromWebCallback);
+		PlayFromWebCommand = new AsyncRelayCommand<string?>(PlayFromWebCallback);
+		windowsMediaController = new(PlayerModel.Instance, QueueModel.Instance);
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
 		FillPlaylists();
@@ -200,7 +184,7 @@ internal class PlayerViewModel : ViewModelBase
 			}
 		};
 
-		QueueModel.Instance.OnRepeatChange += (repeat) =>
+		QueueModel.Instance.OnQueueModeChange += (repeat) =>
 		{
 			ChangeRepeatLabel(repeat);
 		};
@@ -239,6 +223,7 @@ internal class PlayerViewModel : ViewModelBase
 	private void OnSongChange(Song? song)
 	{
 		CurrentSong.SetSong(song);
+		windowsMediaController.UpdateSong(song);
 
 		TimeElapsed = formatTime(TimeSpan.Zero);
 		ProgressValue.Value = 0.0;
@@ -256,7 +241,7 @@ internal class PlayerViewModel : ViewModelBase
   
 	private void ChangeRepeatLabel(QueueMode queueMode)
 	{
-
+		// seperate enum into two different cases
 		var (repeat,random) = queueMode switch
 		{
 			QueueMode.Loop => (1,false),
@@ -449,13 +434,21 @@ internal class PlayerViewModel : ViewModelBase
 	{
 		SelectedList.ExportPlaylist(filename);
 	}
-	private void PlayFromWebCallback(string? text)
+	private async Task PlayFromWebCallback(string? text)
 	{
 		if (String.IsNullOrWhiteSpace(text)) return;
-		var song = Song.fromUrl(text);
+		PlayFromWebInProgress.Value = true;
+		var progressCallback = (double progress) =>
+		{
+			PlayFromWebProgress = progress;
+		};
+		var song = await Song.fromUrlAsync(text,progressCallback);
 		if (song is not null)
 		{
 			QueueModel.Instance.appendSong(song);
+			MessageBox.Show("Song added to queue");
 		}
+		PlayFromWebInProgress.Value = false;
+		PlayFromWebProgress = 0;
 	}
 }

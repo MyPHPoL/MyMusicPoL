@@ -183,13 +183,16 @@ internal class SelectedListViewModel : ViewModelBase
 		if (!IsQueue)
 		{
 			List<Song> list = new ();
-			foreach(var song in originalItems)
+			var comparison = StringComparison.InvariantCultureIgnoreCase;
+			foreach (var song in originalItems)
 			{
-				if (song.name.Contains(Filter.Value, StringComparison.OrdinalIgnoreCase)
-					|| song.artist.Contains(Filter.Value, StringComparison.OrdinalIgnoreCase)
-					|| song.Album.Name.Contains(Filter.Value, StringComparison.OrdinalIgnoreCase))
+				var splittedSongName = song.name.Split(" ");
+				foreach (var songName in splittedSongName)
 				{
-					list.Add(song);
+					if (songName.StartsWith(Filter.Value, comparison) && !list.Contains(song))
+					{
+						list.Add(song);
+					}
 				}
 			}
 			Items.Clear();

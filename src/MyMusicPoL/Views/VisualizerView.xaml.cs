@@ -1,11 +1,10 @@
-﻿using MusicBackend.Filters;
-using MusicBackend.Interfaces;
-using MusicBackend.Model;
+﻿using MusicBackend.Model;
 using SkiaSharp;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace mymusicpol.Views
@@ -21,88 +20,95 @@ namespace mymusicpol.Views
 			QueueModel.Instance.OnSongChange += OnSongChanged;
 			PlayerModel.Instance.OnSongChange += OnSongChanged;
 			CreateCircleImage(QueueModel.Instance.currentSong());
+			CreateBgImage();
 			visualizer = new();
-			timer = new DispatcherTimer();
-			timer.Interval = TimeSpan.FromMilliseconds(16);
-			timer.Tick += OnTimerTick;
-			timer.Start();
+			CompositionTarget.Rendering += OnUpdate;
 		}
 
-		private int counter = 0;
+		SKColor spectrumColor = SKColors.White;
 		Visualizer visualizer;
-		DispatcherTimer timer;
 		SKMatrix scaleMatrix;
 		SKBitmap? circleImage;
+		SKImage bgImage;
 		SKShader circleShader;
 		string songTitle = "";
 
-		private void OnTimerTick(object? s,EventArgs e)
+		private void OnUpdate(object? s,EventArgs e)
 		{
 			Canvas.InvalidateVisual();
 		}
 
 		private void canvas_PaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs e)
 		{
-			SKCanvas canvas = e.Surface.Canvas;
+			DrawVisualizer(e.Surface.Canvas, e.Info.Width, e.Info.Height);
+		}
+
+
+		float SmoothStep(float a, float b, float val)
+		{
+			val = Math.Clamp((val - a) / (b - a), 0, 1);
+			return val* val *(3 - 2 * val);
+		}
+
+		void DrawBg(SKCanvas canvas, int width, int height, float bump)
+		{
+			canvas.Save();
+			var shift = SmoothStep(0F,1F,bump);
+			canvas.Scale(1F+shift, 1F+shift, width / 2, height / 2);
+			//canvas.DrawBitmap(bgImage, new SKRect(0, 0, width, height));
+			canvas.DrawImage(bgImage, new SKRect(0, 0, width, height));
+			canvas.Restore();
+		}
+
+		private void DrawVisualizer(SKCanvas canvas, int width, int height)
+		{
 			canvas.Clear();
 
 			var (processedBuffer,power) = visualizer.Update();
-			float circleBump = 80+100*(float)power;
+			float circleBump = 160+100*(float)power;
 
-			var width = e.Info.Width;
-			var height = e.Info.Height;
+			CalculateNewColor((float)power);
 
 
+			DrawBg(canvas, width, height,(float)power);
 
 			var fillPaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
-				Color = SKColors.HotPink
+				Color = spectrumColor,
+				IsAntialias = true,
 			};
 
-			// draw text in top left corner
-			var textPaint = new SKPaint
-			{
-				Style = SKPaintStyle.Fill,
-				Color = SKColors.White,
-				TextSize = 20,
-				IsAntialias = true,
-				TextAlign = SKTextAlign.Center
-		};
-			canvas.DrawText(songTitle, width / 2f, height-10, textPaint);
-
-			// draw rectangle for each bin starting from bottom of screen
-			// with width of 8 pixels
-
-			fillPaint.IsAntialias = true;
 			canvas.Save();
-			canvas.RotateDegrees(-180,width / 2, height / 2);
-			for (int i = 0; i < 180*4 && i < processedBuffer.Length; ++i)
+			const float rotationAngle = 0.5F;
+			const float endAngle = 180F*2;
+			const float amplify = 400F;
+			canvas.RotateDegrees(-180-rotationAngle,width / 2, height / 2);
+			for (int i = 0; i < endAngle && i < processedBuffer.Length; ++i)
 			{
-				canvas.RotateDegrees(0.25F,width / 2, height / 2);
+				canvas.RotateDegrees(rotationAngle,width / 2, height / 2);
 				canvas.DrawRoundRect(
 					width / 2,
-					height/2 + circleBump - 1, 
+					height / 2 + circleBump - 1, 
 					3,
-					400*(float)processedBuffer[i],
+					amplify * (float)processedBuffer[i],
 					10,10,
 					fillPaint);
 			}
-			canvas.RotateDegrees(180,width / 2, height / 2);
-			for (int i = 0; i < 180*4 && i < processedBuffer.Length; ++i)
+			canvas.RotateDegrees(180+rotationAngle,width / 2, height / 2);
+			for (int i = 0; i < endAngle && i < processedBuffer.Length; ++i)
 			{
-				canvas.RotateDegrees(-0.25F,width / 2, height / 2);
+				canvas.RotateDegrees(-rotationAngle,width / 2, height / 2);
 				canvas.DrawRoundRect(
 					width / 2,
-					height/2 + circleBump - 1, 
+					height / 2 + circleBump - 1, 
 					3,
-					400*(float)processedBuffer[i],
+					amplify * (float)processedBuffer[i],
 					10,10,
 					fillPaint);
 			}
 			canvas.Restore();
 
-			// Draw circle
 			var circlePaint = new SKPaint
 			{
 				Style = SKPaintStyle.Fill,
@@ -110,13 +116,11 @@ namespace mymusicpol.Views
 			};
 			if (circleImage is null)
 			{
-				circlePaint.Color = SKColors.HotPink;
-				// create circle with gradient
 				circlePaint.Shader = SKShader.CreateRadialGradient(
 					new SKPoint(width / 2, height / 2),
 					circleBump,
-					new SKColor[] { SKColors.White, SKColors.HotPink },
-					new float[] { 0.0F, 1.0F },
+					[ SKColors.White, spectrumColor ],
+					[ 0.0F, 1.0F ],
 					SKShaderTileMode.Clamp);
 			}
 			else
@@ -144,6 +148,24 @@ namespace mymusicpol.Views
 			{
 				CreateCircleImage(song);
 			});	
+		}
+
+		static float Lerp(float a, float b, float t) => a + (b - a) * t;
+
+		void CalculateNewColor(float value)
+		{
+			// create new color as time progresses
+			var hue = Lerp(200f,344f,Math.Clamp(value,0f,1f));
+			//var hue = Math.Clamp(50 * value + 250, 274, 352);
+			spectrumColor = SKColor.FromHsv(hue,62,97);
+		}
+
+		void CreateBgImage()
+		{
+			var assembly = GetType().Assembly;
+			using var stream = assembly.GetManifestResourceStream("mymusicpol.assets.background.jpg");
+			var bgBitmap = SKBitmap.Decode(stream);
+			bgImage = SKImage.FromBitmap(bgBitmap);
 		}
 
 		void CreateCircleImage(Song? song)
@@ -179,16 +201,15 @@ namespace mymusicpol.Views
 				image.InstallPixels(info, gcHandle.AddrOfPinnedObject(), info.RowBytes, delegate { gcHandle.Free(); });
 				image = image.Resize(new SKImageInfo(200, 200), SKFilterQuality.High);
 
-				this.circleShader = SKShader.CreateBitmap(image, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
-				this.circleImage = image;
+				circleShader = SKShader.CreateBitmap(image, SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
+				circleImage = image;
 			}
 
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			timer.Stop();
-			timer.Tick -= OnTimerTick;
+			CompositionTarget.Rendering -= OnUpdate;
 			QueueModel.Instance.OnSongChange -= OnSongChanged;
 			PlayerModel.Instance.OnSongChange -= OnSongChanged;
 			visualizer.Dispose();

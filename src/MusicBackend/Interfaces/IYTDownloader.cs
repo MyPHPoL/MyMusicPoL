@@ -9,5 +9,5 @@ namespace MusicBackend.Interfaces;
 
 internal interface IYTDownloader
 {
-	Task<Song> DownloadVideoAsync(string url);
+	Task<Song> DownloadVideoAsync(string url, Action<double> progressFunc);
 }

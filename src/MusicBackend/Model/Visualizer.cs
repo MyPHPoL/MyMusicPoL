@@ -15,7 +15,6 @@ public sealed class Visualizer : IDisposable
 	private IFilter fftFilter;
 	private IFilter[] filters;
 	private IFilter smoothingFilter;
-	private IFilter interpolateFilter;
 	private double power;
 	private double smoothPower;
 
@@ -49,19 +48,18 @@ public sealed class Visualizer : IDisposable
 		sampleBuffer = new double[length];
 		processedBuffer = new double[length];
 		smoothedArray = new double[length];
-		windowFunction = new WindowFunction(new HammingWindow(length));
-		fftFilter = new FftFilter();
+		windowFunction = new WindowFunction(new DefaultWindow(length));
+		fftFilter = new FftFilter(length);
 		filters =
 		[
 			new MovingAverage(),
-			new LogScale(1.02,length/2),
-			new LerpFilter(10, length),
+			new LogScale(1.02,length),
+			new LerpFilter(2, length),
 			new MovingAverage(),
 			new LogBinFilter(1.02,5),
-			new ClampBinFilter(0.30),
+			//new ClampBinFilter(0.30),
 		];
-		interpolateFilter = new LerpFilter(10, length);
-		smoothingFilter = new SmoothingFilter(0.4);
+		smoothingFilter = new SmoothingFilter(0.2);
 	}
 
 	/**

@@ -4,10 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
-        xmlns:local="clr-namespace:mymusicpol.Views"
         mc:Ignorable="d"
         Background="#202124"
-        Title="VisualizerView" Height="450" Width="800"
+        Title="VisualizerView" Height="1000" Width="670"
         Closing="Window_Closing">
     <Grid>
         <skia:SKElement
