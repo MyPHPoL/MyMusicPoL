@@ -31,6 +31,7 @@ namespace mymusicpol.Views
 		SKBitmap? circleImage;
 		SKImage bgImage;
 		SKShader circleShader;
+		string songTitle = "";
 
 		private void OnUpdate(object? s,EventArgs e)
 		{
@@ -77,6 +78,7 @@ namespace mymusicpol.Views
 				Color = spectrumColor,
 				IsAntialias = true,
 			};
+
 			canvas.Save();
 			const float rotationAngle = 0.5F;
 			const float endAngle = 180F*2;
@@ -167,6 +169,15 @@ namespace mymusicpol.Views
 
 		void CreateCircleImage(Song? song)
 		{
+			if (song?.name is null)
+			{
+				this.songTitle = "";
+			}
+			else
+			{
+				this.songTitle = song.name;
+			}
+
 			if (song?.Album.Cover is null)
 			{
 				this.circleImage = null;
@@ -194,6 +205,7 @@ namespace mymusicpol.Views
 			}
 
 		}
+
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			CompositionTarget.Rendering -= OnUpdate;
