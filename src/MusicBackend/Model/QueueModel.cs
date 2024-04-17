@@ -39,7 +39,7 @@ public class QueueModel
 	private QueueModel()
 	{
 	}
-	private QueueModel (QueueModelState qms)
+	private QueueModel(QueueModelState qms)
 	{
 		songs = qms.songs;
 
@@ -156,7 +156,9 @@ public class QueueModel
 	public void PlayPlaylist(string playlistName)
 	{
 		var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
-		if (playlist is null) return;
+		// if song was paused and we tried to play empty playlist then playlist wouldn't be null, but it would have 0 songs
+		// bandaid fix ¯\_(ツ)_/¯
+		if (playlist is null || playlist.Songs.Count == 0) return;
 		songs.Clear();
 		foreach (var song in playlist.Songs)
 		{

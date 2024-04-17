@@ -12,7 +12,7 @@
         <!-- All media control buttons should have unified style (round border + segoe font) -->
         <!-- Its not super important, but for the cleanless of the code should be done somewhere near future (probably never) -->
 
-        <Style TargetType="{x:Type MenuItem}" x:Key="MenuItemStyle" >
+        <Style TargetType="{x:Type MenuItem}" x:Key="MenuItemStyle">
             <Setter Property="BorderBrush" Value="#af7ac5"></Setter>
             <Setter Property="Background" Value="#202124"></Setter>
             <Setter Property="Foreground" Value="White"></Setter>
@@ -21,8 +21,24 @@
             <Setter Property="Margin" Value="-5,0,0,0"></Setter>
             <Setter Property="Padding" Value="10"></Setter>
             <Setter Property="BorderThickness" Value="1"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter Content="{TemplateBinding Header}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      Margin="{TemplateBinding Padding}"
+                                      RecognizesAccessKey="True"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
             <Style.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
+                <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="Transparent"></Setter>
                     <Setter Property="Foreground" Value="#202124"></Setter>
                     <Setter Property="BorderBrush" Value="#af7ac5"></Setter>
@@ -36,6 +52,49 @@
             <Setter Property="Foreground" Value="White"></Setter>
             <Setter Property="FontSize" Value="14"></Setter>
             <Setter Property="FontFamily" Value="{StaticResource MainFont}"></Setter>
+        </Style>
+
+        <!-- This style is used for buttons, to remove the WPF default 'animated' mouse over effect -->
+        <Style x:Key="CleanButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.7" />
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- This style is used for buttons, to remove the WPF default 'animated' mouse over effect -->
+        <Style x:Key="MediaButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse Fill="{TemplateBinding Background}"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.7" />
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
 
@@ -57,6 +116,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <!--ScrollBars-->
         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
@@ -213,43 +273,16 @@
             <!-- media control buttons (for all segoe fonts refer to this site: http://modernicons.io/segoe-mdl2/cheatsheet/) -->
             <StackPanel Grid.Row="1" Grid.Column="1">
                 <StackPanel Orientation="Horizontal" Height="60" VerticalAlignment="Center" HorizontalAlignment="Center" Width="390" Margin="0 5 0 0">
-                    <Button Command="{Binding ShuffleButton}" x:Name="shuffle" Content="{Binding ShuffleLabel.Content}" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" FontFamily="{StaticResource Segoe}" Background="{Binding ShuffleLabel.Background}">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                    <Button Style="{StaticResource MediaButton}" Command="{Binding ShuffleButton}" x:Name="shuffle" Content="{Binding ShuffleLabel.Content}" Width="35" Height="35" Margin="20 0" FontSize="19" FontFamily="{StaticResource Segoe}" Background="{Binding ShuffleLabel.Background}"/>
 
-                    <Button Command="{Binding PreviousButton}" x:Name="previous" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Command="{Binding PlayPauseButton}" x:Name="play_pause" Height="45" Width="45" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" Content="{Binding PlayPauseLabel.Value}" FontSize="37" FontFamily="{StaticResource Segoe}" Background="#ecf0f1">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                    <Button Style="{StaticResource MediaButton}" Command="{Binding PreviousButton}" x:Name="previous" Width="35" Height="35" Margin="20 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2"/>
 
-                    <Button Command="{Binding NextButton}" x:Name="next" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Command="{Binding RepeatButton}" x:Name="repeat" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20 0" FontSize="19" Content="{Binding RepeatLabel.Content}" FontFamily="{StaticResource Segoe}" Background="{Binding RepeatLabel.Background}">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
+                    <Button Style="{StaticResource MediaButton}" Command="{Binding PlayPauseButton}" x:Name="play_pause" Height="45" Width="45" Margin="20 0" Content="{Binding PlayPauseLabel.Value}" FontSize="37" FontFamily="{StaticResource Segoe}" Background="#ecf0f1"/>
+
+                    <Button Style="{StaticResource MediaButton}" Command="{Binding NextButton}" x:Name="next" Height="35" Width="35" Margin="20 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2"/>
+
+                    <Button Style="{StaticResource MediaButton}" Command="{Binding RepeatButton}" x:Name="repeat" Height="35" Width="35" Margin="20 0" FontSize="19" Content="{Binding RepeatLabel.Content}" FontFamily="{StaticResource Segoe}" Background="{Binding RepeatLabel.Background}"/>
+
                 </StackPanel>
 
                 <!-- progress bar -->
@@ -273,21 +306,10 @@
 
             <!-- visualizer, queue and volume slider -->
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <Button ToolTip="Open Visualizer" Click="VisualizerClick" Height="35" Width="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="100"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                <Button Style="{StaticResource MediaButton}" ToolTip="Open Visualizer" Click="VisualizerClick" Height="35" Width="35" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2"/>
 
-                <Button ToolTip="Open Queue" Height="35" Width="35" Command="{Binding ShowQueueButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="100"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                <Button Style="{StaticResource MediaButton}" ToolTip="Open Queue" Height="35" Width="35" Command="{Binding ShowQueueButton}" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2"/>
+
                 <Label x:Name="volIcon" Content="{Binding VolumeIcon.Value}" FontFamily="{StaticResource Segoe}" Foreground="#cacfd2" FontSize="20" VerticalAlignment="Center" Margin="30 0 0 0"/>
                 <Slider 
                     x:Name="volume"
@@ -322,12 +344,14 @@
             </StackPanel>
 
             <!-- all music -->
-            <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0"/>
+            <Border  BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0"/>
+            <Button  Command="{Binding ShowLibaryCommand}" Style="{StaticResource CleanButton}" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0">
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
                 <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Button Command="{Binding ShowLibaryCommand}" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
+                <Label Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
             </StackPanel>
+            </Button>
 
             <!-- play from web -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="2" Grid.Column="0" Margin="0 5 0 0"/>
@@ -342,8 +366,8 @@
                                 <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
                             </TextBox.InputBindings>
                         </TextBox>
-                        <Button Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
-                        <Label ToolTip="Paste an URL to your favourite song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0"/>
+                        <Button Content="" Style="{StaticResource CleanButton}" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
+                        <Label ToolTip="Paste an URL to your favourite Youtube song and play it on MyMusicPoL" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Cursor="Help"/>
                     </StackPanel>
                     <Grid.Style>
                         <Style>
@@ -384,28 +408,32 @@
             <StackPanel Grid.Row="3" Grid.Column="0" Margin="10 10 0 0" VerticalAlignment="Top">
 
                 <!-- create new playlist-->
+                <Button Style="{StaticResource CleanButton}" Click="NewPlaylist_Click">
                 <StackPanel Orientation="Horizontal">
                     <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                     <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                    <Button Click="NewPlaylist_Click" Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                    <Label  Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                 </StackPanel>
+                </Button>
 
                 <!-- playlist list (select, edit name, delete)-->
                 <ListBox ToolTip="Left click to open playlist&#x0a;Right click to open additional context menu" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Width="418">
-                                <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
-                                    <Label.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="Show" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
-                                            <MenuItem Header="Play" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
-                                            <MenuItem Header="Edit name" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
-                                            <MenuItem Header="Delete" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
-                                        </ContextMenu>
-                                    </Label.ContextMenu>
-                                </Label>
-                            </StackPanel>
+                            <Border BorderBrush="#af7ac5" CornerRadius="5" BorderThickness="1">
+                                <StackPanel Orientation="Horizontal" Width="418">
+                                    <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
+                                        <Label.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Show" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="Play" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="Edit name" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="Delete" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
+                                            </ContextMenu>
+                                        </Label.ContextMenu>
+                                    </Label>
+                                </StackPanel>
+                            </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -424,24 +452,18 @@
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
                 <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10 0 0 0"/>
                 <StackPanel Orientation="Horizontal" Margin="5 10 0 0">
-                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
                     </Button>
-                    <Button Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
                     </Button>
 
-                    <Button ToolTip="Left click to export&#x0a;Right click to open additional context menu" Visibility="{Binding SelectedList.FilterVisiblity}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
+                    <Button Style="{StaticResource MediaButton}" ToolTip="Left click to export&#x0a;Right click to open additional context menu" Visibility="{Binding SelectedList.FilterVisiblity}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
                                 <MenuItem Header="Export" Click="SelectedListExport_Click" Style="{StaticResource MenuItemStyle}"/>
                             </ContextMenu>
                         </Button.ContextMenu>
-
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="100"/>
-                            </Style>
-                        </Button.Resources>
                     </Button>
 
                     <!-- filter textbox -->
