@@ -9,9 +9,7 @@
         xmlns:viewmodel="clr-namespace:mymusicpol.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewmodel:PlayerViewModel}">
     <UserControl.Resources>
-        <!-- All media control buttons should have unified style (round border + segoe font) -->
-        <!-- Its not super important, but for the cleanless of the code should be done somewhere near future (probably never) -->
-
+        
         <Style TargetType="{x:Type MenuItem}" x:Key="MenuItemStyle">
             <Setter Property="BorderBrush" Value="#af7ac5"></Setter>
             <Setter Property="Background" Value="#202124"></Setter>
@@ -72,10 +70,13 @@
                     <Setter Property="Opacity" Value="0.7" />
                     <Setter Property="Cursor" Value="Hand" />
                 </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Opacity" Value="0.7" />
+                </Trigger>
             </Style.Triggers>
         </Style>
 
-        <!-- This style is used for buttons, to remove the WPF default 'animated' mouse over effect -->
+        <!-- Same as CleanButton, but round -->
         <Style x:Key="MediaButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Opacity" Value="1"/>
@@ -93,6 +94,9 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Opacity" Value="0.7" />
                     <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Opacity" Value="0.7" />
                 </Trigger>
             </Style.Triggers>
         </Style>

@@ -170,6 +170,7 @@ public class QueueModel
 	}
 	public void forceNextSong()
 	{
+		if (QueueMode == QueueMode.OneLoop) SetQueueMode(QueueMode.Loop);
 		if (songs.Count == 0)
 		{
 			return ;
@@ -184,6 +185,7 @@ public class QueueModel
 	} 
 	public void forcePrevSong()
 	{
+		if (QueueMode == QueueMode.OneLoop) SetQueueMode(QueueMode.Loop);
 		if (songs.Count == 0)
 		{
 			return;
