@@ -63,7 +63,7 @@ namespace mymusicpol.Views
             {
 				var dialog = new InputBoxView("Enter new playlist name");
 				dialog.ShowDialog();
-				if (dialog.TextBody is not null)
+				if (!string.IsNullOrWhiteSpace(dialog.TextBody))
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{
@@ -80,7 +80,7 @@ namespace mymusicpol.Views
             {
 				var dialog = new InputBoxView("Enter new playlist name");
 				dialog.ShowDialog();
-				if (dialog.TextBody is not null)
+				if (!string.IsNullOrWhiteSpace(dialog.TextBody))
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{

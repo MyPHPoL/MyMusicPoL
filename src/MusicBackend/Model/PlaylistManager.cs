@@ -126,6 +126,9 @@ public class PlaylistManager
 
 	public bool CreatePlaylist(string name)
 	{
+		if (string.IsNullOrWhiteSpace(name) 
+			|| name == "Library" 
+			|| name == "Queue") return false;
 		bool status = Playlists.TryAdd(name,new Playlist(name));
 		if (status is true)
 		{
@@ -137,7 +140,9 @@ public class PlaylistManager
 	public void EditPlaylistName(string oldName, string newName)
 	{
 		if (oldName == newName) return;
-		if (newName == "Library" || newName == "Queue") return;
+		if (string.IsNullOrWhiteSpace(newName) 
+			|| newName == "Library" 
+			|| newName == "Queue") return;
 		if (Playlists.ContainsKey(newName)) return;
 
 		bool status = Playlists.Remove(oldName,out Playlist? playlist);

@@ -8,6 +8,7 @@
         Background="#202124"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
         Title="InputBoxView" Height="150" Width="200">
     <Grid>
         <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Width="195" Height="130"/>
