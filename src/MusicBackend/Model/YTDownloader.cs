@@ -66,7 +66,7 @@ internal class YTDownloader : IYTDownloader
 				MimeType = mimeType
 			};
 			file.Tag.Pictures = [picture];
-			file.Tag.Album = Guid.NewGuid().ToString();
+			file.Tag.Album = title + " " + artist;
 		}
 		file.Save();
 	}

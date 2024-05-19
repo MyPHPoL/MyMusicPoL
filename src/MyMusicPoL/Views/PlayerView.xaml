@@ -95,9 +95,6 @@
                     <Setter Property="Opacity" Value="0.7" />
                     <Setter Property="Cursor" Value="Hand" />
                 </Trigger>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="Opacity" Value="0.7" />
-                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -187,7 +184,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RepeatButton">
-                        <Border  BorderThickness="1" BorderBrush="Black" Background="Black" Height="3"/>
+                        <Border  BorderThickness="1" BorderBrush="#202124" Background="#202124" Height="3"/>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -253,7 +250,8 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid x:Name="controller" Margin="0,580,0,0" Background="#121212">
+        <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Margin="5,580,5,5" Width="Auto" Height="Auto"/>
+        <Grid x:Name="controller" Margin="0,580,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
