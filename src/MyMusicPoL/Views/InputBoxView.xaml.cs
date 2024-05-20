@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,20 @@ namespace mymusicpol.Views;
 public partial class InputBoxView : Window
 {
 	public string? TextBody { get; private set; } = "";
+	//public IRelayCommand ConfirmCommand = new RelayCommand(() => ConfirmHandler());
 	public InputBoxView(string labelText)
 	{
 		InitializeComponent();
 		TextLabel.Content = labelText;
+		DataContext = this;
+		InputBox.Focus();
+	}
+
+	[RelayCommand]
+	private void Confirm()
+	{
+		TextBody = InputBox.Text;
+		Close();
 	}
 
 	private void Confirm_Click(object sender, RoutedEventArgs e)
