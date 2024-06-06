@@ -188,5 +188,21 @@ namespace mymusicpol.Views
 				}
 			}
 		}
+
+		private void fromWebPlaceholder_GotFocus(object sender, RoutedEventArgs e)
+		{
+			fromWebBoxPlaceholder.Visibility = Visibility.Collapsed;
+			fromWebBox.Visibility = Visibility.Visible;
+			fromWebBox.Focus();
+		}
+
+		private void fromWeb_LostFocus(object sender, RoutedEventArgs e)
+		{
+			if (string.IsNullOrWhiteSpace(fromWebBox.Text))
+			{
+				fromWebBoxPlaceholder.Visibility = Visibility.Visible;
+				fromWebBox.Visibility = Visibility.Collapsed;
+			}
+		}
 	}
 }

@@ -363,7 +363,8 @@
 
                 <Grid DockPanel.Dock="Left">
                     <StackPanel x:Name="fromWebPanel" Orientation="Horizontal">
-                        <TextBox x:Name="fromWebBox" Text="{Binding FromWebText}" Background="#202124" Foreground="#ecf0f1" Height="35px" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
+                        <TextBox x:Name="fromWebBox" Visibility="Collapsed" LostFocus="fromWeb_LostFocus" Text="{Binding FromWebText}" Background="#202124" Height="35px" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145"/>
+                        <TextBox x:Name="fromWebBoxPlaceholder" GotFocus="fromWebPlaceholder_GotFocus" Text="Paste Youtube link..." Background="#202124" Foreground="Gray" Height="35px" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
                             <TextBox.InputBindings>
                                 <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
                             </TextBox.InputBindings>
@@ -391,7 +392,8 @@
                     Value="{Binding PlayFromWebProgress}"
                     Minimum="0"
                     Maximum="1"
-                    Margin="10 10 10 10">
+                    Height="35"
+                    Margin="0 10 10 10">
                     <ProgressBar.Style>
                         <Style>
                             <Setter Property="ProgressBar.Visibility" Value="Collapsed" />
@@ -422,8 +424,11 @@
                 <ListBox ToolTip="Left click to open playlist&#x0a;Right click to open additional context menu" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border BorderBrush="#af7ac5" CornerRadius="5" BorderThickness="1">
-                                <StackPanel Orientation="Horizontal" Width="418">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="ColumnSize" />
+                                </Grid.ColumnDefinitions>
+                                <Border BorderBrush="#af7ac5" CornerRadius="5" BorderThickness="1" Width="440">
                                     <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
                                         <Label.ContextMenu>
                                             <ContextMenu>
@@ -434,8 +439,8 @@
                                             </ContextMenu>
                                         </Label.ContextMenu>
                                     </Label>
-                                </StackPanel>
-                            </Border>
+                                </Border>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
