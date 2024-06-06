@@ -26,10 +26,13 @@
                      BorderBrush="#af7ac5"
                      Width="180"
                      Height="33">
-            </TextBox>
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding ConfirmCommand}" Key="Return"/>
+            </TextBox.InputBindings>
+        </TextBox>
         
         <!--</Border>-->
-        <Button Click="Confirm_Click" x:Name="Confirm" Width="60" Height="30" Margin="28,99,112,5" BorderBrush="#af7ac5" Background="#202124" Foreground="#ecf0f1">Confirm</Button>
+        <Button Click="Confirm_Click" x:Name="ConfirmB" Width="60" Height="30" Margin="28,99,112,5" BorderBrush="#af7ac5" Background="#202124" Foreground="#ecf0f1">Confirm</Button>
         <Button IsCancel="true" Click="Cancel_Click" x:Name="Cancel" Width="60" Height="30" Margin="112,99,28,5" BorderBrush="#af7ac5" Background="#202124" Foreground="#ecf0f1">Cancel</Button>
     </Grid>
 </Window>
