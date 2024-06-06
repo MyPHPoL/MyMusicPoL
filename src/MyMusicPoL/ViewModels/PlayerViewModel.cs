@@ -448,7 +448,11 @@ internal partial class PlayerViewModel : ViewModelBase
 			QueueModel.Instance.appendSong(song);
 			MessageBox.Show("Song added to queue");
 		}
-		PlayFromWebInProgress.Value = false;
+        else
+        {
+            MessageBox.Show("Invalid link");
+        }
+        PlayFromWebInProgress.Value = false;
 		PlayFromWebProgress = 0;
 	}
 }
