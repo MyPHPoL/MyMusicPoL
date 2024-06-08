@@ -6,6 +6,9 @@
         <ResourceDictionary>
             <FontFamily x:Key="Segoe">#Segoe MDL2 Assets</FontFamily>
             <FontFamily x:Key="MainFont">#Trebuchet MS</FontFamily>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/AllStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

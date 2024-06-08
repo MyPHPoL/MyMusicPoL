@@ -10,6 +10,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
         Title="InputBoxView" Height="150" Width="200">
+
     <Grid>
         <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Width="195" Height="130"/>
         <Label x:Name="TextLabel" d:Content="Information about popup" Foreground="#cacfd2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0">
@@ -23,6 +24,7 @@
                      Background="#202124"
                      Foreground="#ecf0f1"
                      FontFamily="{StaticResource MainFont}" 
+                     FontSize="18"
                      BorderBrush="#af7ac5"
                      Width="180"
                      Height="33">
@@ -32,7 +34,7 @@
         </TextBox>
         
         <!--</Border>-->
-        <Button Click="Confirm_Click" x:Name="ConfirmB" Width="60" Height="30" Margin="28,99,112,5" BorderBrush="#af7ac5" Background="#202124" Foreground="#ecf0f1">Confirm</Button>
-        <Button IsCancel="true" Click="Cancel_Click" x:Name="Cancel" Width="60" Height="30" Margin="112,99,28,5" BorderBrush="#af7ac5" Background="#202124" Foreground="#ecf0f1">Cancel</Button>
+        <Button Style="{StaticResource CleanButton2}" Click="Confirm_Click" x:Name="ConfirmB" Width="60" Height="30" Margin="28,99,112,5" Background="#202124" Foreground="#ecf0f1">Confirm</Button>
+        <Button Style="{StaticResource CleanButton2}" IsCancel="true" Click="Cancel_Click" x:Name="Cancel" Width="60" Height="30" Margin="112,99,28,5" Background="#202124" Foreground="#ecf0f1">Cancel</Button>
     </Grid>
 </Window>
