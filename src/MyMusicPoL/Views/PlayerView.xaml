@@ -221,10 +221,10 @@
                 <StackPanel Orientation="Horizontal" Margin="5 10 0 0">
                     <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
                     </Button>
-                    <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
+                    <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapUpCommand}" Height="35" Width="35" FontSize="19" Content="&#xe010;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="5 0 0 0">
                     </Button>
 
-                    <Button Style="{StaticResource MediaButton}" ToolTip="Left click to export&#x0a;Right click to open additional context menu" Visibility="{Binding SelectedList.FilterVisiblity}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="20 0 0 0">
+                    <Button Style="{StaticResource MediaButton}" ToolTip="Left click to export&#x0a;Right click to open additional context menu" Visibility="{Binding SelectedList.FilterVisiblity}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="15 0 0 0">
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
@@ -233,9 +233,24 @@
                         </Button.ContextMenu>
                     </Button>
 
+                    <Grid>
                     <!-- filter textbox -->
-                    <TextBox Visibility="{Binding SelectedList.FilterVisiblity}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                    <TextBox x:Name="filter" Visibility="{Binding SelectedList.FilterVisiblity}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                        <TextBlock IsHitTestVisible="False" Text="Filter..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25 0 0 0" Foreground="Gray">
 
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Text, ElementName=filter}" Value="">
+                                            <Setter Property="Visibility" Value="{Binding SelectedList.FilterVisiblity}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                    
                     <!-- sort checkbox -->
                     <Label Visibility="{Binding SelectedList.FilterVisiblity}" Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
                     <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
