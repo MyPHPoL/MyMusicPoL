@@ -10,6 +10,7 @@ using Windows.Media;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using CommunityToolkit.Mvvm.ComponentModel;
+using mymusicpol.Views;
 
 namespace mymusicpol.ViewModels;
 
@@ -446,11 +447,11 @@ internal partial class PlayerViewModel : ViewModelBase
 		if (song is not null)
 		{
 			QueueModel.Instance.appendSong(song);
-			MessageBox.Show("Song added to queue");
+			CustomMessageBox.Show("Song added to queue", "Success");
 		}
         else
         {
-            MessageBox.Show("Invalid link");
+			CustomMessageBox.Show("Couldn't find song", "Invalid Link");
         }
         PlayFromWebInProgress.Value = false;
 		PlayFromWebProgress = 0;

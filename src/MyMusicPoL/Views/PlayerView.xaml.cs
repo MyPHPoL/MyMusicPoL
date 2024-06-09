@@ -67,7 +67,7 @@ namespace mymusicpol.Views
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{
-						MessageBox.Show($"Cannot change name of playlist to {dialog.TextBody}");
+						CustomMessageBox.Show($"Cannot change name of playlist to {dialog.TextBody}", "Invalid Name");
 						return;
 					}
 					playerViewModel.EditPlaylist(PlaylistListBox.SelectedIndex, dialog.TextBody);
@@ -84,13 +84,13 @@ namespace mymusicpol.Views
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{
-						MessageBox.Show($"Cannot name playlist as {dialog.TextBody}");
+						CustomMessageBox.Show($"Cannot name playlist as {dialog.TextBody}", "Invalid Name");
 						return;
 					}
 					var res = playerViewModel.NewPlaylist(dialog.TextBody);
 					if (res is false)
 					{
-						MessageBox.Show($"Playlist {dialog.TextBody} already exists");
+						CustomMessageBox.Show($"Playlist {dialog.TextBody} already exists", "Invalid Name");
 					}
 				}
 			}
@@ -133,7 +133,7 @@ namespace mymusicpol.Views
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{
-						MessageBox.Show("Cannot add song to playlist "  + dialog.TextBody);
+						CustomMessageBox.Show("Cannot add song to playlist " + dialog.TextBody, "Invalid Song");
 						return;
 					}
 					playerViewModel.SelectedListAddPlaylist(SelectedList.SelectedIndex, dialog.TextBody);
@@ -163,7 +163,7 @@ namespace mymusicpol.Views
 					}
 					catch
 					{
-						MessageBox.Show("Failed to export playlist");
+						CustomMessageBox.Show("Failed to export playlist", "Export Error");
 					}
 				}
 			}
@@ -183,7 +183,7 @@ namespace mymusicpol.Views
 					}
 					catch
 					{
-						MessageBox.Show("Failed to import playlist");
+						CustomMessageBox.Show("Failed to import playlist", "Export Error");
 					}
 				}
 			}
