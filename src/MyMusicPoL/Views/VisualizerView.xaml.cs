@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -14,6 +15,17 @@ namespace mymusicpol.Views
 	/// </summary>
 	public partial class VisualizerView : Window
 	{
+		[DllImport("DwmApi")] //System.Runtime.InteropServices
+		private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] attrValue, int attrSize);
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			var handle = new WindowInteropHelper(this).Handle;
+			if (DwmSetWindowAttribute(handle, 19, new[] { 1 }, 4) != 0)
+				DwmSetWindowAttribute(handle, 20, new[] { 1 }, 4);
+
+		}
+
 		public VisualizerView()
 		{
 			InitializeComponent();

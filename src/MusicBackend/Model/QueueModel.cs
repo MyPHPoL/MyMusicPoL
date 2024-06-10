@@ -142,6 +142,15 @@ public class QueueModel
 		removeSongAt(index);
 		OnQueueModified();
 	}
+
+	public void clear()
+	{
+		songs.Clear();
+		current = 0;
+		OnQueueModified();
+		OnSongChange(null);
+	}
+
 	public Song? currentSong()
 	{
 		return songs.Count == 0 ? null : songs[current];

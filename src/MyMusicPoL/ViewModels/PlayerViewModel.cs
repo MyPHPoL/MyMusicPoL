@@ -58,6 +58,7 @@ internal partial class PlayerViewModel : ViewModelBase
 	public ICommand PreviousButton { get; }
 	public ICommand NextButton { get; }
 	public ICommand ShowQueueButton { get; }
+	public ICommand ClearQueueCommand { get; }
 	public ICommand ShowPlaylistCommand { get; }
 	public ICommand ShowLibaryCommand { get; }
 	public IAsyncRelayCommand PlayFromWebCommand { get; }
@@ -138,6 +139,7 @@ internal partial class PlayerViewModel : ViewModelBase
 		ShowQueueButton = new RelayCommand(ShowQueue);
 		ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
 		PlayFromWebCommand = new AsyncRelayCommand<string?>(PlayFromWebCallback);
+		ClearQueueCommand = new RelayCommand(ClearQueue);
 		windowsMediaController = new(PlayerModel.Instance, QueueModel.Instance);
 
 		PlaylistManager.Instance.Subscribe(new PlaylistObserver(this));
@@ -455,5 +457,10 @@ internal partial class PlayerViewModel : ViewModelBase
         }
         PlayFromWebInProgress.Value = false;
 		PlayFromWebProgress = 0;
+	}
+
+	public void ClearQueue()
+	{
+		QueueModel.Instance.clear();
 	}
 }

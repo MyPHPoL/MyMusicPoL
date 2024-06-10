@@ -39,6 +39,16 @@ internal class SelectedListViewModel : ViewModelBase
 			OnPropertyChanged(nameof(FilterVisiblity));
 		}
 	}
+	private Visibility _queueButtonVisibility;
+	public Visibility QueueButtonVisibility
+	{
+		get => _queueButtonVisibility;
+		set
+		{
+			_queueButtonVisibility = value;
+			OnPropertyChanged(nameof(QueueButtonVisibility));
+		}
+	}
 	public ObservableCollection<SongViewModel> Items { get; set; } = new();
 
 	public int _selectedIndex = -1;
@@ -358,6 +368,7 @@ internal class SelectedListViewModel : ViewModelBase
 		Name = name;
 		SwapVisibility = Visibility.Visible;
 		FilterVisiblity = Visibility.Visible;
+		QueueButtonVisibility = Visibility.Collapsed;
 		Items.Clear();
 		var playlist = PlaylistManager.Instance.GetPlaylist(name);
 		if (playlist is null) return;
@@ -374,6 +385,7 @@ internal class SelectedListViewModel : ViewModelBase
 		Name = "Library";
 		SwapVisibility = Visibility.Collapsed;
 		FilterVisiblity = Visibility.Visible;
+		QueueButtonVisibility = Visibility.Collapsed;
 		Items.Clear();
 		originalItems = LibraryManager.Instance.Songs.Values.ToArray();
 		foreach (var song in LibraryManager.Instance.Songs)
@@ -387,6 +399,7 @@ internal class SelectedListViewModel : ViewModelBase
 		Name = "Queue";
 		SwapVisibility = Visibility.Collapsed;
 		FilterVisiblity = Visibility.Collapsed;
+		QueueButtonVisibility = Visibility.Visible;
 		Items.Clear();
 		foreach (var song in QueueModel.Instance.songs)
 		{
