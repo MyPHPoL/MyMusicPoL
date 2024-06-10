@@ -10,8 +10,12 @@
         d:DataContext="{d:DesignInstance Type=viewmodel:PlayerViewModel}">
 
     <Grid>
-        <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Margin="5,580,5,5" Width="Auto" Height="Auto"/>
-        <Grid x:Name="controller" Margin="0,580,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Margin="5,580,5,5" Width="Auto" Height="Auto" Grid.ColumnSpan="2"/>
+        <Grid x:Name="controller" Margin="0,580,0,0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -90,7 +94,7 @@
         </Grid>
 
         <!-- left side grid -->
-        <Grid Margin="5,5,800,147" Background="Transparent">
+        <Grid Margin="5,5,800,147" Background="Transparent" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="105"/>
                 <RowDefinition Height="75" />
@@ -108,11 +112,11 @@
             <!-- all music -->
             <Border  BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0"/>
             <Button  Command="{Binding ShowLibaryCommand}" Style="{StaticResource CleanButton}" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0">
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
-                <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Label Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
-            </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
+                    <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                    <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                    <Label Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
+                </StackPanel>
             </Button>
 
             <!-- play from web -->
@@ -173,11 +177,11 @@
 
                 <!-- create new playlist-->
                 <Button Style="{StaticResource CleanButton}" Click="NewPlaylist_Click">
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                    <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                    <Label  Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                        <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                        <Label  Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
+                    </StackPanel>
                 </Button>
 
                 <!-- playlist list (select, edit name, delete)-->
@@ -208,7 +212,7 @@
         </Grid>
 
         <!-- selected playlist (can be also all music, queue, selected album or artist -->
-        <Grid  Margin="475,5,5,147">
+        <Grid  Margin="475,5,5,147" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -217,7 +221,11 @@
             <StackPanel Grid.Row="0">
 
                 <!-- selected playlist name, export buttons, filter textbox, sort checkbox-->
-                <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="{Binding SelectedList.Name}" FontSize="45" Foreground="#ecf0f1" d:Content="{d:SampleData}" FontFamily="{StaticResource MainFont}" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                    <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.QueueButtonVisibility}" Command="{Binding ClearQueueCommand}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" VerticalAlignment="Center" Margin="5 0 0 0">
+                    </Button>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5 10 0 0">
                     <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.SwapVisibility}" Command="{Binding SelectedList.SwapDownCommand}" Height="35" Width="35" FontSize="19" Content="&#xe011;" FontFamily="{StaticResource Segoe}" Background="#af7ac5" Margin="0 0 0 0">
                     </Button>
@@ -234,8 +242,8 @@
                     </Button>
 
                     <Grid>
-                    <!-- filter textbox -->
-                    <TextBox x:Name="filter" Visibility="{Binding SelectedList.FilterVisiblity}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
+                        <!-- filter textbox -->
+                        <TextBox x:Name="filter" Visibility="{Binding SelectedList.FilterVisiblity}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
                         <TextBlock IsHitTestVisible="False" Text="Filter..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25 0 0 0" Foreground="Gray">
 
                             <TextBlock.Style>
@@ -250,7 +258,7 @@
                             </TextBlock.Style>
                         </TextBlock>
                     </Grid>
-                    
+
                     <!-- sort checkbox -->
                     <Label Visibility="{Binding SelectedList.FilterVisiblity}" Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
                     <RadioButton Visibility="{Binding SelectedList.FilterVisiblity}" GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
