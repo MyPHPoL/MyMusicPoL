@@ -105,8 +105,9 @@
             <!-- program name -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto"/>
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
-                <Label Content="Welcome to" Foreground="#ecf0f1" FontSize="38" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="38" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Label Content="Welcome to" Foreground="#ecf0f1" FontSize="34" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="34" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Button Style="{StaticResource MediaButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" VerticalAlignment="Center" Margin="5 0 0 0"/>
             </StackPanel>
 
             <!-- all music -->
@@ -212,7 +213,7 @@
         </Grid>
 
         <!-- selected playlist (can be also all music, queue, selected album or artist -->
-        <Grid  Margin="475,5,5,147" Grid.ColumnSpan="2">
+        <Grid  Margin="477,5,5,147" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>

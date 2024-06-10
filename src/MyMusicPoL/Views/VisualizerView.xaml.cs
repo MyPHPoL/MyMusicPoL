@@ -18,12 +18,11 @@ namespace mymusicpol.Views
 		[DllImport("DwmApi")] //System.Runtime.InteropServices
 		private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, int[] attrValue, int attrSize);
 
+		// change window topbar to dark theme
 		protected override void OnSourceInitialized(EventArgs e)
 		{
-			var handle = new WindowInteropHelper(this).Handle;
-			if (DwmSetWindowAttribute(handle, 19, new[] { 1 }, 4) != 0)
-				DwmSetWindowAttribute(handle, 20, new[] { 1 }, 4);
-
+			if (DwmSetWindowAttribute(new WindowInteropHelper(this).Handle, 19, new[] { 1 }, 4) != 0)
+				DwmSetWindowAttribute(new WindowInteropHelper(this).Handle, 20, new[] { 1 }, 4);
 		}
 
 		public VisualizerView()
