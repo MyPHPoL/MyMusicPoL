@@ -112,15 +112,15 @@ internal class SelectedListViewModel : ViewModelBase
 		{
 			if (selectedListViewModel.Name == name)
 			{
-				selectedListViewModel.ClearAll();
+				selectedListViewModel.ShowLibrary();
 			}
 		}
 	}
 
-	bool IsQueue { get => Name == "Queue"; }
-	bool IsLibrary { get => Name == "Library"; }
+    bool IsQueue => Name == "Queue";
+    bool IsLibrary => Name == "Library";
 
-	public ICommand DefaultSortCommand { get; }
+    public ICommand DefaultSortCommand { get; }
 	public ICommand AlbumSortCommand { get; }
 	public ICommand ArtistSortCommand { get; }
 	public ICommand TimeSortCommand { get; }
@@ -170,7 +170,6 @@ internal class SelectedListViewModel : ViewModelBase
 			SelectedIndex = index;
 		}
 	}
-
 	private void SwapDownCallback()
 	{
 		if (SelectedIndex == -1 || IsLibrary || IsQueue) return;
@@ -217,15 +216,6 @@ internal class SelectedListViewModel : ViewModelBase
 	public void Clear()
 	{
 		Items.Clear();
-	}
-	public void ClearName()
-	{
-		Name = "Nothing selected";
-	}
-	public void ClearAll()
-	{
-		Clear();
-		ClearName();
 	}
 	public void Add(SongViewModel song)
 	{

@@ -63,7 +63,11 @@ namespace mymusicpol.Views
             {
 				var dialog = new InputBoxView("Enter new playlist name");
 				dialog.ShowDialog();
-				if (!string.IsNullOrWhiteSpace(dialog.TextBody))
+				if (string.IsNullOrWhiteSpace(dialog.TextBody))
+				{
+					CustomMessageBox.Show("Playlist name cannot be empty", "Invalid Name");
+				}
+				else
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{
@@ -80,7 +84,11 @@ namespace mymusicpol.Views
             {
 				var dialog = new InputBoxView("Enter new playlist name");
 				dialog.ShowDialog();
-				if (!string.IsNullOrWhiteSpace(dialog.TextBody))
+				if (string.IsNullOrWhiteSpace(dialog.TextBody))
+				{
+					CustomMessageBox.Show("Playlist name cannot be empty", "Invalid Name");
+				}
+				else
 				{
 					if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
 					{

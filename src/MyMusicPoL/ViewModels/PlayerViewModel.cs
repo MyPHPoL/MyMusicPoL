@@ -211,6 +211,8 @@ internal partial class PlayerViewModel : ViewModelBase
 			}
 			OnSliderValueChanged(ProgressValue.Value);
 		};
+
+		SelectedList.ShowLibrary();
 	}
 
 	private void ShowLibaryCallback()

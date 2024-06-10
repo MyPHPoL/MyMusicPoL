@@ -186,14 +186,14 @@
                 </Button>
 
                 <!-- playlist list (select, edit name, delete)-->
-                <ListBox ToolTip="Left click to open playlist&#x0a;Right click to open additional context menu" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click" SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListBox ToolTip="Left click to open playlist&#x0a;Right click to open additional context menu" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click"  SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="ColumnSize" />
                                 </Grid.ColumnDefinitions>
-                                <Border BorderBrush="#af7ac5" CornerRadius="5" BorderThickness="1" Width="440">
+                                <Border BorderBrush="#af7ac5" CornerRadius="5" BorderThickness="1" Width="420">
                                     <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
                                         <Label.ContextMenu>
                                             <ContextMenu>
