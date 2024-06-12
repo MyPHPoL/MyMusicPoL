@@ -20,9 +20,19 @@ namespace mymusicpol
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		[DllImport("uxtheme.dll", EntryPoint = "#135", SetLastError = true, CharSet = CharSet.Unicode)]
+
+		private static extern int SetPreferredAppMode(int preferredAppMode);
+
+		[DllImport("uxtheme.dll", EntryPoint = "#136", SetLastError = true, CharSet = CharSet.Unicode)]
+
+		private static extern void FlushMenuThemes();
 		public MainWindow()
 		{
 			InitializeComponent();
+			SetPreferredAppMode(2); // Enable dark system menu
+
+			FlushMenuThemes();
 		}
 
 		[DllImport("DwmApi")] //System.Runtime.InteropServices
