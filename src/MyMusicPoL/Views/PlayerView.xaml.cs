@@ -30,6 +30,11 @@ namespace mymusicpol.Views
 
         private void VisualizerClick(object snder, RoutedEventArgs e)
         {
+            OpenVisualizer();
+        }
+
+        private void OpenVisualizer()
+        {
             if (visualizerWindow is null)
             {
                 visualizerWindow = new();
@@ -41,14 +46,6 @@ namespace mymusicpol.Views
                 visualizerWindow.Focus();
             }
         }
-
-        //private void Playlists_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-        //	if (DataContext is PlayerViewModel playerViewModel)
-        //	{
-        //		playerViewModel.ShowPlaylist();
-        //	}
-        //}
 
         private void MenuItemShow_Click(object sender, RoutedEventArgs e)
         {
@@ -70,11 +67,6 @@ namespace mymusicpol.Views
                 }
                 else
                 {
-                    //if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
-                    //{
-                    //	CustomMessageBox.Show($"Cannot change name of playlist to {dialog.TextBody}", "Invalid Name");
-                    //	return;
-                    //}
                     try
                     {
                         playerViewModel.EditPlaylist(
@@ -102,11 +94,6 @@ namespace mymusicpol.Views
                 }
                 else
                 {
-                    //if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
-                    //{
-                    //	CustomMessageBox.Show($"Cannot name playlist as {dialog.TextBody}", "Invalid Name");
-                    //	return;
-                    //}
                     try
                     {
                         playerViewModel.NewPlaylist(dialog.TextBody);
@@ -159,11 +146,6 @@ namespace mymusicpol.Views
                 dialog.ShowDialog();
                 if (dialog.TextBody is not null)
                 {
-                    //if (dialog.TextBody == "Library" || dialog.TextBody == "Queue")
-                    //{
-                    //	CustomMessageBox.Show("Cannot add song to playlist " + dialog.TextBody, "Invalid Song");
-                    //	return;
-                    //}
                     playerViewModel.SelectedListAddPlaylist(
                         SelectedList.SelectedIndex,
                         dialog.TextBody

@@ -163,19 +163,19 @@ internal partial class PlayerViewModel : ViewModelBase
         FillPlaylists();
         //setup data bindings
         setupTimer();
-        UpdateVolumeIcon(PlayerModel.Instance.currentVolume());
+        UpdateVolumeIcon(PlayerModel.Instance.CurrentVolume());
         ChangeRepeatLabel(QueueModel.Instance.QueueMode);
 
-        Volume.Value = PlayerModel.Instance.currentVolume() * 100;
+        Volume.Value = PlayerModel.Instance.CurrentVolume() * 100;
         ProgressValue = new()
         {
             Value =
-                PlayerModel.Instance.currentTime().TotalSeconds
-                / PlayerModel.Instance.songLength().TotalSeconds
+                PlayerModel.Instance.CurrentTime().TotalSeconds
+                / PlayerModel.Instance.SongLength().TotalSeconds
         };
-        TotalTime = new() { Value = formatTime(PlayerModel.Instance.songLength()) };
-        timeElapsed = formatTime(PlayerModel.Instance.currentTime());
-        var curSongPath = PlayerModel.Instance.currentSong();
+        TotalTime = new() { Value = formatTime(PlayerModel.Instance.SongLength()) };
+        timeElapsed = formatTime(PlayerModel.Instance.CurrentTime());
+        var curSongPath = PlayerModel.Instance.CurrentSong();
         if (curSongPath == null)
         {
             CurrentSong = new(null);
@@ -212,11 +212,11 @@ internal partial class PlayerViewModel : ViewModelBase
             isChangingSlider = true;
             TimeElapsed = formatTime(time);
             ProgressValue.Value =
-                time.TotalSeconds / PlayerModel.Instance.songLength().TotalSeconds;
+                time.TotalSeconds / PlayerModel.Instance.SongLength().TotalSeconds;
         };
         Volume.PropertyChanged += (sender, e) =>
         {
-            PlayerModel.Instance.setVolume((float)Volume.Value / 100);
+            PlayerModel.Instance.SetVolume((float)Volume.Value / 100);
         };
         ProgressValue.PropertyChanged += (sender, e) =>
         {
@@ -267,7 +267,7 @@ internal partial class PlayerViewModel : ViewModelBase
         var (repeat, random) = queueMode switch
         {
             QueueMode.Loop => (1, false),
-            QueueMode.OneLoop => (0, false),
+            QueueMode.Repeat => (0, false),
             QueueMode.RandomLoop => (1, true),
             QueueMode.Single => (2, false),
             _ => (0, false),
@@ -312,18 +312,18 @@ internal partial class PlayerViewModel : ViewModelBase
     public void OnSliderValueChanged(double value)
     {
         var playerModel = PlayerModel.Instance;
-        var currentTime = value * playerModel.songLength().TotalSeconds;
-        playerModel.setTime(TimeSpan.FromSeconds(currentTime));
+        var currentTime = value * playerModel.SongLength().TotalSeconds;
+        playerModel.SetTime(TimeSpan.FromSeconds(currentTime));
     }
 
     private void PreviousSongCallback()
     {
-        QueueModel.Instance.forcePrevSong();
+        QueueModel.Instance.ForcePrevSong();
     }
 
     private void NextSongCallback()
     {
-        QueueModel.Instance.forceNextSong();
+        QueueModel.Instance.ForceNextSong();
     }
 
     private static string formatTime(TimeSpan time)
@@ -334,15 +334,15 @@ internal partial class PlayerViewModel : ViewModelBase
     private void PlayPauseSongCallback()
     {
         var playerModel = PlayerModel.Instance;
-        if (playerModel.playbackState().isPlaying())
+        if (playerModel.PlaybackState().isPlaying())
         {
             pauseTimer();
-            playerModel.pause();
+            playerModel.Pause();
         }
         else
         {
             startTimer();
-            playerModel.play();
+            playerModel.Play();
         }
     }
 
@@ -361,7 +361,7 @@ internal partial class PlayerViewModel : ViewModelBase
     private void pauseTimer()
     {
         timer.Stop();
-        var remainingTime = PlayerModel.Instance.currentTime();
+        var remainingTime = PlayerModel.Instance.CurrentTime();
         if (remainingTime.Microseconds > 0)
         {
             timer.Interval = remainingTime;
@@ -389,20 +389,13 @@ internal partial class PlayerViewModel : ViewModelBase
         PlayerModel.Instance.UpdateTime();
     }
 
-    private void setupTimers()
-    {
-        timer = new();
-        timer.Interval = TimeSpan.FromSeconds(1);
-        timer.Tick += OnTimerCallback;
-    }
-
     private void RepeatSongCallback()
     {
         var mode = QueueModel.Instance.QueueMode;
         var nextMode = mode switch
         {
-            QueueMode.Loop => QueueMode.OneLoop,
-            QueueMode.OneLoop => QueueMode.Single,
+            QueueMode.Loop => QueueMode.Repeat,
+            QueueMode.Repeat => QueueMode.Single,
             QueueMode.Single => QueueMode.Loop,
             _ => QueueMode.Loop,
         };
@@ -498,7 +491,7 @@ internal partial class PlayerViewModel : ViewModelBase
         var song = await Song.fromUrlAsync(text, progressCallback);
         if (song is not null)
         {
-            QueueModel.Instance.appendSong(song);
+            QueueModel.Instance.AppendSong(song);
             CustomMessageBox.Show("Song added to queue", "Success");
         }
         else
@@ -511,6 +504,6 @@ internal partial class PlayerViewModel : ViewModelBase
 
     public void ClearQueue()
     {
-        QueueModel.Instance.clear();
+        QueueModel.Instance.Clear();
     }
 }

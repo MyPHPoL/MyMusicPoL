@@ -18,7 +18,7 @@ public interface IPlaylistObserver
 internal class PlaylistManagerState
 {
     [JsonInclude]
-    public PlaylistState[] Playlists { get; set; }
+    public PlaylistState[] Playlists { get; set; } = null!;
 }
 
 public class PlaylistManager

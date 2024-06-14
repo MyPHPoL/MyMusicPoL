@@ -1,168 +1,175 @@
-﻿using MusicBackend.Interfaces;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using MusicBackend.Interfaces;
 
 namespace MusicBackend.Model;
 
 internal class PlayerModelState
 {
-	[JsonInclude]
-	public float volume { get; set; } = 0.5F;
-	[JsonInclude]
-	public TimeSpan currentTime { get; set; } = TimeSpan.Zero;
-	[JsonInclude]
-	public string? currentSong { get; set; } = null;
+    [JsonInclude]
+    public float volume { get; set; } = 0.5F;
+
+    [JsonInclude]
+    public TimeSpan currentTime { get; set; } = TimeSpan.Zero;
+
+    [JsonInclude]
+    public string? currentSong { get; set; } = null;
 }
 
 public interface SampleObserver
 {
-	public void SamplesNotify(float[] samples);
+    public void SamplesNotify(float[] samples);
 }
 
 public class PlayerModel
 {
-	public event Action<PlaybackState> OnPlaybackChange = delegate { };
-	public event Action<float> OnVolumeChange = delegate { };
-	public event Action<TimeSpan> OnTimeChange = delegate { };
-	public event Action<Song?> OnSongChange = delegate { };
-	//private List<SampleObserver> sampleObservers = new();
-	internal AudioWrapper audioWrapper;
-	private IIterator<Song> queueIterator;
+    public event Action<PlaybackState> OnPlaybackChange = delegate { };
+    public event Action<float> OnVolumeChange = delegate { };
+    public event Action<TimeSpan> OnTimeChange = delegate { };
+    public event Action<Song?> OnSongChange = delegate { };
 
-	private static PlayerModel? _instance;
-	public static PlayerModel Instance
-	{
-		get => _instance ??= new PlayerModel();
-	}
+    //private List<SampleObserver> sampleObservers = new();
+    internal AudioWrapper audioWrapper;
 
-	internal static void InitWithState(PlayerModelState a)
-	{
-		_instance = new PlayerModel(a);
-	}
+    private static PlayerModel? _instance;
+    public static PlayerModel Instance
+    {
+        get => _instance ??= new PlayerModel();
+    }
 
-	private PlayerModel()
-	{
-		audioWrapper = new();
-		attachCallbacks();
-	}
-	private PlayerModel(PlayerModelState a)
-	{
-		audioWrapper = new (a.volume, a.currentTime, a.currentSong);
-		attachCallbacks();
-	}
+    internal static void InitWithState(PlayerModelState a)
+    {
+        _instance = new PlayerModel(a);
+    }
 
-	private void attachCallbacks()
-	{
-		audioWrapper.OnPlaybackChange += (ps) => OnPlaybackChange(ps);
-		queueIterator = QueueModel.Instance.GetIterator();
-		attachOnSongEnd(OnSongEnd);
-		QueueModel.Instance.OnQueueModified += () => refreshIterator();
-		QueueModel.Instance.OnSongChange += (s) =>
-		{
-			selectSong(s?.path);
-		};
-		QueueModel.Instance.OnQueueModeChange += (q) => refreshIterator();
-		QueueModel.Instance.OnSkip += () => refreshIterator();
-	}
+    private PlayerModel()
+    {
+        audioWrapper = new();
+        AttachCallbacks();
+    }
 
-	private void refreshIterator() => queueIterator = QueueModel.Instance.GetIterator();
+    private PlayerModel(PlayerModelState a)
+    {
+        audioWrapper = new(a.volume, a.currentTime, a.currentSong);
+        AttachCallbacks();
+    }
 
-	private void OnSongEnd()
-	{
-		if (queueIterator.HasNext())
-		{
-			var song = queueIterator.Next();
-			selectSong(song.path);
-			OnSongChange(song);
-		}
-		else
-		{
-			audioWrapper.reset();
-			OnPlaybackChange(PlaybackState.Stopped);
-		}
-	}
-	internal PlayerModelState DumpState()
-	{
-		var ct = audioWrapper.currentTime();
-		ct = TimeSpan.FromSeconds(Math.Floor(ct.TotalSeconds));
-		return new PlayerModelState()
-		{
-			volume = audioWrapper.currentVolume(),
-			currentTime = ct,
-			currentSong = audioWrapper.currentSong()
-		};
-	}
+    private void AttachCallbacks()
+    {
+        audioWrapper.OnPlaybackChange += (ps) => OnPlaybackChange(ps);
+        AttachOnSongEnd(OnSongEnd);
+        QueueModel.Instance.OnSongChange += (s) =>
+        {
+            SelectSong(s?.path);
+        };
+    }
 
-	public void attachOnSongEnd(Action fn)
-	{
-		audioWrapper.attachOnSongEnd(fn);
-	}
+    private void OnSongEnd()
+    {
+        var song = QueueModel.Instance.NextSong();
+        if (song is not null)
+        {
+            SelectSong(song.path);
+            OnSongChange(song);
+        }
+        else
+        {
+            audioWrapper.Reset();
+            OnPlaybackChange(Model.PlaybackState.Stopped);
+        }
+    }
 
-	public void UpdateTime()
-	{
-		if (audioWrapper.UpdateTime())
-			OnTimeChange(audioWrapper.currentTime());
-	}
-	public TimeSpan songLength()
-	{
-		return audioWrapper.songLength();
-	}
+    internal PlayerModelState DumpState()
+    {
+        var ct = audioWrapper.CurrentTime();
+        ct = TimeSpan.FromSeconds(Math.Floor(ct.TotalSeconds));
+        return new PlayerModelState()
+        {
+            volume = audioWrapper.CurrentVolume(),
+            currentTime = ct,
+            currentSong = audioWrapper.CurrentSong()
+        };
+    }
 
-	public string? currentSong()
-	{
-		return audioWrapper.currentSong();
-	}
-	// returns with playback enabled
-	public void selectSong(string? name)
-	{
-		if (name is null)
-		{
-			audioWrapper.reset();
-		}
-		else
-		{
-			audioWrapper.selectSong(name);
-		}
-	}
-	public TimeSpan currentTime()
-	{
-		return audioWrapper.currentTime();
-	}
-	public void pause()
-	{
-		audioWrapper.pause();
-	}
-	public void play()
-	{
-		audioWrapper.play();
-	}
-	public PlaybackState playbackState()
-	{
-		return audioWrapper.playbackState();
-	}
-	public float currentVolume()
-	{
-		return audioWrapper.currentVolume();
-	}
-	public void addVolume(float delta)
-	{
-		if (audioWrapper.addVolume(delta) is true)
-			OnVolumeChange(audioWrapper.currentVolume());
-	}
+    public void AttachOnSongEnd(Action fn)
+    {
+        audioWrapper.AttachOnSongEnd(fn);
+    }
 
-	public void setVolume(float vol)
-	{
-		if (audioWrapper.setVolume(vol) is true)
-			OnVolumeChange(audioWrapper.currentVolume());
-	}
-	public void setTime(TimeSpan time)
-	{
-		if (audioWrapper.setTime(time) is true)
-			OnTimeChange(audioWrapper.currentTime());
-	}
+    public void UpdateTime()
+    {
+        if (audioWrapper.UpdateTime())
+            OnTimeChange(audioWrapper.CurrentTime());
+    }
 
-	public void addTime(float delta)
-	{
-		if (audioWrapper.addTime(delta) is true)
-			OnTimeChange(audioWrapper.currentTime());
-	}
+    public TimeSpan SongLength()
+    {
+        return audioWrapper.SongLength();
+    }
+
+    public string? CurrentSong()
+    {
+        return audioWrapper.CurrentSong();
+    }
+
+    // returns with playback enabled
+    public void SelectSong(string? name)
+    {
+        if (name is null)
+        {
+            audioWrapper.Reset();
+        }
+        else
+        {
+            audioWrapper.SelectSong(name);
+        }
+    }
+
+    public TimeSpan CurrentTime()
+    {
+        return audioWrapper.CurrentTime();
+    }
+
+    public void Pause()
+    {
+        audioWrapper.Pause();
+    }
+
+    public void Play()
+    {
+        audioWrapper.Play();
+    }
+
+    public PlaybackState PlaybackState()
+    {
+        return audioWrapper.PlaybackState();
+    }
+
+    public float CurrentVolume()
+    {
+        return audioWrapper.CurrentVolume();
+    }
+
+    public void AddVolume(float delta)
+    {
+        if (audioWrapper.AddVolume(delta) is true)
+            OnVolumeChange(audioWrapper.CurrentVolume());
+    }
+
+    public void SetVolume(float vol)
+    {
+        if (audioWrapper.SetVolume(vol) is true)
+            OnVolumeChange(audioWrapper.CurrentVolume());
+    }
+
+    public void SetTime(TimeSpan time)
+    {
+        if (audioWrapper.SetTime(time) is true)
+            OnTimeChange(audioWrapper.CurrentTime());
+    }
+
+    public void AddTime(float delta)
+    {
+        if (audioWrapper.AddTime(delta) is true)
+            OnTimeChange(audioWrapper.CurrentTime());
+    }
 }

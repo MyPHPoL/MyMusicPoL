@@ -1,302 +1,288 @@
-﻿using MusicBackend.Interfaces;
+﻿using System.Text.Json.Serialization;
+using MusicBackend.Interfaces;
 using MusicBackend.Utils;
-using System.Text.Json.Serialization;
 
 namespace MusicBackend.Model;
 
 internal class QueueModelState
 {
-	[JsonInclude]
-	public List<Song> songs { get; set; } = new();
-	[JsonInclude]
-	public int current { get; set; } = 0;
-	[JsonInclude]
-	public QueueMode queueMode { get; set; } = QueueMode.Loop;
+    [JsonInclude]
+    public List<Song> songs { get; set; } = new();
+
+    [JsonInclude]
+    public int current { get; set; } = 0;
+
+    [JsonInclude]
+    public QueueMode queueMode { get; set; } = QueueMode.Loop;
 }
 
 public enum QueueMode
 {
-	Loop,
-	OneLoop,
-	RandomLoop,
-	Single,
+    Loop,
+    Repeat,
+    RandomLoop,
+    Single,
 }
 
 public class QueueModel
 {
-	public List<Song> songs { get; private set; } = new();
-	int current = 0;
-	public int Current { get => current; }
-	public QueueMode QueueMode { get; private set; }
-	public event Action OnQueueModified = delegate { };
-	public event Action<Song?> OnSongChange = delegate { };
-	public event Action<QueueMode> OnQueueModeChange = delegate { };
-	public event Action OnSkip = delegate { };
+    private List<Song> QueuedSongs { get; set; } = new();
+    private List<int>? randomQueueIndexes = null;
+    private List<int> RandomQueueIndexes
+    {
+        get
+        {
+            if (randomQueueIndexes is null)
+            {
+                randomQueueIndexes = Enumerable.Range(0, QueuedSongs.Count).ToList();
+                Shuffle.ShuffleList(randomQueueIndexes, Random.Shared);
+            }
+            return randomQueueIndexes;
+        }
+    }
 
-	private static QueueModel? _instance;
-	public static QueueModel Instance { get => _instance ??= new QueueModel(); }
+    public IEnumerable<Song> Songs =>
+        QueueMode is not QueueMode.RandomLoop
+            ? QueuedSongs.AsEnumerable()
+            : RandomQueueIndexes.Select(i => QueuedSongs[i]);
 
-	private QueueModel()
-	{
-	}
-	private QueueModel(QueueModelState qms)
-	{
-		songs = qms.songs;
+    private int current = 0;
+    public QueueMode QueueMode { get; private set; }
+    public event Action OnQueueModified = delegate { };
+    public event Action<Song?> OnSongChange = delegate { };
+    public event Action<QueueMode> OnQueueModeChange = delegate { };
+    public event Action OnSkip = delegate { };
 
-		if (qms.current > qms.songs.Count)
-			current = 0;
-		else
-			current = qms.current;
-		QueueMode = qms.queueMode;
-		fixupSongs();
-	}
-	internal static void InitWithState(QueueModelState qms)
-	{
-		_instance = new QueueModel(qms);
-	}
+    private static QueueModel? _instance;
+    public static QueueModel Instance
+    {
+        get => _instance ??= new QueueModel();
+    }
 
-	private void fixupSongs()
-	{
-		var currentCount = songs.Count;
-		songs.RemoveAll(s => string.IsNullOrWhiteSpace(s.path));
-		if (currentCount != songs.Count)
-		{
-			current = 0;
-		}
-	}
+    private QueueModel() { }
 
-	public void SetQueueMode(QueueMode mode)
-	{
-		QueueMode = mode;
-		OnQueueModeChange(mode);
-	}
+    private QueueModel(QueueModelState qms)
+    {
+        QueuedSongs = qms.songs;
 
-	public IIterator<Song> GetIterator()
-	{
-		return QueueMode switch
-		{
-			QueueMode.Loop => new LoopIterator(this),
-			QueueMode.OneLoop => new OneLoopIterator(this),
-			QueueMode.RandomLoop => new RandomLoopIterator(this),
-			QueueMode.Single => new SingleIterator(this),
-			_ => new LoopIterator(this),
-		};
-	}
+        if (qms.current > qms.songs.Count)
+            current = 0;
+        else
+            current = qms.current;
+        QueueMode = qms.queueMode;
+        FixupSongs();
+    }
 
-	internal QueueModelState DumpState()
-	{
-		return new QueueModelState()
-		{
-			songs = songs,
-			current = current,
-			queueMode = QueueMode
-		};
-	}
+    internal static void InitWithState(QueueModelState qms)
+    {
+        _instance = new QueueModel(qms);
+    }
 
-	public bool isEmpty() => songs.Count == 0;
+    private void FixupSongs()
+    {
+        var currentCount = QueuedSongs.Count;
+        QueuedSongs.RemoveAll(s => string.IsNullOrWhiteSpace(s.path));
+        if (currentCount != QueuedSongs.Count)
+        {
+            current = 0;
+        }
+    }
 
-	public Song songAt(int index)
-	{
-		return songs[index];
-	}
-	public void appendSong(Song song)
-	{
-		songs.Add(song);
-		OnQueueModified();
-	}
+    public void SetQueueMode(QueueMode mode)
+    {
+        var prevMode = QueueMode;
+        QueueMode = mode;
+        OnQueueModeChange(mode);
+        if (
+            mode == QueueMode.RandomLoop && prevMode != QueueMode.RandomLoop
+            || mode != QueueMode.RandomLoop && prevMode == QueueMode.RandomLoop
+        )
+        {
+            randomQueueIndexes = null;
+            OnQueueModified();
+        }
+    }
 
-	private void removeSongAt(int index)
-	{
-		var song = songs[index];
-		songs.RemoveAt(index);
-		if (index <= current)
-		{
-			current--;
-			if (current == -1) current = 0;
-			if (songs.Count == 0)
-			{
-				OnSongChange(null);
-			}
+    internal QueueModelState DumpState()
+    {
+        return new QueueModelState()
+        {
+            songs = QueuedSongs,
+            current = current,
+            queueMode = QueueMode
+        };
+    }
 
-			var curSong = currentSong();
-			if (curSong == song)
-			{
-				current = 0;
-			}
-			if (currentSong() is not null)
-			{
-				OnSongChange(songs[current]);
-			}
-		}
-	}
-	public void removeSong(Song song)
-	{
-		var index = songs.Select((p, i) => (p, i)).First(p => p.p == song).i;
-		if (index < 0 || songs.Count <= index) return;
-		removeSongAt(index);
-		OnQueueModified();
-	}
-	public void removeSong(int index)
-	{
-		if (index < 0 || songs.Count <= index) return;
-		removeSongAt(index);
-		OnQueueModified();
-	}
+    public void AppendSong(Song song)
+    {
+        QueuedSongs.Add(song);
+        OnQueueModified();
+    }
 
-	public void clear()
-	{
-		songs.Clear();
-		current = 0;
-		OnQueueModified();
-		OnSongChange(null);
-	}
+    private void RemoveSongAt(int index)
+    {
+        var song = CurrentSong();
+        if (randomQueueIndexes is not null)
+        {
+            var normalIndex = randomQueueIndexes[index];
+            randomQueueIndexes.RemoveAt(index);
+            for (int i = 0; i < randomQueueIndexes.Count; i++)
+            {
+                if (randomQueueIndexes[i] > normalIndex)
+                {
+                    randomQueueIndexes[i]--;
+                }
+            }
+            index = normalIndex;
+        }
+        QueuedSongs.RemoveAt(index);
+        if (index <= current)
+        {
+            current--;
+            if (current == -1)
+                current = 0;
+            if (QueuedSongs.Count == 0)
+            {
+                OnSongChange(null);
+            }
 
-	public Song? currentSong()
-	{
-		return songs.Count == 0 ? null : songs[current];
-	}
-	public void playNth(int index)
-	{
-		if (index < 0 || songs.Count < index) return;
-		current = index;
-		OnSongChange(songs[current]);
-		OnSkip();
-	}
-	public void PlayPlaylist(string playlistName)
-	{
-		var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
-		// if song was paused and we tried to play empty playlist then playlist wouldn't be null, but it would have 0 songs
-		// bandaid fix ¯\_(ツ)_/¯
-		if (playlist is null || playlist.Songs.Count == 0) return;
-		songs.Clear();
-		foreach (var song in playlist.Songs)
-		{
-			songs.Add(song);
-		}
-		current = 0;
-		OnQueueModified();
-		OnSongChange(songs[current]);
-	}
-	public void forceNextSong()
-	{
-		if (QueueMode == QueueMode.OneLoop) SetQueueMode(QueueMode.Loop);
-		if (songs.Count == 0)
-		{
-			return ;
-		}
-		current++;
-		if (current == songs.Count)
-		{
-			current = 0;
-		}
-		OnSongChange(songs[current]);
-		OnSkip();
-	} 
-	public void forcePrevSong()
-	{
-		if (QueueMode == QueueMode.OneLoop) SetQueueMode(QueueMode.Loop);
-		if (songs.Count == 0)
-		{
-			return;
-		}
-		current--;
-		if (current == -1)
-		{
-			current = songs.Count-1;
-		}
-		OnSongChange(songs[current]);
-		OnSkip();
-	} 
-	internal class LoopIterator : IIterator<Song>
-	{
-		private readonly QueueModel queueModel;
-		private int index;
-		public LoopIterator(QueueModel queueModel)
-		{
-			this.queueModel = queueModel;
-			index = queueModel.current;
-		}
-		public bool HasNext()
-		{
-			return queueModel.songs.Count != 0;
-		}
+            var curSong = CurrentSong();
+            if (curSong == song)
+            {
+                current = 0;
+            }
+            curSong = CurrentSong();
+            if (curSong is not null)
+            {
+                OnSongChange(curSong);
+            }
+        }
+    }
 
-		public Song Next()
-		{
-			queueModel.forceNextSong();
-			var song = queueModel.songs[queueModel.current];
-			return song;
-		}
-	}
-	internal class SingleIterator : IIterator<Song>
-	{
-		private readonly QueueModel queueModel;
-		public SingleIterator(QueueModel queueModel)
-		{
-			this.queueModel = queueModel;
-		}
-		public bool HasNext()
-		{
-			return false;
-		}
+    public void RemoveSong(int index)
+    {
+        if (index < 0 || QueuedSongs.Count <= index)
+            return;
+        RemoveSongAt(index);
+        OnQueueModified();
+    }
 
-		public Song Next()
-		{
-			return queueModel.songs[queueModel.current];
-		}
-	}
-	internal class OneLoopIterator : IIterator<Song>
-	{
-		private readonly QueueModel queueModel;
-		private Song song;
-		public OneLoopIterator(QueueModel queueModel)
-		{
-			this.queueModel = queueModel;
-			song = queueModel.songs[queueModel.current];
-		}
-		public bool HasNext()
-		{
-			return true;
-		}
+    public void Clear()
+    {
+        QueuedSongs.Clear();
+        randomQueueIndexes = null;
+        current = 0;
+        OnQueueModified();
+        OnSongChange(null);
+    }
 
-		public Song Next()
-		{
-			return song;
-		}
-	}
+    public Song? CurrentSong()
+    {
+        if (QueuedSongs.Count == 0)
+            return null;
+        return QueueMode == QueueMode.RandomLoop
+            ? QueuedSongs[RandomQueueIndexes[current]]
+            : QueuedSongs[current];
+    }
 
-	internal class RandomLoopIterator : IIterator<Song>
-	{
-		private readonly QueueModel queueModel;
-		private readonly Random rng = new Random();
-		private readonly List<int> indices = new();
+    public void PlayNth(int index)
+    {
+        if (index < 0 || QueuedSongs.Count < index)
+            return;
+        current = index;
+        OnSongChange(CurrentSong());
+        OnSkip();
+    }
 
-		public RandomLoopIterator(QueueModel queueModel)
-		{
-			this.queueModel = queueModel;
-			shuffle();
-		}
-		public bool HasNext()
-		{
-			return queueModel.songs.Count != 0;
-		}
-		public Song Next()
-		{
-			var song = queueModel.songs[indices[0]];
-			indices.RemoveAt(0);
-			if (indices.Count == 0)
-			{
-				shuffle();
-			}
-			return song;
-		}
-		private void shuffle()
-		{
-			for (int i = 0; i < queueModel.songs.Count; i++)
-			{
-				indices.Add(i);
-			}
-			Shuffle.ShuffleList(indices, rng);
-		}
-	}
+    public void PlayPlaylist(string playlistName)
+    {
+        var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
+        // if song was paused and we tried to play empty playlist then playlist wouldn't be null, but it would have 0 songs
+        // bandaid fix ¯\_(ツ)_/¯
+        if (playlist is null || playlist.Songs.Count == 0)
+            return;
+        QueuedSongs.Clear();
+        foreach (var song in playlist.Songs)
+        {
+            QueuedSongs.Add(song);
+        }
+        current = 0;
+        randomQueueIndexes = null;
+        OnQueueModified();
+        OnSongChange(CurrentSong());
+    }
+
+    internal Song? NextSong()
+    {
+        switch (QueueMode)
+        {
+            case QueueMode.Loop:
+                current++;
+                if (current == QueuedSongs.Count)
+                {
+                    current = 0;
+                }
+                return CurrentSong();
+            case QueueMode.Single:
+                current++;
+                if (current == QueuedSongs.Count)
+                {
+                    current = 0;
+                    return null;
+                }
+                return CurrentSong();
+            case QueueMode.RandomLoop:
+                current++;
+                if (current == QueuedSongs.Count)
+                {
+                    current = 0;
+                    Shuffle.ShuffleList(randomQueueIndexes!, Random.Shared);
+                }
+                return CurrentSong();
+            case QueueMode.Repeat:
+                return CurrentSong();
+        }
+        throw new InvalidOperationException("Invalid QueueMode");
+    }
+
+    public void ForceNextSong()
+    {
+        if (QueueMode == QueueMode.Repeat)
+            SetQueueMode(QueueMode.Loop);
+        if (QueuedSongs.Count == 0)
+        {
+            return;
+        }
+        current++;
+        if (current == QueuedSongs.Count)
+        {
+            current = 0;
+        }
+        OnSongChange(CurrentSong());
+        OnSkip();
+    }
+
+    public void ForcePrevSong()
+    {
+        if (QueueMode == QueueMode.Repeat)
+            SetQueueMode(QueueMode.Loop);
+        if (QueuedSongs.Count == 0)
+        {
+            return;
+        }
+        current--;
+        if (current == -1)
+        {
+            current = QueuedSongs.Count - 1;
+        }
+        OnSongChange(CurrentSong());
+        OnSkip();
+    }
+    //private IEnumerable<Song> GetRandomEnumerable()
+    //{
+    //    foreach (var index in RandomQueueIndexes)
+    //    {
+    //        yield return QueuedSongs[index];
+    //    }
+    //}
 }
