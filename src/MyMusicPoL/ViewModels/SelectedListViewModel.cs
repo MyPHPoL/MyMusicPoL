@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MusicBackend.Model;
 using mymusicpol.Utils;
 using System.Collections.ObjectModel;
@@ -7,59 +8,19 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace mymusicpol.ViewModels;
-internal class SelectedListViewModel : ViewModelBase
+internal partial class SelectedListViewModel : ViewModelBase
 {
+	[ObservableProperty]
 	private string name;
-	public string Name
-	{
-		get => name;
-		set
-		{
-			name = value;
-			OnPropertyChanged(nameof(Name));
-		}
-	}
+	[ObservableProperty]
 	private Visibility _swapVisibility;
-	public Visibility SwapVisibility
-	{
-		get => _swapVisibility;
-		set
-		{
-			_swapVisibility = value;
-			OnPropertyChanged(nameof(SwapVisibility));
-		}
-	}
+	[ObservableProperty]
 	private Visibility _filterVisibility;
-	public Visibility FilterVisiblity
-	{
-		get => _filterVisibility;
-		set
-		{
-			_filterVisibility = value;
-			OnPropertyChanged(nameof(FilterVisiblity));
-		}
-	}
+	[ObservableProperty]
 	private Visibility _queueButtonVisibility;
-	public Visibility QueueButtonVisibility
-	{
-		get => _queueButtonVisibility;
-		set
-		{
-			_queueButtonVisibility = value;
-			OnPropertyChanged(nameof(QueueButtonVisibility));
-		}
-	}
 	public ObservableCollection<SongViewModel> Items { get; set; } = new();
-
+	[ObservableProperty]
 	public int _selectedIndex = -1;
-	public int SelectedIndex
-	{
-		get => _selectedIndex;
-		set 
-		{
-			_selectedIndex = value; OnPropertyChanged(nameof(SelectedIndex));
-		}
-	}
 
 	public Notify<string> Filter { get; set; } = new();
 	private Song[] originalItems = [];
@@ -117,8 +78,15 @@ internal class SelectedListViewModel : ViewModelBase
 		}
 	}
 
-    bool IsQueue => Name == "Queue";
-    bool IsLibrary => Name == "Library";
+	private enum ListType
+	{
+		Queue,
+		Library,
+		Playlist
+	}
+    ListType listType;
+    bool IsQueue => listType == ListType.Queue;
+    bool IsLibrary => listType == ListType.Playlist;
 
     public ICommand DefaultSortCommand { get; }
 	public ICommand AlbumSortCommand { get; }
@@ -243,11 +211,11 @@ internal class SelectedListViewModel : ViewModelBase
 
 	public void PlayNth(int index)
 	{
-		if (Name == "Queue")
+		if (IsQueue)
 		{
 			QueueModel.Instance.playNth(index);
 		}
-		else if (Name == "Library")
+		else if (IsLibrary)
 		{
 			var song = Song.fromPath(Items[index].path);
 			if (song is null) return;
@@ -300,7 +268,7 @@ internal class SelectedListViewModel : ViewModelBase
 
 	private void Sort<T>(T arr) where T : IEnumerable<SongViewModel>
 	{
-		if (Name == "Queue") return;
+		if (IsQueue) return;
 
 		var query = sortMode switch
 		{
@@ -356,8 +324,9 @@ internal class SelectedListViewModel : ViewModelBase
 	public void ShowPlaylist(string name)
 	{
 		Name = name;
+		listType = ListType.Playlist;
 		SwapVisibility = Visibility.Visible;
-		FilterVisiblity = Visibility.Visible;
+		FilterVisibility = Visibility.Visible;
 		QueueButtonVisibility = Visibility.Collapsed;
 		Items.Clear();
 		var playlist = PlaylistManager.Instance.GetPlaylist(name);
@@ -373,8 +342,9 @@ internal class SelectedListViewModel : ViewModelBase
 	public void ShowLibrary()
 	{
 		Name = "Library";
+		listType = ListType.Library;
 		SwapVisibility = Visibility.Collapsed;
-		FilterVisiblity = Visibility.Visible;
+		FilterVisibility = Visibility.Visible;
 		QueueButtonVisibility = Visibility.Collapsed;
 		Items.Clear();
 		originalItems = LibraryManager.Instance.Songs.Values.ToArray();
@@ -387,8 +357,9 @@ internal class SelectedListViewModel : ViewModelBase
 	public void ShowQueue()
 	{
 		Name = "Queue";
+		listType = ListType.Queue;
 		SwapVisibility = Visibility.Collapsed;
-		FilterVisiblity = Visibility.Collapsed;
+		FilterVisibility = Visibility.Collapsed;
 		QueueButtonVisibility = Visibility.Visible;
 		Items.Clear();
 		foreach (var song in QueueModel.Instance.songs)
