@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using mymusicpol.ViewModels;
+using Forms = System.Windows.Forms;
 
 namespace mymusicpol.Views
 {
@@ -24,11 +17,70 @@ namespace mymusicpol.Views
         public PlayerView()
         {
             InitializeComponent();
+            Loaded += (s, e) =>
+            {
+                window = Window.GetWindow(this);
+                LoadIcon();
+                window.Closing += (s, e) =>
+                {
+                    e.Cancel = true;
+                    window.ShowInTaskbar = false;
+                    window.Hide();
+                };
+            };
         }
 
         private VisualizerView? visualizerWindow;
+        private Forms.NotifyIcon notifyIcon;
+        private Window window;
 
-        private void VisualizerClick(object snder, RoutedEventArgs e)
+        private void LoadIcon()
+        {
+            notifyIcon = new()
+            {
+                Icon = Icon.ExtractAssociatedIcon(
+                    Process.GetCurrentProcess().MainModule!.FileName
+                ),
+                Visible = false,
+                Text = "MyMusicPoL",
+            };
+            notifyIcon.MouseClick += (s, e) =>
+            {
+                if (e.Button == Forms.MouseButtons.Left)
+                {
+                    window.Show();
+                    window.ShowInTaskbar = true;
+                }
+                else if (e.Button == Forms.MouseButtons.Right)
+                {
+                    var menu = (ContextMenu)FindResource("NotifyIconMenu");
+                    menu.IsOpen = true;
+                }
+            };
+            notifyIcon.Visible = true;
+        }
+
+        private void NotifyIconShowWindow(object sender, RoutedEventArgs e)
+        {
+            window.Show();
+            window.ShowInTaskbar = true;
+        }
+
+        private void NotifyIconPlayPause(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is PlayerViewModel playerViewModel)
+            {
+                playerViewModel.PlayPauseButton.Execute(null);
+            }
+        }
+
+        private void NotifyIconQuit(object sender, RoutedEventArgs e)
+        {
+            notifyIcon.Dispose();
+            Application.Current.Shutdown();
+        }
+
+        private void VisualizerClick(object sender, RoutedEventArgs e)
         {
             OpenVisualizer();
         }
@@ -63,7 +115,10 @@ namespace mymusicpol.Views
                 dialog.ShowDialog();
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
-                    CustomMessageBox.Show("Playlist name cannot be empty", "Invalid Name");
+                    CustomMessageBox.Show(
+                        "Playlist name cannot be empty",
+                        "Invalid Name"
+                    );
                 }
                 else
                 {
@@ -90,7 +145,10 @@ namespace mymusicpol.Views
                 dialog.ShowDialog();
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
-                    CustomMessageBox.Show("Playlist name cannot be empty", "Invalid Name");
+                    CustomMessageBox.Show(
+                        "Playlist name cannot be empty",
+                        "Invalid Name"
+                    );
                 }
                 else
                 {
@@ -130,19 +188,29 @@ namespace mymusicpol.Views
             }
         }
 
-        private void SelectedListAddQueue_Click(object sender, RoutedEventArgs e)
+        private void SelectedListAddQueue_Click(
+            object sender,
+            RoutedEventArgs e
+        )
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                playerViewModel.SelectedListAddQueue(SelectedList.SelectedIndex);
+                playerViewModel.SelectedListAddQueue(
+                    SelectedList.SelectedIndex
+                );
             }
         }
 
-        private void SelectedListAddPlaylist_Click(object sender, RoutedEventArgs e)
+        private void SelectedListAddPlaylist_Click(
+            object sender,
+            RoutedEventArgs e
+        )
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                var dialog = new InputBoxView("Enter playlist name to add song");
+                var dialog = new InputBoxView(
+                    "Enter playlist name to add song"
+                );
                 dialog.ShowDialog();
                 if (dialog.TextBody is not null)
                 {
@@ -154,7 +222,10 @@ namespace mymusicpol.Views
             }
         }
 
-        private void SelectedList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void SelectedList_MouseDoubleClick(
+            object sender,
+            MouseButtonEventArgs e
+        )
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
@@ -167,7 +238,8 @@ namespace mymusicpol.Views
             if (DataContext is PlayerViewModel playerViewModel)
             {
                 var dialog = new System.Windows.Forms.SaveFileDialog();
-                dialog.Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
+                dialog.Filter =
+                    "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     var path = dialog.FileName;
@@ -177,7 +249,10 @@ namespace mymusicpol.Views
                     }
                     catch
                     {
-                        CustomMessageBox.Show("Failed to export playlist", "Export Error");
+                        CustomMessageBox.Show(
+                            "Failed to export playlist",
+                            "Export Error"
+                        );
                     }
                 }
             }
@@ -188,7 +263,8 @@ namespace mymusicpol.Views
             if (DataContext is PlayerViewModel playerViewModel)
             {
                 var dialog = new System.Windows.Forms.OpenFileDialog();
-                dialog.Filter = "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
+                dialog.Filter =
+                    "JSON files (*.json)|*.json|XML files (*.xml)|*.xml";
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     var path = dialog.FileName;
@@ -198,13 +274,19 @@ namespace mymusicpol.Views
                     }
                     catch
                     {
-                        CustomMessageBox.Show("Failed to import playlist", "Export Error");
+                        CustomMessageBox.Show(
+                            "Failed to import playlist",
+                            "Export Error"
+                        );
                     }
                 }
             }
         }
 
-        private void fromWebPlaceholder_GotFocus(object sender, RoutedEventArgs e)
+        private void fromWebPlaceholder_GotFocus(
+            object sender,
+            RoutedEventArgs e
+        )
         {
             fromWebBoxPlaceholder.Visibility = Visibility.Collapsed;
             fromWebBox.Visibility = Visibility.Visible;

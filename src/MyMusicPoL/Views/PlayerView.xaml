@@ -9,6 +9,19 @@
         xmlns:viewmodel="clr-namespace:mymusicpol.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewmodel:PlayerViewModel}">
 
+    <UserControl.Resources>
+        <ContextMenu x:Key="NotifyIconMenu"
+                     Background="#202124"
+                     BorderBrush="#121212"
+                     BorderThickness="1"
+                     Foreground="#ecf0f1">
+            <MenuItem Header="Show window" Click="NotifyIconShowWindow" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="Show visualizer" Click="VisualizerClick" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="Play/Pause" Click="NotifyIconPlayPause" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="Quit" Click="NotifyIconQuit" Style="{StaticResource MenuItemStyle}"/>
+        </ContextMenu>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0*"/>
