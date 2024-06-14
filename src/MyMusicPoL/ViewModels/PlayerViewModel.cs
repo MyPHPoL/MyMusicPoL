@@ -52,7 +52,8 @@ internal partial class PlayerViewModel : ViewModelBase
     public double playFromWebProgress;
 
     // all playlists
-    public ObservableCollection<SonglistViewModel> Playlists { get; set; } = new();
+    public ObservableCollection<SonglistViewModel> Playlists { get; set; } =
+        new();
 
     // view model for selected library/playlist/queue
     public SelectedListViewModel SelectedList { get; set; } = new();
@@ -70,7 +71,8 @@ internal partial class PlayerViewModel : ViewModelBase
     public ICommand ShowPlaylistCommand { get; }
     public ICommand ShowLibaryCommand { get; }
     public IAsyncRelayCommand PlayFromWebCommand { get; }
-    public Notify<bool> PlayFromWebInProgress { get; set; } = new() { Value = false };
+    public Notify<bool> PlayFromWebInProgress { get; set; } =
+        new() { Value = false };
     public Notify<string> PlayPauseLabel { get; set; } = new() { Value = "" };
     public ButtonNotify RepeatLabel { get; set; } = new();
     public ButtonNotify ShuffleLabel { get; set; } =
@@ -110,7 +112,8 @@ internal partial class PlayerViewModel : ViewModelBase
 
         public void OnPlaylistNameEdited(string oldName, string newName)
         {
-            playerViewModel.Playlists.First(p => p.Name == oldName).Name = newName;
+            playerViewModel.Playlists.First(p => p.Name == oldName).Name =
+                newName;
         }
 
         public void OnPlaylistRemoved(string name)
@@ -137,7 +140,10 @@ internal partial class PlayerViewModel : ViewModelBase
         if (playlist is null)
             return;
         // find index of playlist
-        var index = Playlists.Select((p, i) => (p, i)).First(p => p.p.Name == name).i;
+        var index = Playlists
+            .Select((p, i) => (p, i))
+            .First(p => p.p.Name == name)
+            .i;
 
         Playlists[index].Name = playlist.Name;
         Playlists[index].Songs.Clear();
@@ -155,7 +161,9 @@ internal partial class PlayerViewModel : ViewModelBase
         ShowPlaylistCommand = new RelayCommand(ShowPlaylist);
         ShowQueueButton = new RelayCommand(ShowQueue);
         ShowLibaryCommand = new RelayCommand(ShowLibaryCallback);
-        PlayFromWebCommand = new AsyncRelayCommand<string?>(PlayFromWebCallback);
+        PlayFromWebCommand = new AsyncRelayCommand<string?>(
+            PlayFromWebCallback
+        );
         ClearQueueCommand = new RelayCommand(ClearQueue);
         windowsMediaController = new(PlayerModel.Instance, QueueModel.Instance);
 
@@ -173,7 +181,10 @@ internal partial class PlayerViewModel : ViewModelBase
                 PlayerModel.Instance.CurrentTime().TotalSeconds
                 / PlayerModel.Instance.SongLength().TotalSeconds
         };
-        TotalTime = new() { Value = formatTime(PlayerModel.Instance.SongLength()) };
+        TotalTime = new()
+        {
+            Value = formatTime(PlayerModel.Instance.SongLength())
+        };
         timeElapsed = formatTime(PlayerModel.Instance.CurrentTime());
         var curSongPath = PlayerModel.Instance.CurrentSong();
         if (curSongPath == null)
@@ -212,7 +223,8 @@ internal partial class PlayerViewModel : ViewModelBase
             isChangingSlider = true;
             TimeElapsed = formatTime(time);
             ProgressValue.Value =
-                time.TotalSeconds / PlayerModel.Instance.SongLength().TotalSeconds;
+                time.TotalSeconds
+                / PlayerModel.Instance.SongLength().TotalSeconds;
         };
         Volume.PropertyChanged += (sender, e) =>
         {
@@ -275,26 +287,31 @@ internal partial class PlayerViewModel : ViewModelBase
 
         if (repeat == 0)
         {
-            RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+            RepeatLabel.Background =
+                new BrushConverter().ConvertFrom("#d2b4de") as Brush;
             RepeatLabel.Content = "\uE8ED";
         }
         else if (repeat == 1)
         {
             RepeatLabel.Content = "\uE8EE";
-            RepeatLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+            RepeatLabel.Background =
+                new BrushConverter().ConvertFrom("#d2b4de") as Brush;
         }
         else if (repeat == 2)
         {
             RepeatLabel.Content = "\uE8EE";
-            RepeatLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
+            RepeatLabel.Background =
+                new BrushConverter().ConvertFrom("#cacfd2") as Brush;
         }
         if (random)
         {
-            ShuffleLabel.Background = new BrushConverter().ConvertFrom("#d2b4de") as Brush;
+            ShuffleLabel.Background =
+                new BrushConverter().ConvertFrom("#d2b4de") as Brush;
         }
         else
         {
-            ShuffleLabel.Background = new BrushConverter().ConvertFrom("#cacfd2") as Brush;
+            ShuffleLabel.Background =
+                new BrushConverter().ConvertFrom("#cacfd2") as Brush;
         }
     }
 

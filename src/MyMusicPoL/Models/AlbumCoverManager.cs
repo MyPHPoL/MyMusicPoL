@@ -6,64 +6,69 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace mymusicpol.Models;
+
 public class AlbumCoverManager
 {
-	private Dictionary<string, BitmapSource> covers = new();
+    private Dictionary<string, BitmapSource> covers = new();
 
-	private static AlbumCoverManager? instance;
-	public static AlbumCoverManager Instance { get => instance ??= new AlbumCoverManager(); }
-	private AlbumCoverManager()
-	{
-	}
+    private static AlbumCoverManager? instance;
+    public static AlbumCoverManager Instance
+    {
+        get => instance ??= new AlbumCoverManager();
+    }
 
-	private void CreateDefault()
-	{
-		var image = new BitmapImage();
-		image.BeginInit();
-		image.UriSource = new Uri("pack://application:,,,/assets/default.png");
-		image.EndInit();
-		image.Freeze();
-		covers["Unknown"] = image;
-	}
+    private AlbumCoverManager() { }
 
-	public BitmapSource GetCover(MusicBackend.Model.Song? song)
-	{
-		if (song is null)
-		{
-			if (covers.ContainsKey("Unknown"))
-			{
-				return covers["Unknown"];
-			}
-			CreateDefault();
-			return covers["Unknown"];
-		}
-		if (covers.TryGetValue(song.Album.Name, out BitmapSource? value))
-		{
-			return value;
-		}
-		var cover = song.Album.Cover;
-		var image = new BitmapImage();
+    private void CreateDefault()
+    {
+        var image = new BitmapImage();
+        image.BeginInit();
+        image.UriSource = new Uri("pack://application:,,,/assets/default.png");
+        image.EndInit();
+        image.Freeze();
+        covers["Unknown"] = image;
+    }
 
-		if (cover is not null)
-		{
-			using var ms = new System.IO.MemoryStream(cover);
-			ms.Position = 0;
-			image.BeginInit();
-			image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-			image.CacheOption = BitmapCacheOption.OnLoad;
-			image.UriSource = null;
-			image.StreamSource = ms;
-			image.EndInit();
-		}
-		else
-		{
-			image.BeginInit();
-			image.UriSource = new Uri("pack://application:,,,/assets/default.png");
-			image.EndInit();
-		}
-		image.Freeze();
-		covers[song.Album.Name] = image;
+    public BitmapSource GetCover(MusicBackend.Model.Song? song)
+    {
+        if (song is null)
+        {
+            if (covers.ContainsKey("Unknown"))
+            {
+                return covers["Unknown"];
+            }
+            CreateDefault();
+            return covers["Unknown"];
+        }
+        if (covers.TryGetValue(song.Album.Name, out BitmapSource? value))
+        {
+            return value;
+        }
+        var cover = song.Album.Cover;
+        var image = new BitmapImage();
 
-		return image;
-	}
+        if (cover is not null)
+        {
+            using var ms = new System.IO.MemoryStream(cover);
+            ms.Position = 0;
+            image.BeginInit();
+            image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = null;
+            image.StreamSource = ms;
+            image.EndInit();
+        }
+        else
+        {
+            image.BeginInit();
+            image.UriSource = new Uri(
+                "pack://application:,,,/assets/default.png"
+            );
+            image.EndInit();
+        }
+        image.Freeze();
+        covers[song.Album.Name] = image;
+
+        return image;
+    }
 }

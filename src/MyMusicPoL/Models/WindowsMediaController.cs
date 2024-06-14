@@ -18,13 +18,20 @@ internal class WindowsMediaController
     //private readonly MediaPlayer mediaPlayer;
     private readonly SystemMediaTransportControls smtControls;
 
-    public WindowsMediaController(PlayerModel playerModel, QueueModel queueModel)
+    public WindowsMediaController(
+        PlayerModel playerModel,
+        QueueModel queueModel
+    )
     {
         this.playerModel = playerModel;
         this.queueModel = queueModel;
         // GetForCurrentView doesnt work
-        var winHandle = new WindowInteropHelper(Application.Current.MainWindow).EnsureHandle();
-        smtControls = SystemMediaTransportControlsInterop.GetForWindow(winHandle);
+        var winHandle = new WindowInteropHelper(
+            Application.Current.MainWindow
+        ).EnsureHandle();
+        smtControls = SystemMediaTransportControlsInterop.GetForWindow(
+            winHandle
+        );
         smtControls.IsPlayEnabled = true;
         smtControls.IsPauseEnabled = true;
         smtControls.IsNextEnabled = true;
@@ -85,19 +92,22 @@ internal class WindowsMediaController
         {
             var stream = ByteToRandomAccessStream(cover);
             WriteStreamToFile(stream, "albumCover.png");
-            smtControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromStream(
-                stream
-            );
+            smtControls.DisplayUpdater.Thumbnail =
+                RandomAccessStreamReference.CreateFromStream(stream);
         }
         else
         {
-            smtControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(
-                new Uri("pack://application:,,,/assets/default.png")
-            );
+            smtControls.DisplayUpdater.Thumbnail =
+                RandomAccessStreamReference.CreateFromUri(
+                    new Uri("pack://application:,,,/assets/default.png")
+                );
         }
     }
 
-    private static void WriteStreamToFile(IRandomAccessStream stream, string path)
+    private static void WriteStreamToFile(
+        IRandomAccessStream stream,
+        string path
+    )
     {
         using (var fileStream = new FileStream(path, FileMode.Create))
         {
@@ -125,11 +135,16 @@ internal class WindowsMediaController
         func = args.Button switch
         {
             SystemMediaTransportControlsButton.Play => () => playerModel.Play(),
-            SystemMediaTransportControlsButton.Pause => () => playerModel.Pause(),
-            SystemMediaTransportControlsButton.Next => () => queueModel.ForceNextSong(),
-            SystemMediaTransportControlsButton.Previous => () => queueModel.ForcePrevSong(),
-            SystemMediaTransportControlsButton.FastForward => () => playerModel.AddTime(10),
-            SystemMediaTransportControlsButton.Rewind => () => playerModel.AddTime(-10),
+            SystemMediaTransportControlsButton.Pause
+                => () => playerModel.Pause(),
+            SystemMediaTransportControlsButton.Next
+                => () => queueModel.ForceNextSong(),
+            SystemMediaTransportControlsButton.Previous
+                => () => queueModel.ForcePrevSong(),
+            SystemMediaTransportControlsButton.FastForward
+                => () => playerModel.AddTime(10),
+            SystemMediaTransportControlsButton.Rewind
+                => () => playerModel.AddTime(-10),
             _ => null,
         };
 

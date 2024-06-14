@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace mymusicpol.ViewModels
 {
-	internal class MainViewModel : ViewModelBase
-	{
-		public ViewModelBase CurrentViewModel { get; }
-		public MainViewModel()
-		{
-			CurrentViewModel = new PlayerViewModel();
-		}
-	}
+    internal class MainViewModel : ViewModelBase
+    {
+        public ViewModelBase CurrentViewModel { get; }
+
+        public MainViewModel()
+        {
+            CurrentViewModel = new PlayerViewModel();
+        }
+    }
 }

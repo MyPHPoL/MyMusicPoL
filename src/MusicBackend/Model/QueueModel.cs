@@ -34,7 +34,9 @@ public class QueueModel
         {
             if (randomQueueIndexes is null)
             {
-                randomQueueIndexes = Enumerable.Range(0, QueuedSongs.Count).ToList();
+                randomQueueIndexes = Enumerable
+                    .Range(0, QueuedSongs.Count)
+                    .ToList();
                 Shuffle.ShuffleList(randomQueueIndexes, Random.Shared);
             }
             return randomQueueIndexes;

@@ -109,7 +109,10 @@ internal class AudioWrapper : IDisposable
         {
             audioFileReader = new(filename);
             currentFileName = filename;
-            sampleAccumulator = new(audioFileReader.ToSampleProvider(), BUFFER_SIZE);
+            sampleAccumulator = new(
+                audioFileReader.ToSampleProvider(),
+                BUFFER_SIZE
+            );
             sampleAccumulator.SamplesAccumulated += (s, e) =>
             {
                 SamplesAccumulated?.Invoke(e);
@@ -160,7 +163,10 @@ internal class AudioWrapper : IDisposable
     /// <param name="name">Name of the song to select</param>
     public void SelectSong(string name)
     {
-        if (audioFileReader is null || waveOut.PlaybackState == NAudio.Wave.PlaybackState.Stopped)
+        if (
+            audioFileReader is null
+            || waveOut.PlaybackState == NAudio.Wave.PlaybackState.Stopped
+        )
         {
             waveInit(name);
             Play();
@@ -243,7 +249,10 @@ internal class AudioWrapper : IDisposable
         if (audioFileReader is null)
             return false;
         var ct = audioFileReader.CurrentTime + TimeSpan.FromSeconds(delta);
-        if (ct >= TimeSpan.Zero && audioFileReader.CurrentTime <= audioFileReader.TotalTime)
+        if (
+            ct >= TimeSpan.Zero
+            && audioFileReader.CurrentTime <= audioFileReader.TotalTime
+        )
         {
             audioFileReader.CurrentTime = ct;
             return true;

@@ -116,11 +116,19 @@ internal partial class SelectedListViewModel : ViewModelBase
 
     public SelectedListViewModel()
     {
-        DefaultSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByDefault));
-        AlbumSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByAlbum));
-        ArtistSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByArtist));
+        DefaultSortCommand = new RelayCommand(
+            () => SetSortMode(SortMode.ByDefault)
+        );
+        AlbumSortCommand = new RelayCommand(
+            () => SetSortMode(SortMode.ByAlbum)
+        );
+        ArtistSortCommand = new RelayCommand(
+            () => SetSortMode(SortMode.ByArtist)
+        );
         TimeSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByTime));
-        TitleSortCommand = new RelayCommand(() => SetSortMode(SortMode.ByTitle));
+        TitleSortCommand = new RelayCommand(
+            () => SetSortMode(SortMode.ByTitle)
+        );
         SwapDownCommand = new RelayCommand(SwapDownCallback);
         SwapUpCommand = new RelayCommand(SwapUpCallback);
 
@@ -177,7 +185,10 @@ internal partial class SelectedListViewModel : ViewModelBase
                 var splittedSongName = song.name.Split(" ");
                 foreach (var songName in splittedSongName)
                 {
-                    if (songName.StartsWith(Filter.Value, comparison) && !list.Contains(song))
+                    if (
+                        songName.StartsWith(Filter.Value, comparison)
+                        && !list.Contains(song)
+                    )
                     {
                         list.Add(song);
                     }
@@ -218,7 +229,10 @@ internal partial class SelectedListViewModel : ViewModelBase
         }
         else
         {
-            PlaylistManager.Instance.RemoveSongFromPlaylist(Name, Items[index].path);
+            PlaylistManager.Instance.RemoveSongFromPlaylist(
+                Name,
+                Items[index].path
+            );
         }
     }
 
@@ -257,7 +271,10 @@ internal partial class SelectedListViewModel : ViewModelBase
         if (index < 0 || index >= Items.Count)
             return;
 
-        PlaylistManager.Instance.AddSongToPlaylist(playlistName, Items[index].path);
+        PlaylistManager.Instance.AddSongToPlaylist(
+            playlistName,
+            Items[index].path
+        );
     }
 
     public void AddSongs(SongViewModel[] songs)

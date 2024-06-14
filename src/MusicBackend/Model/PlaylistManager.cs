@@ -29,7 +29,8 @@ public class PlaylistManager
         get => instance ??= new();
     }
 
-    public SortedDictionary<string, Playlist> Playlists { get; private set; } = new();
+    public SortedDictionary<string, Playlist> Playlists { get; private set; } =
+        new();
     private List<IPlaylistObserver> _observers = new();
     private object _observerLock = new();
 
@@ -138,7 +139,9 @@ public class PlaylistManager
         }
         else
         {
-            throw new ArgumentException("Playlist with the same name already exists");
+            throw new ArgumentException(
+                "Playlist with the same name already exists"
+            );
         }
     }
 
@@ -149,7 +152,9 @@ public class PlaylistManager
         if (string.IsNullOrWhiteSpace(newName))
             throw new ArgumentException("Playlist name cannot be empty");
         if (Playlists.ContainsKey(newName))
-            throw new ArgumentException("Playlist with the same name already exists");
+            throw new ArgumentException(
+                "Playlist with the same name already exists"
+            );
 
         bool status = Playlists.Remove(oldName, out Playlist? playlist);
         if (status is true && playlist is not null)
@@ -162,7 +167,10 @@ public class PlaylistManager
 
     public void AddSongToPlaylist(string playlistName, string songPath)
     {
-        bool status = Playlists.TryGetValue(playlistName, out Playlist? playlist);
+        bool status = Playlists.TryGetValue(
+            playlistName,
+            out Playlist? playlist
+        );
         if (status is true && playlist is not null)
         {
             if (playlist.Add(songPath) == true)
@@ -174,7 +182,10 @@ public class PlaylistManager
 
     public void RemoveSongFromPlaylist(string playlistName, string songPath)
     {
-        bool status = Playlists.TryGetValue(playlistName, out Playlist? playlist);
+        bool status = Playlists.TryGetValue(
+            playlistName,
+            out Playlist? playlist
+        );
         if (status is true && playlist is not null)
         {
             if (playlist.Remove(songPath) == true)
@@ -186,7 +197,10 @@ public class PlaylistManager
 
     public void RemoveSongFromPlaylistAt(string playlistName, int index)
     {
-        bool status = Playlists.TryGetValue(playlistName, out Playlist? playlist);
+        bool status = Playlists.TryGetValue(
+            playlistName,
+            out Playlist? playlist
+        );
         if (status is true && playlist is not null)
         {
             if (playlist.RemoveAt(index) == true)
@@ -198,7 +212,10 @@ public class PlaylistManager
 
     public void ExportPlaylist(string playlistName, string path)
     {
-        bool status = Playlists.TryGetValue(playlistName, out Playlist? playlist);
+        bool status = Playlists.TryGetValue(
+            playlistName,
+            out Playlist? playlist
+        );
         if (status is true && playlist is not null)
         {
             playlist.Export(path);

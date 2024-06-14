@@ -27,9 +27,19 @@ namespace mymusicpol.Views
         protected override void OnSourceInitialized(EventArgs e)
         {
             if (
-                DwmSetWindowAttribute(new WindowInteropHelper(this).Handle, 19, new[] { 1 }, 4) != 0
+                DwmSetWindowAttribute(
+                    new WindowInteropHelper(this).Handle,
+                    19,
+                    new[] { 1 },
+                    4
+                ) != 0
             )
-                DwmSetWindowAttribute(new WindowInteropHelper(this).Handle, 20, new[] { 1 }, 4);
+                DwmSetWindowAttribute(
+                    new WindowInteropHelper(this).Handle,
+                    20,
+                    new[] { 1 },
+                    4
+                );
         }
 
         public VisualizerView()
@@ -132,7 +142,11 @@ namespace mymusicpol.Views
             }
             canvas.Restore();
 
-            var circlePaint = new SKPaint { Style = SKPaintStyle.Fill, IsAntialias = true, };
+            var circlePaint = new SKPaint
+            {
+                Style = SKPaintStyle.Fill,
+                IsAntialias = true,
+            };
             if (circleImage is null)
             {
                 circlePaint.Shader = SKShader.CreateRadialGradient(
@@ -214,7 +228,11 @@ namespace mymusicpol.Views
                 byte[] bytes;
                 SKImageInfo info;
 
-                using (var data = new SKManagedStream(new MemoryStream(song.Album.Cover)))
+                using (
+                    var data = new SKManagedStream(
+                        new MemoryStream(song.Album.Cover)
+                    )
+                )
                 {
                     var codec = SKCodec.Create(data);
                     info = new SKImageInfo(codec.Info.Width, codec.Info.Height);
@@ -230,7 +248,10 @@ namespace mymusicpol.Views
                         gcHandle.Free();
                     }
                 );
-                image = image.Resize(new SKImageInfo(200, 200), SKFilterQuality.High);
+                image = image.Resize(
+                    new SKImageInfo(200, 200),
+                    SKFilterQuality.High
+                );
 
                 circleShader = SKShader.CreateBitmap(
                     image,
@@ -241,7 +262,10 @@ namespace mymusicpol.Views
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(
+            object sender,
+            System.ComponentModel.CancelEventArgs e
+        )
         {
             CompositionTarget.Rendering -= OnUpdate;
             QueueModel.Instance.OnSongChange -= OnSongChanged;
