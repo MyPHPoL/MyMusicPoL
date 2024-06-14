@@ -50,6 +50,7 @@ public partial class InputBoxView : Window
     }
 
     public string? TextBody { get; private set; } = "";
+    public bool Canceled { get; private set; } = false;
 
     //public IRelayCommand ConfirmCommand = new RelayCommand(() => ConfirmHandler());
     public InputBoxView(string labelText)
@@ -76,5 +77,6 @@ public partial class InputBoxView : Window
     private void Cancel_Click(object sender, RoutedEventArgs e)
     {
         TextBody = null;
+        Canceled = true;
     }
 }

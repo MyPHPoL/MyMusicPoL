@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using mymusicpol.ViewModels;
 using Forms = System.Windows.Forms;
 
@@ -23,16 +25,22 @@ namespace mymusicpol.Views
                 LoadIcon();
                 window.Closing += (s, e) =>
                 {
-                    e.Cancel = true;
-                    window.ShowInTaskbar = false;
-                    window.Hide();
-                };
+                    notifyIcon?.Dispose();
+                }; 
             };
+        }
+
+        private void NotifyIconMinimize(object sender, RoutedEventArgs e)
+        {
+            window.Hide();
+            window.ShowInTaskbar = false; 
         }
 
         private VisualizerView? visualizerWindow;
         private Forms.NotifyIcon notifyIcon;
         private Window window;
+        [DllImport("User32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         private void LoadIcon()
         {
@@ -48,13 +56,18 @@ namespace mymusicpol.Views
             {
                 if (e.Button == Forms.MouseButtons.Left)
                 {
+                    window.Topmost = true;
                     window.Show();
+                    window.Topmost = false;
                     window.ShowInTaskbar = true;
                 }
                 else if (e.Button == Forms.MouseButtons.Right)
                 {
                     var menu = (ContextMenu)FindResource("NotifyIconMenu");
                     menu.IsOpen = true;
+
+                    IntPtr handle = ((HwndSource)PresentationSource.FromVisual(menu)).Handle;
+                    SetForegroundWindow(handle);
                 }
             };
             notifyIcon.Visible = true;
@@ -62,6 +75,7 @@ namespace mymusicpol.Views
 
         private void NotifyIconShowWindow(object sender, RoutedEventArgs e)
         {
+            window.ShowActivated = true;
             window.Show();
             window.ShowInTaskbar = true;
         }
@@ -113,6 +127,7 @@ namespace mymusicpol.Views
             {
                 var dialog = new InputBoxView("Enter new playlist name");
                 dialog.ShowDialog();
+                if (dialog.Canceled) return;
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
                     CustomMessageBox.Show(
@@ -143,6 +158,7 @@ namespace mymusicpol.Views
             {
                 var dialog = new InputBoxView("Enter new playlist name");
                 dialog.ShowDialog();
+                if (dialog.Canceled) return;
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
                     CustomMessageBox.Show(
