@@ -13,8 +13,9 @@
         <ContextMenu x:Key="NotifyIconMenu"
                      Background="#202124"
                      BorderBrush="#121212"
-                     BorderThickness="1"
+                     BorderThickness="0"
                      Foreground="#ecf0f1">
+            <MenuItem Header="Minimize to tray" Click="NotifyIconMinimize" Style="{StaticResource MenuItemStyle}"/>
             <MenuItem Header="Show window" Click="NotifyIconShowWindow" Style="{StaticResource MenuItemStyle}"/>
             <MenuItem Header="Show visualizer" Click="VisualizerClick" Style="{StaticResource MenuItemStyle}"/>
             <MenuItem Header="Play/Pause" Click="NotifyIconPlayPause" Style="{StaticResource MenuItemStyle}"/>
@@ -260,7 +261,7 @@
 
                     <Button Style="{StaticResource MediaButton}" Visibility="{Binding SelectedList.FilterVisibility}" Click="SelectedListExport_Click" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" Margin="15 0 0 0">
                         <Button.ContextMenu>
-                            <ContextMenu Background="Transparent" BorderBrush="Transparent">
+                            <ContextMenu Background="#202124" BorderBrush="#121212">
                                 <MenuItem Header="Import" Click="SelectedListImport_Click" Style="{StaticResource MenuItemStyle}"/>
                                 <MenuItem Header="Export" Click="SelectedListExport_Click" Style="{StaticResource MenuItemStyle}"/>
                             </ContextMenu>
