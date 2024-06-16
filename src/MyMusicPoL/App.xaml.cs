@@ -14,7 +14,6 @@ public partial class App : Application
     public App()
     {
         MusicBackend.Model.Serializer.Deserialize();
-        Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en");
     }
 
     protected override void OnStartup(StartupEventArgs e)
