@@ -11,6 +11,7 @@ using mymusicpol.Models;
 using mymusicpol.Utils;
 using mymusicpol.Views;
 using Windows.Media;
+using mymusicpol.Views.Languages;
 
 namespace mymusicpol.ViewModels;
 
@@ -509,11 +510,11 @@ internal partial class PlayerViewModel : ViewModelBase
         if (song is not null)
         {
             QueueModel.Instance.AppendSong(song);
-            CustomMessageBox.Show("Song added to queue", "Success");
+            CustomMessageBox.Show(Resources.cmbSongAddedToQueue, Resources.cmbSuccess);
         }
         else
         {
-            CustomMessageBox.Show("Couldn't find song", "Invalid Link");
+            CustomMessageBox.Show(Resources.cmbInvLink, Resources.cmbErrorInvLink);
         }
         PlayFromWebInProgress.Value = false;
         PlayFromWebProgress = 0;

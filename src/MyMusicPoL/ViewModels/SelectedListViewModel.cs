@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MusicBackend.Model;
 using mymusicpol.Utils;
+using mymusicpol.Views.Languages;
 
 namespace mymusicpol.ViewModels;
 
@@ -372,7 +373,7 @@ internal partial class SelectedListViewModel : ViewModelBase
 
     public void ShowLibrary()
     {
-        Name = "Library";
+        Name = Resources.library;
         listType = ListType.Library;
         SwapVisibility = Visibility.Collapsed;
         FilterVisibility = Visibility.Visible;
@@ -388,7 +389,7 @@ internal partial class SelectedListViewModel : ViewModelBase
 
     public void ShowQueue()
     {
-        Name = "Queue";
+        Name = Resources.queue;
         listType = ListType.Queue;
         SwapVisibility = Visibility.Collapsed;
         FilterVisibility = Visibility.Collapsed;

@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="addToPlaylist" xml:space="preserve">
+    <value>Dodaj do playlisty</value>
+  </data>
+  <data name="addToQueue" xml:space="preserve">
+    <value>Dodaj do kolejki</value>
+  </data>
+  <data name="addToQueueToolTip" xml:space="preserve">
+    <value>Kliknij podwójnie aby dodać do kolejki
+Kliknij prawym aby otworzyć dodatkowe menu</value>
+  </data>
+  <data name="album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="allMusic" xml:space="preserve">
+    <value>Wszystkie Utwory</value>
+  </data>
+  <data name="artist" xml:space="preserve">
+    <value>Artysta</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="cmbCannotEmpty" xml:space="preserve">
+    <value>Nazwa playlisty nie może być pusta</value>
+  </data>
+  <data name="cmbErrorExport" xml:space="preserve">
+    <value>Błąd Eksportu</value>
+  </data>
+  <data name="cmbErrorImport" xml:space="preserve">
+    <value>Błąd Importu</value>
+  </data>
+  <data name="cmbErrorInvLink" xml:space="preserve">
+    <value>Nieprawidłowy Link</value>
+  </data>
+  <data name="cmbErrorInvName" xml:space="preserve">
+    <value>Nieprawidłowa Nazwa</value>
+  </data>
+  <data name="cmbExportFail" xml:space="preserve">
+    <value>Nie udało się wyeksportować playlisty</value>
+  </data>
+  <data name="cmbImportFail" xml:space="preserve">
+    <value>Nie udało się zaimportować playlisty</value>
+  </data>
+  <data name="cmbInvLink" xml:space="preserve">
+    <value>Nie udało się znaleźć piosenki</value>
+  </data>
+  <data name="cmbSongAddedToQueue" xml:space="preserve">
+    <value>Dodano piosenkę do kolejki</value>
+  </data>
+  <data name="cmbSuccess" xml:space="preserve">
+    <value>Sukces</value>
+  </data>
+  <data name="confirm" xml:space="preserve">
+    <value>Potwierdź</value>
+  </data>
+  <data name="default" xml:space="preserve">
+    <value>Domyślnie</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="duration" xml:space="preserve">
+    <value>Długość</value>
+  </data>
+  <data name="editName" xml:space="preserve">
+    <value>Zmień nazwę</value>
+  </data>
+  <data name="exportToolTip" xml:space="preserve">
+    <value>Kliknij lewym aby eksportować
+Kliknij prawym aby otworzyć dodatkowe menu</value>
+  </data>
+  <data name="filter" xml:space="preserve">
+    <value>Filtruj</value>
+  </data>
+  <data name="ibvAddSong" xml:space="preserve">
+    <value>Enter playlist name to add song</value>
+  </data>
+  <data name="ibvPlaylistName" xml:space="preserve">
+    <value>Podaj nową nazwę playlisty</value>
+  </data>
+  <data name="library" xml:space="preserve">
+    <value>Wszystkie Utwory</value>
+  </data>
+  <data name="minimizeToTray" xml:space="preserve">
+    <value>Zminimalizuj do paska</value>
+  </data>
+  <data name="openQueue" xml:space="preserve">
+    <value>Otwórz Kolejkę</value>
+  </data>
+  <data name="openVisualizer" xml:space="preserve">
+    <value>Otwórz Wizualizator</value>
+  </data>
+  <data name="pasteUrl" xml:space="preserve">
+    <value>Wklej link do swojego ulubionego utworu z Youtube i puść go przy pomocy MyMusicPoL</value>
+  </data>
+  <data name="pasteYTLink" xml:space="preserve">
+    <value>Wklej link Youtube...</value>
+  </data>
+  <data name="play" xml:space="preserve">
+    <value>Odtwórz</value>
+  </data>
+  <data name="playFromWeb" xml:space="preserve">
+    <value>Odtwórz z sieci:</value>
+  </data>
+  <data name="playlists" xml:space="preserve">
+    <value>Playlisty</value>
+  </data>
+  <data name="playlistsToolTip" xml:space="preserve">
+    <value>Kliknij lewym aby otworzyć playlistę
+Kliknij prawym aby otworzyć dodatkowe menu</value>
+  </data>
+  <data name="playPause" xml:space="preserve">
+    <value>Odtwórz/Pauza</value>
+  </data>
+  <data name="queue" xml:space="preserve">
+    <value>Kolejka</value>
+  </data>
+  <data name="quit" xml:space="preserve">
+    <value>Wyjdź</value>
+  </data>
+  <data name="remove" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="show" xml:space="preserve">
+    <value>Pokaż</value>
+  </data>
+  <data name="showVisualizer" xml:space="preserve">
+    <value>Pokaż Wizualizator</value>
+  </data>
+  <data name="showWindow" xml:space="preserve">
+    <value>Pokaż Odtwarzacz</value>
+  </data>
+  <data name="sortBy" xml:space="preserve">
+    <value>Sortuj po:</value>
+  </data>
+  <data name="title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="welcomeTo" xml:space="preserve">
+    <value>Witaj w</value>
+  </data>
+</root>

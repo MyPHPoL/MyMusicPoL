@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:mymusicpol.Views"
+        xmlns:rs="clr-namespace:mymusicpol.Views.Languages"
         mc:Ignorable="d"
         Background="#202124"
         Topmost="True"
@@ -35,7 +36,8 @@
         </TextBox>
         
         <!--</Border>-->
-        <Button Style="{StaticResource CleanButton2}" Click="Confirm_Click" x:Name="ConfirmB" Width="60" Height="30" Margin="28,99,112,10" Background="#202124" Foreground="#ecf0f1">Confirm</Button>
-        <Button Style="{StaticResource CleanButton2}" IsCancel="true" Click="Cancel_Click" x:Name="Cancel" Width="60" Height="30" Margin="112,99,28,10" Background="#202124" Foreground="#ecf0f1">Cancel</Button>
+        <!--couldn't add here confirm and cancel localization, no idea why-->
+        <Button Style="{StaticResource CleanButton2}" Click="Confirm_Click" x:Name="ConfirmB" Width="60" Height="30" Margin="28,99,112,10" Content="OK" Background="#202124" Foreground="#ecf0f1"/>
+        <Button Style="{StaticResource CleanButton2}" IsCancel="true" Click="Cancel_Click" x:Name="Cancel" Width="60" Height="30" Margin="112,99,28,10" Background="#202124" Foreground="#ecf0f1" Content="Cancel"/>
     </Grid>
 </Window>

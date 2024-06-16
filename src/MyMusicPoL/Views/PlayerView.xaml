@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:rs="clr-namespace:mymusicpol.Views.Languages"
              Height="720" Width="1270"
         mc:Ignorable="d"
         Background="#202124"
@@ -15,11 +16,11 @@
                      BorderBrush="#121212"
                      BorderThickness="0"
                      Foreground="#ecf0f1">
-            <MenuItem Header="Minimize to tray" Click="NotifyIconMinimize" Style="{StaticResource MenuItemStyle}"/>
-            <MenuItem Header="Show window" Click="NotifyIconShowWindow" Style="{StaticResource MenuItemStyle}"/>
-            <MenuItem Header="Show visualizer" Click="VisualizerClick" Style="{StaticResource MenuItemStyle}"/>
-            <MenuItem Header="Play/Pause" Click="NotifyIconPlayPause" Style="{StaticResource MenuItemStyle}"/>
-            <MenuItem Header="Quit" Click="NotifyIconQuit" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="{x:Static rs:Resources.minimizeToTray}" Click="NotifyIconMinimize" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="{x:Static rs:Resources.showWindow}" Click="NotifyIconShowWindow" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="{x:Static rs:Resources.showVisualizer}" Click="VisualizerClick" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="{x:Static rs:Resources.playPause}" Click="NotifyIconPlayPause" Style="{StaticResource MenuItemStyle}"/>
+            <MenuItem Header="{x:Static rs:Resources.quit}" Click="NotifyIconQuit" Style="{StaticResource MenuItemStyle}"/>
         </ContextMenu>
     </UserControl.Resources>
 
@@ -88,13 +89,13 @@
             <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
                 <Button Style="{StaticResource MediaButton}" Click="VisualizerClick" Height="35" Width="35" Margin="50 0 0 0" FontSize="19" Content="&#xe9d9;" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.ToolTip>
-                        <ToolTip Content="Open Visualizer" FontFamily="{StaticResource MainFont}"/>
+                        <ToolTip Content="{x:Static rs:Resources.openVisualizer}" FontFamily="{StaticResource MainFont}"/>
                     </Button.ToolTip>
                 </Button>
 
                 <Button Style="{StaticResource MediaButton}" Height="35" Width="35" Command="{Binding ShowQueueButton}" Margin="15 0 0 0" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2">
                     <Button.ToolTip>
-                        <ToolTip Content="Open Queue" FontFamily="{StaticResource MainFont}"/>
+                        <ToolTip Content="{x:Static rs:Resources.openQueue}" FontFamily="{StaticResource MainFont}"/>
                     </Button.ToolTip>
                 </Button>
 
@@ -126,8 +127,8 @@
 
             <!-- program name -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
-                <Label Content="Welcome to" Foreground="#ecf0f1" FontSize="34" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
+                <Label Content="{x:Static rs:Resources.welcomeTo}" Foreground="#ecf0f1" FontSize="34" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
                 <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="34" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
                 <Button Style="{StaticResource MediaButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" VerticalAlignment="Center" Margin="5 0 0 0"/>
             </StackPanel>
@@ -137,7 +138,7 @@
             <Button  Command="{Binding ShowLibaryCommand}" Style="{StaticResource CleanButton}" Grid.Row="1" Grid.Column="0" Margin="0 5 0 0">
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left">
                     <Label Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                    <Label Content="All Music" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                    <Label Content="{x:Static rs:Resources.allMusic}" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
                     <Label Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"  Margin="5 0 0 0"/>
                 </StackPanel>
             </Button>
@@ -146,12 +147,12 @@
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="2" Grid.Column="0" Margin="0 5 0 0"/>
             <DockPanel Grid.Row="2" HorizontalAlignment="Center" Width="465">
                 <Label DockPanel.Dock="Left" Content="" Foreground="#af7ac5" Margin="10 0 0 0" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                <Label DockPanel.Dock="Left" Content="Play from web:" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Label DockPanel.Dock="Left" Content="{x:Static rs:Resources.playFromWeb}" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
 
                 <Grid DockPanel.Dock="Left">
                     <StackPanel x:Name="fromWebPanel" Orientation="Horizontal">
                         <TextBox x:Name="fromWebBox" Visibility="Collapsed" LostFocus="fromWeb_LostFocus" Text="{Binding FromWebText}" Background="#202124" Height="35px" Foreground="#ecf0f1" VerticalContentAlignment="Center" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145"/>
-                        <TextBox x:Name="fromWebBoxPlaceholder" GotFocus="fromWebPlaceholder_GotFocus" Text="Paste Youtube link..." Background="#202124" Foreground="Gray" Height="35px" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
+                        <TextBox x:Name="fromWebBoxPlaceholder" GotFocus="fromWebPlaceholder_GotFocus" Text="{x:Static rs:Resources.pasteYTLink}" Background="#202124" Foreground="Gray" Height="35px" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="145">
                             <TextBox.InputBindings>
                                 <KeyBinding Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text, ElementName=fromWebBox}" Key="Return"/>
                             </TextBox.InputBindings>
@@ -159,7 +160,7 @@
                         <Button Content="" Style="{StaticResource CleanButton}" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Command="{Binding PlayFromWebCommand}" CommandParameter="{Binding Text,ElementName=fromWebBox}"/>
                         <Label Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" FontFamily="{StaticResource Segoe}" Margin="5 0 0 0" Cursor="Help">
                             <Label.ToolTip>
-                                <ToolTip Content="Paste an URL to your favourite Youtube song and play it on MyMusicPoL" FontFamily="{StaticResource MainFont}"></ToolTip>
+                                <ToolTip Content="{x:Static rs:Resources.pasteUrl}" FontFamily="{StaticResource MainFont}"></ToolTip>
                             </Label.ToolTip>
                         </Label>
                     </StackPanel>
@@ -206,13 +207,13 @@
                 <Button Style="{StaticResource CleanButton}" Click="NewPlaylist_Click">
                     <StackPanel Orientation="Horizontal">
                         <Label Content="" Foreground="#af7ac5" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
-                        <Label Content="Playlists" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                        <Label Content="{x:Static rs:Resources.playlists}" Foreground="#ecf0f1" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
                         <Label  Content="" Background="Transparent" BorderBrush="Transparent" Foreground="#af7ac5" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Segoe}"/>
                     </StackPanel>
                 </Button>
 
                 <!-- playlist list (select, edit name, delete)-->
-                <ListBox ToolTip="Left click to open playlist&#x0a;Right click to open additional context menu" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click"  SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" d:ItemsSource="{d:SampleData ItemCount=5}">
+                <ListBox ToolTip="{x:Static rs:Resources.playlistsToolTip}" x:Name="PlaylistListBox" SelectedIndex="{Binding SelectedIndex}" ItemsSource="{Binding Playlists}" MouseDoubleClick="MenuItemShow_Click"  SelectionChanged="MenuItemShow_Click" Background="Transparent" Height="263" Width="454" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" d:ItemsSource="{d:SampleData ItemCount=5}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -223,10 +224,10 @@
                                     <Label Content="{Binding Name}" Foreground="#ecf0f1" FontSize="23" Width="420">
                                         <Label.ContextMenu>
                                             <ContextMenu Background="Transparent" BorderBrush="Transparent">
-                                                <MenuItem Header="Show" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
-                                                <MenuItem Header="Play" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
-                                                <MenuItem Header="Edit name" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
-                                                <MenuItem Header="Delete" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="{x:Static rs:Resources.show}" Click="MenuItemShow_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="{x:Static rs:Resources.play}" Click="MenuItemPlay_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="{x:Static rs:Resources.editName}" Click="MenuItemEdit_Click" Style="{StaticResource MenuItemStyle}"/>
+                                                <MenuItem Header="{x:Static rs:Resources.delete}" Click="MenuItemDelete_Click" Style="{StaticResource MenuItemStyle}"/>
                                             </ContextMenu>
                                         </Label.ContextMenu>
                                     </Label>
@@ -267,14 +268,14 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                         <Button.ToolTip>
-                            <ToolTip Content="Left click to export&#x0a;Right click to open additional context menu" FontFamily="{StaticResource MainFont}"></ToolTip>
+                            <ToolTip Content="{x:Static rs:Resources.exportToolTip}" FontFamily="{StaticResource MainFont}"></ToolTip>
                         </Button.ToolTip>
                     </Button>
 
                     <Grid>
                         <!-- filter textbox -->
                         <TextBox x:Name="filter" Visibility="{Binding SelectedList.FilterVisibility}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
-                        <TextBlock IsHitTestVisible="False" Text="Filter..." VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25 0 0 0" Foreground="Gray">
+                        <TextBlock IsHitTestVisible="False" Text="{x:Static rs:Resources.filter}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25 0 0 0" Foreground="Gray">
 
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -290,12 +291,12 @@
                     </Grid>
 
                     <!-- sort checkbox -->
-                    <Label Visibility="{Binding SelectedList.FilterVisibility}" Content="Sort by: " VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19" Width="77"/>
-                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Default</RadioButton>
-                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Title</RadioButton>
-                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Artist</RadioButton>
-                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Album</RadioButton>
-                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Duration</RadioButton>
+                    <Label Visibility="{Binding SelectedList.FilterVisibility}" Content="{x:Static rs:Resources.sortBy}" VerticalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="20 0 0 0" FontSize="19"/>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.DefaultSortCommand}" IsChecked="True" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13" Content="{x:Static rs:Resources._default}"></RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.TitleSortCommand}"  VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13" Content="{x:Static rs:Resources.title}"></RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.ArtistSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13" Content="{x:Static rs:Resources.artist}"></RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.AlbumSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13" Content="{x:Static rs:Resources.album}"></RadioButton>
+                    <RadioButton Visibility="{Binding SelectedList.FilterVisibility}" GroupName="sort" Command="{Binding SelectedList.TimeSortCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13" Content="{x:Static rs:Resources.duration}"></RadioButton>
                     <!--<RadioButton GroupName="sort" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" Foreground="#ecf0f1" Margin="10 0 0 0" FontSize="13">Track Length</RadioButton>-->
                 </StackPanel>
 
@@ -303,12 +304,12 @@
                 <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="459" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}" >
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" ToolTip='Double click to instantly add to queue &#x0a;Right click to open additional context menu'>
+                            <StackPanel Orientation="Horizontal" ToolTip='{x:Static rs:Resources.addToQueueToolTip}'>
                                 <StackPanel.ContextMenu>
                                     <ContextMenu Background="Transparent" BorderBrush="Transparent">
-                                        <MenuItem Header="Add to queue" Click="SelectedListAddQueue_Click" Style="{StaticResource MenuItemStyle}"/>
-                                        <MenuItem Header="Add to playlist" Click="SelectedListAddPlaylist_Click" Style="{StaticResource MenuItemStyle}"/>
-                                        <MenuItem Header="Remove" Click="SelectedListRemove_Click" Command="{Binding DeletePlaylistButton}" Style="{StaticResource MenuItemStyle}"/>
+                                        <MenuItem Header="{x:Static rs:Resources.addToQueue}" Click="SelectedListAddQueue_Click" Style="{StaticResource MenuItemStyle}"/>
+                                        <MenuItem Header="{x:Static rs:Resources.addToPlaylist}" Click="SelectedListAddPlaylist_Click" Style="{StaticResource MenuItemStyle}"/>
+                                        <MenuItem Header="{x:Static rs:Resources.remove}" Click="SelectedListRemove_Click" Command="{Binding DeletePlaylistButton}" Style="{StaticResource MenuItemStyle}"/>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
                                 <!-- mby later add row number on the left -->
