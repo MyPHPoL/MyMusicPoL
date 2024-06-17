@@ -206,6 +206,15 @@ namespace mymusicpol.Views.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Playlist with that name already exists.
+        /// </summary>
+        public static string cmbNameExists {
+            get {
+                return ResourceManager.GetString("cmbNameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Song added to queue.
         /// </summary>
         public static string cmbSongAddedToQueue {

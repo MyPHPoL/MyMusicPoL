@@ -163,6 +163,9 @@ Kliknij prawym aby otworzyć dodatkowe menu</value>
   <data name="cmbInvLink" xml:space="preserve">
     <value>Nie udało się znaleźć piosenki</value>
   </data>
+  <data name="cmbNameExists" xml:space="preserve">
+    <value>Playlista z taką nazwą już istnieje</value>
+  </data>
   <data name="cmbSongAddedToQueue" xml:space="preserve">
     <value>Dodano piosenkę do kolejki</value>
   </data>
@@ -192,7 +195,7 @@ Kliknij prawym aby otworzyć dodatkowe menu</value>
     <value>Filtruj</value>
   </data>
   <data name="ibvAddSong" xml:space="preserve">
-    <value>Enter playlist name to add song</value>
+    <value>Podaj nazwę playlisty aby dodać do niej utwór</value>
   </data>
   <data name="ibvPlaylistName" xml:space="preserve">
     <value>Podaj nową nazwę playlisty</value>

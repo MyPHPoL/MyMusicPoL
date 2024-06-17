@@ -37,8 +37,8 @@ internal class SongViewModel : INotifyPropertyChanged
         else
         {
             this.title = Resources.noSong;
-            this.artist = Resources.unknown;
-            this.album = Resources.unknown;
+            this.artist = "";
+            this.album = "";
             this.path = "";
             this.duration = TimeSpan.Zero;
         }

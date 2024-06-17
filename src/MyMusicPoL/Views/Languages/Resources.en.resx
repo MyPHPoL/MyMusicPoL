@@ -163,6 +163,9 @@ Right click to open additional context menu</value>
   <data name="cmbInvLink" xml:space="preserve">
     <value>Couldn't find song</value>
   </data>
+  <data name="cmbNameExists" xml:space="preserve">
+    <value>Playlist with that name already exists</value>
+  </data>
   <data name="cmbSongAddedToQueue" xml:space="preserve">
     <value>Song added to queue</value>
   </data>

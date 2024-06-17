@@ -127,7 +127,7 @@
 
             <!-- program name -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
                 <Label Content="{x:Static rs:Resources.welcomeTo}" Foreground="#ecf0f1" FontSize="39" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
                 <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="39" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
             </StackPanel>
@@ -274,7 +274,7 @@
                     <Grid>
                         <!-- filter textbox -->
                         <TextBox x:Name="filter" Visibility="{Binding SelectedList.FilterVisibility}" Text="{Binding SelectedList.Filter.Value, UpdateSourceTrigger=PropertyChanged}" Background="#202124" Foreground="#ecf0f1" FontSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource MainFont}" BorderBrush="#af7ac5" Width="200" Margin="20 0 0 0"/>
-                        <TextBlock IsHitTestVisible="False" Text="{x:Static rs:Resources.filter}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25 0 0 0" Foreground="Gray">
+                        <TextBlock IsHitTestVisible="False" Text="{x:Static rs:Resources.filter}" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="25 0 0 0" Foreground="Gray" FontSize="23">
 
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">

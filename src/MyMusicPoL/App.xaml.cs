@@ -14,6 +14,8 @@ public partial class App : Application
     public App()
     {
         MusicBackend.Model.Serializer.Deserialize();
+        // uncomment to force language change :)
+        // System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("pl-PL");
     }
 
     protected override void OnStartup(StartupEventArgs e)
