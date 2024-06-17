@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using mymusicpol.Models;
+using mymusicpol.Views.Languages;
 
 namespace mymusicpol.ViewModels;
 
@@ -35,9 +36,9 @@ internal class SongViewModel : INotifyPropertyChanged
         }
         else
         {
-            this.title = "No song selected";
-            this.artist = "Unknown";
-            this.album = "Unknown";
+            this.title = Resources.noSong;
+            this.artist = Resources.unknown;
+            this.album = Resources.unknown;
             this.path = "";
             this.duration = TimeSpan.Zero;
         }

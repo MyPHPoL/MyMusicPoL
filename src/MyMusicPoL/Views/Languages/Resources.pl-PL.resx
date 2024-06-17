@@ -203,6 +203,9 @@ Kliknij prawym aby otworzyć dodatkowe menu</value>
   <data name="minimizeToTray" xml:space="preserve">
     <value>Zminimalizuj do paska</value>
   </data>
+  <data name="noSong" xml:space="preserve">
+    <value>Nie Wybrano Utworu</value>
+  </data>
   <data name="openQueue" xml:space="preserve">
     <value>Otwórz Kolejkę</value>
   </data>
@@ -254,6 +257,9 @@ Kliknij prawym aby otworzyć dodatkowe menu</value>
   </data>
   <data name="title" xml:space="preserve">
     <value>Tytuł</value>
+  </data>
+  <data name="unknown" xml:space="preserve">
+    <value>Nieznany</value>
   </data>
   <data name="welcomeTo" xml:space="preserve">
     <value>Witaj w</value>

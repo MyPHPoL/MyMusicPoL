@@ -203,6 +203,9 @@ Right click to open additional context menu</value>
   <data name="minimizeToTray" xml:space="preserve">
     <value>Minimize To Tray</value>
   </data>
+  <data name="noSong" xml:space="preserve">
+    <value>No Song Selected</value>
+  </data>
   <data name="openQueue" xml:space="preserve">
     <value>Open Queue</value>
   </data>
@@ -254,6 +257,9 @@ Right click to open additional context menu</value>
   </data>
   <data name="title" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="unknown" xml:space="preserve">
+    <value>Unknown</value>
   </data>
   <data name="welcomeTo" xml:space="preserve">
     <value>Welcome to</value>

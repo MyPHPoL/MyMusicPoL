@@ -128,9 +128,8 @@
             <!-- program name -->
             <Border BorderBrush="#121212" Background="#121212" BorderThickness="1" CornerRadius="10" Grid.Row="0" Grid.Column="0" Width="Auto" Height="Auto"/>
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
-                <Label Content="{x:Static rs:Resources.welcomeTo}" Foreground="#ecf0f1" FontSize="34" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="34" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
-                <Button Style="{StaticResource MediaButton}" Height="35" Width="35" FontSize="19" Content="" FontFamily="{StaticResource Segoe}" Background="#cacfd2" VerticalAlignment="Center" Margin="5 0 0 0"/>
+                <Label Content="{x:Static rs:Resources.welcomeTo}" Foreground="#ecf0f1" FontSize="39" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
+                <Label Content="MyMusicPoL" Foreground="#af7ac5" FontSize="39" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" FontFamily="{StaticResource MainFont}"/>
             </StackPanel>
 
             <!-- all music -->

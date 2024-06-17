@@ -94,7 +94,7 @@ internal partial class SelectedListViewModel : ViewModelBase
 
     ListType listType;
     bool IsQueue => listType == ListType.Queue;
-    bool IsLibrary => listType == ListType.Playlist;
+    bool IsLibrary => listType == ListType.Library;
 
     public ICommand DefaultSortCommand { get; }
     public ICommand AlbumSortCommand { get; }

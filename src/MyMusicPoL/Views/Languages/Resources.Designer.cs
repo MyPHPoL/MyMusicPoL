@@ -315,6 +315,15 @@ namespace mymusicpol.Views.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Song Selected.
+        /// </summary>
+        public static string noSong {
+            get {
+                return ResourceManager.GetString("noSong", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Queue.
         /// </summary>
         public static string openQueue {
@@ -465,6 +474,15 @@ namespace mymusicpol.Views.Languages {
         public static string title {
             get {
                 return ResourceManager.GetString("title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string unknown {
+            get {
+                return ResourceManager.GetString("unknown", resourceCulture);
             }
         }
         
