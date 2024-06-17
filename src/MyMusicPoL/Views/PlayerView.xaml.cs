@@ -8,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using mymusicpol.ViewModels;
 using Forms = System.Windows.Forms;
+using mymusicpol.Views.Languages;
+using System.Globalization;
 
 namespace mymusicpol.Views
 {
@@ -125,14 +127,14 @@ namespace mymusicpol.Views
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                var dialog = new InputBoxView("Enter new playlist name");
+                var dialog = new InputBoxView(Languages.Resources.ibvPlaylistName);
                 dialog.ShowDialog();
                 if (dialog.Canceled) return;
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
                     CustomMessageBox.Show(
-                        "Playlist name cannot be empty",
-                        "Invalid Name"
+                        Languages.Resources.cmbCannotEmpty,
+                        Languages.Resources.cmbErrorInvName
                     );
                 }
                 else
@@ -146,7 +148,7 @@ namespace mymusicpol.Views
                     }
                     catch (Exception ex)
                     {
-                        CustomMessageBox.Show(ex.Message, "Invalid Name");
+                        CustomMessageBox.Show(ex.Message, Languages.Resources.cmbErrorInvName);
                     }
                 }
             }
@@ -156,14 +158,14 @@ namespace mymusicpol.Views
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                var dialog = new InputBoxView("Enter new playlist name");
+                var dialog = new InputBoxView(Languages.Resources.ibvPlaylistName);
                 dialog.ShowDialog();
                 if (dialog.Canceled) return;
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
                     CustomMessageBox.Show(
-                        "Playlist name cannot be empty",
-                        "Invalid Name"
+                        Languages.Resources.cmbCannotEmpty,
+                        Languages.Resources.cmbErrorInvName
                     );
                 }
                 else
@@ -174,7 +176,7 @@ namespace mymusicpol.Views
                     }
                     catch (Exception ex)
                     {
-                        CustomMessageBox.Show(ex.Message, "Invalid Name");
+                        CustomMessageBox.Show(ex.Message, Languages.Resources.cmbErrorInvName);
                     }
                 }
             }
@@ -225,7 +227,7 @@ namespace mymusicpol.Views
             if (DataContext is PlayerViewModel playerViewModel)
             {
                 var dialog = new InputBoxView(
-                    "Enter playlist name to add song"
+                    Languages.Resources.ibvAddSong
                 );
                 dialog.ShowDialog();
                 if (dialog.TextBody is not null)
@@ -266,8 +268,8 @@ namespace mymusicpol.Views
                     catch
                     {
                         CustomMessageBox.Show(
-                            "Failed to export playlist",
-                            "Export Error"
+                            Languages.Resources.cmbExportFail,
+                            Languages.Resources.cmbErrorExport
                         );
                     }
                 }
@@ -291,8 +293,8 @@ namespace mymusicpol.Views
                     catch
                     {
                         CustomMessageBox.Show(
-                            "Failed to import playlist",
-                            "Export Error"
+                            Languages.Resources.cmbImportFail,
+                            Languages.Resources.cmbErrorImport
                         );
                     }
                 }
