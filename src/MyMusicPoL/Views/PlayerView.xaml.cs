@@ -148,7 +148,18 @@ namespace mymusicpol.Views
                     }
                     catch (Exception ex)
                     {
-                        CustomMessageBox.Show(ex.Message, Languages.Resources.cmbErrorInvName);
+                        switch (ex.Message)
+                        {
+                            case "playlistNameEmpty":
+                                CustomMessageBox.Show(Languages.Resources.cmbCannotEmpty, Languages.Resources.cmbErrorInvName);
+                                break;
+                            case "playlistNameSame":
+                                CustomMessageBox.Show(Languages.Resources.cmbNameExists, Languages.Resources.cmbErrorInvName);
+                                break;
+                            default:
+                                CustomMessageBox.Show("(´。＿。｀)", Languages.Resources.cmbErrorInvName);
+                                break;
+                        }
                     }
                 }
             }

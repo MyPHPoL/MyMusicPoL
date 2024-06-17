@@ -150,10 +150,10 @@ public class PlaylistManager
         if (oldName == newName)
             return;
         if (string.IsNullOrWhiteSpace(newName))
-            throw new ArgumentException("Playlist name cannot be empty");
+            throw new ArgumentException("playlistNameEmpty");
         if (Playlists.ContainsKey(newName))
             throw new ArgumentException(
-                "Playlist with the same name already exists"
+                "playlistNameSame"
             );
 
         bool status = Playlists.Remove(oldName, out Playlist? playlist);
