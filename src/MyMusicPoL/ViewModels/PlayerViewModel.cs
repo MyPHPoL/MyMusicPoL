@@ -10,8 +10,8 @@ using MusicBackend.Model;
 using mymusicpol.Models;
 using mymusicpol.Utils;
 using mymusicpol.Views;
-using Windows.Media;
 using mymusicpol.Views.Languages;
+using Windows.Media;
 
 namespace mymusicpol.ViewModels;
 
@@ -190,15 +190,17 @@ internal partial class PlayerViewModel : ViewModelBase
         var curSongPath = PlayerModel.Instance.CurrentSong();
         if (curSongPath == null)
         {
-            CurrentSong = new(null);
+            CurrentSong = new(null, -1);
         }
         else
         {
-            CurrentSong = new(Song.fromPath(curSongPath));
+            CurrentSong = new(Song.fromPath(curSongPath), -1);
         }
 
         QueueModel.Instance.OnSongChange += OnSongChange;
+        QueueModel.Instance.OnSongChangeWhenRemoved += OnSongChange;
         PlayerModel.Instance.OnSongChange += OnSongChange;
+
         PlayerModel.Instance.OnVolumeChange += (vol) =>
         {
             UpdateVolumeIcon(vol);
@@ -477,9 +479,10 @@ internal partial class PlayerViewModel : ViewModelBase
         SelectedList.AddToQueue(index);
     }
 
-    public void SelectedListPlay(int index)
+    [RelayCommand]
+    public void SelectedListPlay()
     {
-        SelectedList.PlayNth(index);
+        SelectedList.PlaySelectedSong();
     }
 
     public void SelectedListAddPlaylist(int index, string playlistName)
@@ -510,11 +513,17 @@ internal partial class PlayerViewModel : ViewModelBase
         if (song is not null)
         {
             QueueModel.Instance.AppendSong(song);
-            CustomMessageBox.Show(Resources.cmbSongAddedToQueue, Resources.cmbSuccess);
+            CustomMessageBox.Show(
+                Resources.cmbSongAddedToQueue,
+                Resources.cmbSuccess
+            );
         }
         else
         {
-            CustomMessageBox.Show(Resources.cmbInvLink, Resources.cmbErrorInvLink);
+            CustomMessageBox.Show(
+                Resources.cmbInvLink,
+                Resources.cmbErrorInvLink
+            );
         }
         PlayFromWebInProgress.Value = false;
         PlayFromWebProgress = 0;

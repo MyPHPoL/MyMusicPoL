@@ -12,16 +12,24 @@ namespace mymusicpol.ViewModels;
 
 internal class SongViewModel : INotifyPropertyChanged
 {
-    private string _title { get; set; }
-    private string _artist { get; set; }
-    private string _album { get; set; }
-    private BitmapSource _cover { get; set; }
-    private string _path { get; set; }
-    private TimeSpan _duration { get; set; }
+    private string _title;
+    private string _artist;
+    private string _album;
+    private BitmapSource _cover;
+    private string _path;
+    private TimeSpan _duration;
+    public int Index { get; private set; }
 
-    public SongViewModel(MusicBackend.Model.Song? song)
+    public SongViewModel(MusicBackend.Model.Song? song, int index)
     {
         SetSong(song);
+        Index = index;
+    }
+
+    public SongViewModel AdjustIndex(int index)
+    {
+        Index = index;
+        return this;
     }
 
     public void SetSong(MusicBackend.Model.Song? song)

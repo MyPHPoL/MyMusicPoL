@@ -7,8 +7,8 @@
              Height="720" Width="1270"
         mc:Ignorable="d"
         Background="#202124"
-        xmlns:viewmodel="clr-namespace:mymusicpol.ViewModels"
-        d:DataContext="{d:DesignInstance Type=viewmodel:PlayerViewModel}">
+        xmlns:viewmodel="clr-namespace:mymusicpol.ViewModels" xmlns:controls="clr-namespace:mymusicpol.Controls"
+             d:DataContext="{d:DesignInstance Type=viewmodel:PlayerViewModel}">
 
     <UserControl.Resources>
         <ContextMenu x:Key="NotifyIconMenu"
@@ -300,7 +300,10 @@
                 </StackPanel>
 
                 <!-- song list (the same problem as with the playlist list: idk how to set float right on those buttons) -->
-                <ListBox x:Name="SelectedList" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="459" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}" >
+                <controls:MultiSelectListBox x:Name="SelectedList" SelectionMode="Extended" SelectedItems="{Binding SelectedList.SelectedItems, Mode=TwoWay}" MouseDoubleClick="SelectedList_MouseDoubleClick" ItemsSource="{Binding SelectedList.Items}" SelectedIndex="{Binding SelectedList.SelectedIndex}" Background="Transparent" Height="459" Width="786" BorderBrush="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" d:ItemsSource="{d:SampleData ItemCount=25}" >
+                    <ListBox.InputBindings>
+                        <KeyBinding Command="{Binding SelectedListPlayCommand}" Key="Return"/>
+                    </ListBox.InputBindings>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" ToolTip='{x:Static rs:Resources.addToQueueToolTip}'>
@@ -329,7 +332,7 @@
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
-                </ListBox>
+                </controls:MultiSelectListBox>
             </StackPanel>
         </Grid>
     </Grid>

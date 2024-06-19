@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -27,6 +28,9 @@ internal partial class SelectedListViewModel : ViewModelBase
 
     [ObservableProperty]
     public int _selectedIndex = -1;
+
+    [ObservableProperty]
+    private IList selectedItems;
 
     public Notify<string> Filter { get; set; } = new();
     private Song[] originalItems = [];
@@ -196,9 +200,9 @@ internal partial class SelectedListViewModel : ViewModelBase
                 }
             }
             Items.Clear();
-            foreach (var song in list)
+            foreach (var (song, i) in list.Enumerate())
             {
-                Items.Add(new(song));
+                Items.Add(new(song, i));
             }
             Sort(Items);
         }
@@ -222,7 +226,14 @@ internal partial class SelectedListViewModel : ViewModelBase
 
         if (IsQueue)
         {
-            QueueModel.Instance.RemoveSong(index);
+            var sortedList = ((IList<object>)SelectedItems)
+                .Select(x => ((SongViewModel)x).Index)
+                .OrderByDescending(x => x)
+                .ToArray();
+            foreach (var sortedIndex in sortedList)
+            {
+                QueueModel.Instance.RemoveSong(sortedIndex);
+            }
         }
         else if (IsLibrary)
         {
@@ -230,25 +241,33 @@ internal partial class SelectedListViewModel : ViewModelBase
         }
         else
         {
-            PlaylistManager.Instance.RemoveSongFromPlaylist(
-                Name,
-                Items[index].path
-            );
+            var sortedList = ((IList<object>)SelectedItems)
+                .Select(x => ((SongViewModel)x).Index)
+                .OrderByDescending(x => x)
+                .ToArray();
+            foreach (var sortedIndex in sortedList)
+            {
+                PlaylistManager.Instance.RemoveSongFromPlaylistAt(
+                    Name,
+                    sortedIndex
+                );
+            }
         }
     }
 
-    public void PlayNth(int index)
+    public void PlaySelectedSong()
     {
+        var index = SelectedIndex;
         if (IsQueue)
         {
             QueueModel.Instance.PlayNth(index);
         }
         else if (IsLibrary)
         {
-            var song = Song.fromPath(Items[index].path);
-            if (song is null)
+            if (index < 0 || index >= Items.Count)
                 return;
-            QueueModel.Instance.AppendSong(song);
+
+            AddToQueue(0);
             ShowQueue();
         }
         else
@@ -261,10 +280,13 @@ internal partial class SelectedListViewModel : ViewModelBase
     {
         if (index < 0 || index >= Items.Count)
             return;
-        var song = Song.fromPath(Items[index].path);
-        if (song is null)
-            return;
-        QueueModel.Instance.AppendSong(song);
+        foreach (var item in SelectedItems.ShallowClone())
+        {
+            var song = Song.fromPath(((SongViewModel)item).path);
+            if (song is null)
+                continue;
+            QueueModel.Instance.AppendSong(song);
+        }
     }
 
     public void AddToPlaylist(string playlistName, int index)
@@ -272,10 +294,13 @@ internal partial class SelectedListViewModel : ViewModelBase
         if (index < 0 || index >= Items.Count)
             return;
 
-        PlaylistManager.Instance.AddSongToPlaylist(
-            playlistName,
-            Items[index].path
-        );
+        foreach (var item in SelectedItems.ShallowClone())
+        {
+            PlaylistManager.Instance.AddSongToPlaylist(
+                playlistName,
+                ((SongViewModel)item).path
+            );
+        }
     }
 
     public void AddSongs(SongViewModel[] songs)
@@ -319,9 +344,9 @@ internal partial class SelectedListViewModel : ViewModelBase
         {
             var sortedList = query.ToList();
             Items.Clear();
-            foreach (var song in sortedList)
+            foreach (var (song, i) in sortedList.Enumerate())
             {
-                Items.Add(song);
+                Items.Add(song.AdjustIndex(i));
             }
         }
     }
@@ -364,9 +389,9 @@ internal partial class SelectedListViewModel : ViewModelBase
         if (playlist is null)
             return;
         originalItems = playlist.Songs.ToArray();
-        foreach (var song in playlist.Songs)
+        foreach (var (song, i) in playlist.Songs.Enumerate())
         {
-            Items.Add(new SongViewModel(song));
+            Items.Add(new SongViewModel(song, i));
         }
         Sort(Items);
     }
@@ -380,9 +405,9 @@ internal partial class SelectedListViewModel : ViewModelBase
         QueueButtonVisibility = Visibility.Collapsed;
         Items.Clear();
         originalItems = LibraryManager.Instance.Songs.Values.ToArray();
-        foreach (var song in LibraryManager.Instance.Songs)
+        foreach (var (song, i) in LibraryManager.Instance.Songs.Enumerate())
         {
-            Items.Add(new SongViewModel(song.Value));
+            Items.Add(new SongViewModel(song.Value, i));
         }
         Sort(Items);
     }
@@ -395,9 +420,9 @@ internal partial class SelectedListViewModel : ViewModelBase
         FilterVisibility = Visibility.Collapsed;
         QueueButtonVisibility = Visibility.Visible;
         Items.Clear();
-        foreach (var song in QueueModel.Instance.Songs)
+        foreach (var (song, i) in QueueModel.Instance.Songs.Enumerate())
         {
-            Items.Add(new SongViewModel(song));
+            Items.Add(new SongViewModel(song, i));
         }
     }
 }

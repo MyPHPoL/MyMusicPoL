@@ -61,6 +61,13 @@ public class PlayerModel
         {
             SelectSong(s?.path);
         };
+        QueueModel.Instance.OnSongChangeWhenRemoved += (s) =>
+        {
+            if (PlaybackState() == Model.PlaybackState.Playing)
+            {
+                SelectSong(s.path);
+            }
+        };
     }
 
     private void OnSongEnd()

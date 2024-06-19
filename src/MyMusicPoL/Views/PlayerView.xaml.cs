@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -7,9 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using mymusicpol.ViewModels;
-using Forms = System.Windows.Forms;
 using mymusicpol.Views.Languages;
-using System.Globalization;
+using Forms = System.Windows.Forms;
 
 namespace mymusicpol.Views
 {
@@ -28,19 +28,20 @@ namespace mymusicpol.Views
                 window.Closing += (s, e) =>
                 {
                     notifyIcon?.Dispose();
-                }; 
+                };
             };
         }
 
         private void NotifyIconMinimize(object sender, RoutedEventArgs e)
         {
             window.Hide();
-            window.ShowInTaskbar = false; 
+            window.ShowInTaskbar = false;
         }
 
         private VisualizerView? visualizerWindow;
         private Forms.NotifyIcon notifyIcon;
         private Window window;
+
         [DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -68,7 +69,9 @@ namespace mymusicpol.Views
                     var menu = (ContextMenu)FindResource("NotifyIconMenu");
                     menu.IsOpen = true;
 
-                    IntPtr handle = ((HwndSource)PresentationSource.FromVisual(menu)).Handle;
+                    IntPtr handle = (
+                        (HwndSource)PresentationSource.FromVisual(menu)
+                    ).Handle;
                     SetForegroundWindow(handle);
                 }
             };
@@ -127,9 +130,12 @@ namespace mymusicpol.Views
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                var dialog = new InputBoxView(Languages.Resources.ibvPlaylistName);
+                var dialog = new InputBoxView(
+                    Languages.Resources.ibvPlaylistName
+                );
                 dialog.ShowDialog();
-                if (dialog.Canceled) return;
+                if (dialog.Canceled)
+                    return;
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
                     CustomMessageBox.Show(
@@ -151,13 +157,22 @@ namespace mymusicpol.Views
                         switch (ex.Message)
                         {
                             case "playlistNameEmpty":
-                                CustomMessageBox.Show(Languages.Resources.cmbCannotEmpty, Languages.Resources.cmbErrorInvName);
+                                CustomMessageBox.Show(
+                                    Languages.Resources.cmbCannotEmpty,
+                                    Languages.Resources.cmbErrorInvName
+                                );
                                 break;
                             case "playlistNameSame":
-                                CustomMessageBox.Show(Languages.Resources.cmbNameExists, Languages.Resources.cmbErrorInvName);
+                                CustomMessageBox.Show(
+                                    Languages.Resources.cmbNameExists,
+                                    Languages.Resources.cmbErrorInvName
+                                );
                                 break;
                             default:
-                                CustomMessageBox.Show("(´。＿。｀)", Languages.Resources.cmbErrorInvName);
+                                CustomMessageBox.Show(
+                                    "(´。＿。｀)",
+                                    Languages.Resources.cmbErrorInvName
+                                );
                                 break;
                         }
                     }
@@ -169,9 +184,12 @@ namespace mymusicpol.Views
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                var dialog = new InputBoxView(Languages.Resources.ibvPlaylistName);
+                var dialog = new InputBoxView(
+                    Languages.Resources.ibvPlaylistName
+                );
                 dialog.ShowDialog();
-                if (dialog.Canceled) return;
+                if (dialog.Canceled)
+                    return;
                 if (string.IsNullOrWhiteSpace(dialog.TextBody))
                 {
                     CustomMessageBox.Show(
@@ -187,7 +205,10 @@ namespace mymusicpol.Views
                     }
                     catch (Exception ex)
                     {
-                        CustomMessageBox.Show(ex.Message, Languages.Resources.cmbErrorInvName);
+                        CustomMessageBox.Show(
+                            ex.Message,
+                            Languages.Resources.cmbErrorInvName
+                        );
                     }
                 }
             }
@@ -237,9 +258,7 @@ namespace mymusicpol.Views
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                var dialog = new InputBoxView(
-                    Languages.Resources.ibvAddSong
-                );
+                var dialog = new InputBoxView(Languages.Resources.ibvAddSong);
                 dialog.ShowDialog();
                 if (dialog.TextBody is not null)
                 {
@@ -258,7 +277,7 @@ namespace mymusicpol.Views
         {
             if (DataContext is PlayerViewModel playerViewModel)
             {
-                playerViewModel.SelectedListPlay(SelectedList.SelectedIndex);
+                playerViewModel.SelectedListPlay();
             }
         }
 

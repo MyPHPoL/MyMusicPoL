@@ -53,6 +53,8 @@ public class QueueModel
     public event Action OnQueueModified = delegate { };
     public event Action<Song?> OnSongChange = delegate { };
     public event Action<QueueMode> OnQueueModeChange = delegate { };
+    public event Action<Song>? OnSongChangeWhenRemoved;
+
     public event Action OnSkip = delegate { };
 
     private static QueueModel? _instance;
@@ -118,6 +120,10 @@ public class QueueModel
     public void AppendSong(Song song)
     {
         QueuedSongs.Add(song);
+        if (randomQueueIndexes is not null)
+        {
+            randomQueueIndexes.Add(QueuedSongs.Count - 1);
+        }
         OnQueueModified();
     }
 
@@ -156,7 +162,7 @@ public class QueueModel
             curSong = CurrentSong();
             if (curSong is not null)
             {
-                OnSongChange(curSong);
+                OnSongChangeWhenRemoved?.Invoke(curSong);
             }
         }
     }
