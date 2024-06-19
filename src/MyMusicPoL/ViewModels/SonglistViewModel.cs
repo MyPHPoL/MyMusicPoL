@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using MusicBackend.Model;
 using mymusicpol.Models;
 
-// idk czy tego potrzebujemy, ale to jest z tutoriala (okok?)
 namespace mymusicpol.ViewModels
 {
     internal class SonglistViewModel : ViewModelBase

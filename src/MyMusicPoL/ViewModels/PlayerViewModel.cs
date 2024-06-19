@@ -27,7 +27,6 @@ public struct TimeControl
     public Notify<string> TimeValue { get; set; }
 }
 
-//this is a test (i copied youtube tutorial video like a monkey)
 internal partial class PlayerViewModel : ViewModelBase
 {
     // current song model

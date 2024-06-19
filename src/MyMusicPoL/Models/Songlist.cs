@@ -7,7 +7,6 @@ using MusicBackend.Model;
 
 namespace mymusicpol.Models
 {
-    // for now, this is just a placeholder class
     internal class Songlist
     {
         public string name { get; set; }

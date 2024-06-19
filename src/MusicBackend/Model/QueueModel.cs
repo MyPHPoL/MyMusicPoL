@@ -205,8 +205,6 @@ public class QueueModel
     public void PlayPlaylist(string playlistName)
     {
         var playlist = PlaylistManager.Instance.GetPlaylist(playlistName);
-        // if song was paused and we tried to play empty playlist then playlist wouldn't be null, but it would have 0 songs
-        // bandaid fix ¯\_(ツ)_/¯
         if (playlist is null || playlist.Songs.Count == 0)
             return;
         QueuedSongs.Clear();
@@ -286,11 +284,4 @@ public class QueueModel
         OnSongChange(CurrentSong());
         OnSkip();
     }
-    //private IEnumerable<Song> GetRandomEnumerable()
-    //{
-    //    foreach (var index in RandomQueueIndexes)
-    //    {
-    //        yield return QueuedSongs[index];
-    //    }
-    //}
 }
